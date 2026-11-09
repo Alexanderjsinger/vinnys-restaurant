@@ -1,14 +1,12 @@
 import { NextResponse } from "next/server";
 import { isAdmin } from "@/lib/auth";
-import { addMedia, allowRate } from "@/lib/content";
+import { addMedia, allowRate, deleteMediaRecord } from "@/lib/content";
 import { sameOriginPost } from "@/lib/format";
+import { newMediaObjectKey, validateImageUpload } from "@/lib/image-bytes";
 import { mediaBucket } from "@/lib/media";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
-
-const TYPES = new Set(["image/jpeg", "image/png", "image/webp", "image/gif"]);
-const MAX_BYTES = 4 * 1024 * 1024;
 
 export async function POST(request: Request) {
   if (!sameOriginPost(request) || !(await isAdmin())) {
@@ -18,25 +16,63 @@ export async function POST(request: Request) {
   if (!(await allowRate(`upload:${ip}`, 20, 60 * 60 * 1000))) {
     return NextResponse.redirect(new URL("/admin/media?error=rate", request.url), 303);
   }
+
+  const form = await request.formData();
+  const intent = String(form.get("intent") ?? "upload");
+  if (intent === "delete") {
+    const id = Number(form.get("id"));
+    if (!Number.isInteger(id) || id < 1 || form.get("yes") !== "1") {
+      return NextResponse.redirect(new URL("/admin/media?error=required", request.url), 303);
+    }
+    const result = await deleteMediaRecord(id);
+    if (!result.ok) {
+      return NextResponse.redirect(new URL(`/admin/media?error=${result.reason}`, request.url), 303);
+    }
+    const bucket = await mediaBucket();
+    if (bucket?.delete) {
+      try {
+        await bucket.delete(result.object_key);
+      } catch (error) {
+        console.error(error);
+      }
+    }
+    return NextResponse.redirect(new URL("/admin/media?saved=archived", request.url), 303);
+  }
+
   const bucket = await mediaBucket();
   if (!bucket) {
     return NextResponse.redirect(new URL("/admin/media", request.url), 303);
   }
-  const form = await request.formData();
   const file = form.get("file");
   const alt = String(form.get("alt") ?? "").trim().slice(0, 180);
-  if (!(file instanceof File) || !TYPES.has(file.type) || file.size <= 0 || file.size > MAX_BYTES || !alt) {
+  if (!(file instanceof File) || file.size <= 0 || !alt) {
     return NextResponse.redirect(new URL("/admin/media?error=required", request.url), 303);
   }
   const bytes = await file.arrayBuffer();
-  const key = `library/${Date.now()}-${file.name.replace(/[^a-zA-Z0-9._-]/g, "")}`;
-  await bucket.put(key, bytes, { httpMetadata: { contentType: file.type } });
-  await addMedia({
-    object_key: key,
-    alt,
-    content_type: file.type,
-    bytes: file.size,
-    created_at: new Date().toISOString(),
-  });
+  const checked = validateImageUpload(bytes);
+  if (!checked.ok) {
+    return NextResponse.redirect(new URL(`/admin/media?error=${checked.reason}`, request.url), 303);
+  }
+  const key = newMediaObjectKey(checked.type);
+  await bucket.put(key, bytes, { httpMetadata: { contentType: checked.type } });
+  try {
+    await addMedia({
+      object_key: key,
+      alt,
+      content_type: checked.type,
+      bytes: bytes.byteLength,
+      created_at: new Date().toISOString(),
+    });
+  } catch (error) {
+    console.error(error);
+    if (bucket.delete) {
+      try {
+        await bucket.delete(key);
+      } catch (cleanupError) {
+        console.error(cleanupError);
+      }
+    }
+    return NextResponse.redirect(new URL("/admin/media?error=save", request.url), 303);
+  }
   return NextResponse.redirect(new URL("/admin/media?saved=published", request.url), 303);
 }

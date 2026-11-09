@@ -242,6 +242,10 @@ function ensureContentColumns(db: Database.Database) {
       id INTEGER PRIMARY KEY,
       inquiry_id INTEGER NOT NULL,
       reason TEXT NOT NULL,
+      status TEXT NOT NULL DEFAULT 'pending',
+      attempts INTEGER NOT NULL DEFAULT 0,
+      last_attempt_at TEXT NOT NULL DEFAULT '',
+      sent_at TEXT NOT NULL DEFAULT '',
       created_at TEXT NOT NULL
     );
     CREATE TABLE IF NOT EXISTS rate_hits (
@@ -250,6 +254,10 @@ function ensureContentColumns(db: Database.Database) {
       created_at TEXT NOT NULL
     );
   `);
+  addColumn(db, "notify_queue", "status", "TEXT NOT NULL DEFAULT 'pending'");
+  addColumn(db, "notify_queue", "attempts", "INTEGER NOT NULL DEFAULT 0");
+  addColumn(db, "notify_queue", "last_attempt_at", "TEXT NOT NULL DEFAULT ''");
+  addColumn(db, "notify_queue", "sent_at", "TEXT NOT NULL DEFAULT ''");
 }
 
 function ensureExtraSettings(db: Database.Database) {
@@ -820,10 +828,109 @@ export function allowRate(bucket: string, limit: number, windowMs: number): bool
   return true;
 }
 
+function asNotifyStatus(value: string | undefined): import("./types").NotifyStatus {
+  if (value === "sent" || value === "failed") return value;
+  return "pending";
+}
+
 export function enqueueNotify(inquiryId: number, reason: string) {
-  getDb()
-    .prepare("INSERT INTO notify_queue (inquiry_id, reason, created_at) VALUES (?, ?, ?)")
-    .run(inquiryId, reason, new Date().toISOString());
+  const db = getDb();
+  const now = new Date().toISOString();
+  const existing = db
+    .prepare(
+      "SELECT id FROM notify_queue WHERE inquiry_id = ? AND status IN ('pending', 'failed') ORDER BY id DESC LIMIT 1",
+    )
+    .get(inquiryId) as { id: number } | undefined;
+  if (existing) {
+    db.prepare("UPDATE notify_queue SET reason = ?, status = 'pending' WHERE id = ?").run(reason.slice(0, 200), existing.id);
+    return;
+  }
+  const sent = db
+    .prepare("SELECT id FROM notify_queue WHERE inquiry_id = ? AND status = 'sent' LIMIT 1")
+    .get(inquiryId) as { id: number } | undefined;
+  if (sent) return;
+  db.prepare(
+    "INSERT INTO notify_queue (inquiry_id, reason, status, attempts, last_attempt_at, sent_at, created_at) VALUES (?, ?, 'pending', 0, '', '', ?)",
+  ).run(inquiryId, reason.slice(0, 200), now);
+}
+
+export function markNotifyAttempt(queueId: number) {
+  const db = getDb();
+  const now = new Date().toISOString();
+  db.prepare("UPDATE notify_queue SET attempts = attempts + 1, last_attempt_at = ? WHERE id = ?").run(now, queueId);
+}
+
+export function recordNotifyFailure(queueId: number, reason: string) {
+  const db = getDb();
+  const row = db.prepare("SELECT attempts FROM notify_queue WHERE id = ?").get(queueId) as { attempts: number };
+  const status = (row?.attempts ?? 0) >= 5 ? "failed" : "pending";
+  db.prepare("UPDATE notify_queue SET reason = ?, status = ? WHERE id = ? AND status != 'sent'").run(
+    reason.slice(0, 200),
+    status,
+    queueId,
+  );
+}
+
+export function markNotifySent(inquiryId: number, reason = "accepted-by-resend") {
+  const db = getDb();
+  const now = new Date().toISOString();
+  db.prepare(
+    "UPDATE notify_queue SET status = 'sent', reason = ?, sent_at = ?, last_attempt_at = ? WHERE inquiry_id = ? AND status != 'sent'",
+  ).run(reason.slice(0, 200), now, now, inquiryId);
+  const existing = db
+    .prepare("SELECT id FROM notify_queue WHERE inquiry_id = ? AND status = 'sent' LIMIT 1")
+    .get(inquiryId) as { id: number } | undefined;
+  if (!existing) {
+    db.prepare(
+      "INSERT INTO notify_queue (inquiry_id, reason, status, attempts, last_attempt_at, sent_at, created_at) VALUES (?, ?, 'sent', 1, ?, ?, ?)",
+    ).run(inquiryId, reason.slice(0, 200), now, now, now);
+  }
+}
+
+export function getInquiryNotifyStatus(inquiryId: number): import("./types").NotifyQueueRow | null {
+  const row = getDb()
+    .prepare(
+      "SELECT id, inquiry_id, reason, status, attempts, last_attempt_at, sent_at, created_at FROM notify_queue WHERE inquiry_id = ? ORDER BY CASE status WHEN 'sent' THEN 0 WHEN 'pending' THEN 1 ELSE 2 END, id DESC LIMIT 1",
+    )
+    .get(inquiryId) as import("./types").NotifyQueueRow | undefined;
+  if (!row) return null;
+  return { ...row, status: asNotifyStatus(row.status) };
+}
+
+export function listPendingNotifies(limit = 20): import("./types").NotifyQueueJoin[] {
+  const rows = getDb()
+    .prepare(
+      `SELECT q.id, q.inquiry_id, q.reason, q.status, q.attempts, q.last_attempt_at, q.sent_at, q.created_at,
+              i.name, i.email, i.event_date, i.party_size, i.message
+       FROM notify_queue q
+       JOIN inquiries i ON i.id = q.inquiry_id
+       WHERE q.status IN ('pending', 'failed')
+       ORDER BY q.id ASC
+       LIMIT ?`,
+    )
+    .all(limit) as import("./types").NotifyQueueJoin[];
+  return rows.map((row) => ({ ...row, status: asNotifyStatus(row.status) }));
+}
+
+export function mediaInUse(id: number): boolean {
+  const needle = `/media/${id}`;
+  const setting = getDb().prepare("SELECT value FROM settings WHERE key = 'hero_image'").get() as
+    | { value: string }
+    | undefined;
+  if (setting?.value?.includes(needle)) return true;
+  const event = getDb()
+    .prepare("SELECT id FROM events WHERE photo LIKE ? LIMIT 1")
+    .get(`%${needle}%`) as { id: number } | undefined;
+  return Boolean(event);
+}
+
+export function deleteMedia(id: number): { ok: true; object_key: string } | { ok: false; reason: string } {
+  if (mediaInUse(id)) return { ok: false, reason: "in-use" };
+  const db = getDb();
+  const row = db.prepare("SELECT object_key FROM media WHERE id = ?").get(id) as { object_key: string } | undefined;
+  if (!row) return { ok: false, reason: "missing" };
+  db.prepare("DELETE FROM media WHERE id = ?").run(id);
+  return { ok: true, object_key: row.object_key };
 }
 
 export function listMedia(): import("./types").MediaRow[] {

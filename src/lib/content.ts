@@ -2,7 +2,18 @@ import "server-only";
 import * as d1 from "./d1-store";
 import * as sqlite from "./db";
 import snapshotFile from "./public-snapshot.json";
-import type { EventRow, Hour, MediaRow, MenuItem, MenuSection, PublishStatus, ReadScope, SettingsMap } from "./types";
+import type {
+  EventRow,
+  Hour,
+  MediaRow,
+  MenuItem,
+  MenuSection,
+  NotifyQueueJoin,
+  NotifyQueueRow,
+  PublishStatus,
+  ReadScope,
+  SettingsMap,
+} from "./types";
 import { SETTING_KEYS } from "./types";
 
 type SnapshotFile = {
@@ -258,6 +269,31 @@ export async function enqueueNotify(inquiryId: number, reason: string) {
   sqlite.enqueueNotify(inquiryId, reason);
 }
 
+export async function markNotifyAttempt(queueId: number) {
+  if ((await writeMode()) === "d1") return d1.markNotifyAttempt(queueId);
+  sqlite.markNotifyAttempt(queueId);
+}
+
+export async function recordNotifyFailure(queueId: number, reason: string) {
+  if ((await writeMode()) === "d1") return d1.recordNotifyFailure(queueId, reason);
+  sqlite.recordNotifyFailure(queueId, reason);
+}
+
+export async function markNotifySent(inquiryId: number, reason?: string) {
+  if ((await writeMode()) === "d1") return d1.markNotifySent(inquiryId, reason);
+  sqlite.markNotifySent(inquiryId, reason);
+}
+
+export async function getInquiryNotifyStatus(inquiryId: number): Promise<NotifyQueueRow | null> {
+  if ((await writeMode()) === "d1") return d1.getInquiryNotifyStatus(inquiryId);
+  return sqlite.getInquiryNotifyStatus(inquiryId);
+}
+
+export async function listPendingNotifies(limit = 20): Promise<NotifyQueueJoin[]> {
+  if ((await writeMode()) === "d1") return d1.listPendingNotifies(limit);
+  return sqlite.listPendingNotifies(limit);
+}
+
 export async function listMedia(): Promise<MediaRow[]> {
   if ((await writeMode()) === "d1") return d1.listMedia();
   return sqlite.listMedia();
@@ -271,6 +307,16 @@ export async function addMedia(input: Omit<MediaRow, "id">): Promise<number> {
 export async function getMedia(id: number): Promise<MediaRow | null> {
   if ((await writeMode()) === "d1") return d1.getMedia(id);
   return sqlite.listMedia().find((row) => row.id === id) ?? null;
+}
+
+export async function mediaInUse(id: number): Promise<boolean> {
+  if ((await writeMode()) === "d1") return d1.mediaInUse(id);
+  return sqlite.mediaInUse(id);
+}
+
+export async function deleteMediaRecord(id: number) {
+  if ((await writeMode()) === "d1") return d1.deleteMedia(id);
+  return sqlite.deleteMedia(id);
 }
 
 export async function runtimeLabel(): Promise<string> {

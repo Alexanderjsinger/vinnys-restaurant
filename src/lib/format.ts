@@ -213,10 +213,17 @@ export function isEmail(value: string): boolean {
 
 export function sameOriginPost(request: Request): boolean {
   const origin = request.headers.get("origin");
-  if (!origin) return true;
-  try {
-    return new URL(origin).host === new URL(request.url).host;
-  } catch {
-    return false;
+  if (origin) {
+    try {
+      return new URL(origin).host === new URL(request.url).host;
+    } catch {
+      return false;
+    }
   }
+  // Browsers usually send Origin on cross-site POSTs. When Origin is absent,
+  // require same-origin/same-site Sec-Fetch-Site (or allow non-browser tooling
+  // that sends neither header).
+  const site = (request.headers.get("sec-fetch-site") || "").toLowerCase();
+  if (!site) return true;
+  return site === "same-origin" || site === "same-site" || site === "none";
 }

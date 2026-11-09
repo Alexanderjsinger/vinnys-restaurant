@@ -28,6 +28,18 @@ export function adminError(code: string | undefined): string | null {
       return "That save could not be matched.";
     case "save":
       return "The save did not finish. Try again.";
+    case "type":
+    case "size":
+    case "empty":
+      return "Use a JPEG, PNG, WebP, or GIF image under 4 MB.";
+    case "in-use":
+      return "That photo is still used on the site. Remove it from homepage or events first.";
+    case "missing":
+      return "That photo was already removed.";
+    case "notify-skip":
+      return "Nothing was ready to retry (missing Resend settings, backoff wait, or empty queue).";
+    case "notify-fail":
+      return "Retry ran but Resend did not accept the messages. Notes stay stored.";
     default:
       return null;
   }
