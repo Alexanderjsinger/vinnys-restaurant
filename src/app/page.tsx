@@ -78,18 +78,6 @@ export default async function HomePage({
             <img src={site.heroImage} alt="" />
           </figure>
         ) : null}
-        <div className="cta-row">
-          <Link className="btn btn-solid" href="/menu">
-            View Menu
-          </Link>
-          <a className="btn" href={site.mapUrl || DIRECTIONS_URL} data-track="directions_click" target="_blank" rel="noopener noreferrer">
-            Get Directions
-            <span className="sr-only"> (opens in a new tab)</span>
-          </a>
-          <a className="btn" href={site.phoneHref || RESERVE_TEL} data-track="phone_click">
-            {site.phone || PHONE_DISPLAY}
-          </a>
-        </div>
       </section>
 
       <section className="page wrap" aria-labelledby="plates-heading">
