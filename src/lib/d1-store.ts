@@ -1,6 +1,18 @@
 import { LUNCH_MENU } from "./lunch-menu";
 import { ORDER_URL, PHONE_DISPLAY } from "./public";
-import { SETTING_KEYS, type EventRow, type Hour, type Inquiry, type MediaRow, type MenuSection, type PublishStatus, type SettingsMap } from "./types";
+import {
+  SETTING_KEYS,
+  type EventRow,
+  type Hour,
+  type Inquiry,
+  type MediaRow,
+  type MenuSection,
+  type NotifyQueueJoin,
+  type NotifyQueueRow,
+  type NotifyStatus,
+  type PublishStatus,
+  type SettingsMap,
+} from "./types";
 
 type D1Statement = {
   bind(...values: unknown[]): D1Statement;
@@ -161,6 +173,10 @@ async function ensure() {
         id INTEGER PRIMARY KEY,
         inquiry_id INTEGER NOT NULL,
         reason TEXT NOT NULL,
+        status TEXT NOT NULL DEFAULT 'pending',
+        attempts INTEGER NOT NULL DEFAULT 0,
+        last_attempt_at TEXT NOT NULL DEFAULT '',
+        sent_at TEXT NOT NULL DEFAULT '',
         created_at TEXT NOT NULL
       )`,
     )
@@ -199,6 +215,10 @@ async function ensure() {
     "ALTER TABLE menu_items ADD COLUMN status TEXT NOT NULL DEFAULT 'published'",
     "ALTER TABLE menu_items ADD COLUMN updated_at TEXT NOT NULL DEFAULT ''",
     "ALTER TABLE menu_items ADD COLUMN published_at TEXT NOT NULL DEFAULT ''",
+    "ALTER TABLE notify_queue ADD COLUMN status TEXT NOT NULL DEFAULT 'pending'",
+    "ALTER TABLE notify_queue ADD COLUMN attempts INTEGER NOT NULL DEFAULT 0",
+    "ALTER TABLE notify_queue ADD COLUMN last_attempt_at TEXT NOT NULL DEFAULT ''",
+    "ALTER TABLE notify_queue ADD COLUMN sent_at TEXT NOT NULL DEFAULT ''",
   ]) {
     await addColumn(db, sql);
   }
@@ -859,13 +879,146 @@ export async function allowRate(bucket: string, limit: number, windowMs: number)
   return true;
 }
 
+function asNotifyStatus(value: string | undefined): NotifyStatus {
+  if (value === "sent" || value === "failed") return value;
+  return "pending";
+}
+
 export async function enqueueNotify(inquiryId: number, reason: string) {
   await prepareD1();
   const db = await database();
+  const now = new Date().toISOString();
+  const existing = await db
+    .prepare(
+      "SELECT id, status FROM notify_queue WHERE inquiry_id = ? AND status IN ('pending', 'failed') ORDER BY id DESC LIMIT 1",
+    )
+    .bind(inquiryId)
+    .first<{ id: number; status: string }>();
+  if (existing) {
+    await db
+      .prepare("UPDATE notify_queue SET reason = ?, status = 'pending' WHERE id = ?")
+      .bind(reason.slice(0, 200), existing.id)
+      .run();
+    return;
+  }
+  const sent = await db
+    .prepare("SELECT id FROM notify_queue WHERE inquiry_id = ? AND status = 'sent' LIMIT 1")
+    .bind(inquiryId)
+    .first<{ id: number }>();
+  if (sent) return;
   await db
-    .prepare("INSERT INTO notify_queue (inquiry_id, reason, created_at) VALUES (?, ?, ?)")
-    .bind(inquiryId, reason, new Date().toISOString())
+    .prepare(
+      "INSERT INTO notify_queue (inquiry_id, reason, status, attempts, last_attempt_at, sent_at, created_at) VALUES (?, ?, 'pending', 0, '', '', ?)",
+    )
+    .bind(inquiryId, reason.slice(0, 200), now)
     .run();
+}
+
+export async function markNotifyAttempt(queueId: number) {
+  await prepareD1();
+  const db = await database();
+  const now = new Date().toISOString();
+  await db
+    .prepare("UPDATE notify_queue SET attempts = attempts + 1, last_attempt_at = ? WHERE id = ?")
+    .bind(now, queueId)
+    .run();
+}
+
+export async function recordNotifyFailure(queueId: number, reason: string) {
+  await prepareD1();
+  const db = await database();
+  const row = await db
+    .prepare("SELECT attempts FROM notify_queue WHERE id = ?")
+    .bind(queueId)
+    .first<{ attempts: number }>();
+  const status = (row?.attempts ?? 0) >= 5 ? "failed" : "pending";
+  await db
+    .prepare("UPDATE notify_queue SET reason = ?, status = ? WHERE id = ? AND status != 'sent'")
+    .bind(reason.slice(0, 200), status, queueId)
+    .run();
+}
+
+export async function markNotifySent(inquiryId: number, reason = "accepted-by-resend") {
+  await prepareD1();
+  const db = await database();
+  const now = new Date().toISOString();
+  await db
+    .prepare(
+      "UPDATE notify_queue SET status = 'sent', reason = ?, sent_at = ?, last_attempt_at = ? WHERE inquiry_id = ? AND status != 'sent'",
+    )
+    .bind(reason.slice(0, 200), now, now, inquiryId)
+    .run();
+  const existing = await db
+    .prepare("SELECT id FROM notify_queue WHERE inquiry_id = ? AND status = 'sent' LIMIT 1")
+    .bind(inquiryId)
+    .first<{ id: number }>();
+  if (!existing) {
+    await db
+      .prepare(
+        "INSERT INTO notify_queue (inquiry_id, reason, status, attempts, last_attempt_at, sent_at, created_at) VALUES (?, ?, 'sent', 1, ?, ?, ?)",
+      )
+      .bind(inquiryId, reason.slice(0, 200), now, now, now)
+      .run();
+  }
+}
+
+export async function getInquiryNotifyStatus(inquiryId: number): Promise<NotifyQueueRow | null> {
+  await prepareD1();
+  const db = await database();
+  const row = await db
+    .prepare(
+      "SELECT id, inquiry_id, reason, status, attempts, last_attempt_at, sent_at, created_at FROM notify_queue WHERE inquiry_id = ? ORDER BY CASE status WHEN 'sent' THEN 0 WHEN 'pending' THEN 1 ELSE 2 END, id DESC LIMIT 1",
+    )
+    .bind(inquiryId)
+    .first<NotifyQueueRow>();
+  if (!row) return null;
+  return { ...row, status: asNotifyStatus(row.status) };
+}
+
+export async function listPendingNotifies(limit = 20): Promise<NotifyQueueJoin[]> {
+  await prepareD1();
+  const db = await database();
+  const rows = await db
+    .prepare(
+      `SELECT q.id, q.inquiry_id, q.reason, q.status, q.attempts, q.last_attempt_at, q.sent_at, q.created_at,
+              i.name, i.email, i.event_date, i.party_size, i.message
+       FROM notify_queue q
+       JOIN inquiries i ON i.id = q.inquiry_id
+       WHERE q.status IN ('pending', 'failed')
+       ORDER BY q.id ASC
+       LIMIT ?`,
+    )
+    .bind(limit)
+    .all<NotifyQueueJoin>();
+  return (rows.results ?? []).map((row) => ({ ...row, status: asNotifyStatus(row.status) }));
+}
+
+export async function mediaInUse(id: number): Promise<boolean> {
+  await prepareD1();
+  const db = await database();
+  const needle = `/media/${id}`;
+  const setting = await db
+    .prepare("SELECT value FROM settings WHERE key = 'hero_image'")
+    .first<{ value: string }>();
+  if (setting?.value?.includes(needle)) return true;
+  const event = await db
+    .prepare("SELECT id FROM events WHERE photo LIKE ? LIMIT 1")
+    .bind(`%${needle}%`)
+    .first<{ id: number }>();
+  return Boolean(event);
+}
+
+export async function deleteMedia(id: number): Promise<{ ok: true; object_key: string } | { ok: false; reason: string }> {
+  await prepareD1();
+  if (await mediaInUse(id)) return { ok: false, reason: "in-use" };
+  const db = await database();
+  const row = await db
+    .prepare("SELECT object_key FROM media WHERE id = ?")
+    .bind(id)
+    .first<{ object_key: string }>();
+  if (!row) return { ok: false, reason: "missing" };
+  await db.prepare("DELETE FROM media WHERE id = ?").bind(id).run();
+  return { ok: true, object_key: row.object_key };
 }
 
 export async function listMedia(): Promise<MediaRow[]> {

@@ -103,6 +103,27 @@ export type MediaRow = {
   created_at: string;
 };
 
+export type NotifyStatus = "pending" | "sent" | "failed";
+
+export type NotifyQueueRow = {
+  id: number;
+  inquiry_id: number;
+  reason: string;
+  status: NotifyStatus;
+  attempts: number;
+  last_attempt_at: string;
+  sent_at: string;
+  created_at: string;
+};
+
+export type NotifyQueueJoin = NotifyQueueRow & {
+  name: string;
+  email: string;
+  event_date: string;
+  party_size: number;
+  message: string;
+};
+
 export type Inquiry = {
   id: number;
   name: string;

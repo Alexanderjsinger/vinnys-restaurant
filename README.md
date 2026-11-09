@@ -4,7 +4,7 @@ Restaurant site for Vinny's Bar & Grill in Ypsilanti (repo: `Alexanderjsinger/vi
 
 **This project does not change DNS for vinnysbargrill.com.**
 
-Phase 2 status, CMS architecture, and isolation notes live under [`docs/`](docs/).
+Phase 2 / 2.5 docs live under [`docs/`](docs/) (`phase-2-status.md`, `phase-2-5-audit.md`, `owner-setup.md`, `d1-backup-recovery.md`).
 
 ## Run
 
@@ -31,6 +31,14 @@ Cloudflare / Vite production build (documented Phase 2 path):
 
 ```bash
 npm run build:vinext
+```
+
+Checks used in CI:
+
+```bash
+npm run typecheck
+npm test
+npm run ci
 ```
 
 Optional Vite local preview:

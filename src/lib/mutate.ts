@@ -104,9 +104,20 @@ export async function applyAdminSave(form: FormData): Promise<string> {
       return saveEventDelete(form);
     case "inquiry-delete":
       return saveInquiryDelete(form);
+    case "notify-retry":
+      return saveNotifyRetry();
     default:
       return "/admin?error=unknown";
   }
+}
+
+async function saveNotifyRetry(): Promise<string> {
+  const { retryPendingNotifications } = await import("./notify");
+  const result = await retryPendingNotifications(10);
+  if (result.attempted === 0) return "/admin/inquiries?error=notify-skip";
+  if (result.sent > 0 && result.failed === 0) return "/admin/inquiries?saved=published";
+  if (result.sent > 0) return "/admin/inquiries?saved=draft";
+  return "/admin/inquiries?error=notify-fail";
 }
 
 async function savePlace(form: FormData): Promise<string> {
