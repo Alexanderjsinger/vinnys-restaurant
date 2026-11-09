@@ -1,0 +1,22 @@
+export async function mediaEnabled(): Promise<boolean> {
+  try {
+    const { env } = await import("cloudflare:workers");
+    return Boolean((env as { MEDIA?: { put?: unknown } }).MEDIA?.put);
+  } catch {
+    return false;
+  }
+}
+
+export async function mediaBucket(): Promise<{
+  put(key: string, value: ArrayBuffer, options: { httpMetadata: { contentType: string } }): Promise<unknown>;
+  get(key: string): Promise<{ arrayBuffer(): Promise<ArrayBuffer>; httpMetadata?: { contentType?: string } } | null>;
+} | null> {
+  try {
+    const { env } = await import("cloudflare:workers");
+    const bucket = (env as { MEDIA?: { put?: unknown; get?: unknown } }).MEDIA;
+    if (!bucket || typeof bucket.put !== "function" || typeof bucket.get !== "function") return null;
+    return bucket as Awaited<ReturnType<typeof mediaBucket>>;
+  } catch {
+    return null;
+  }
+}
