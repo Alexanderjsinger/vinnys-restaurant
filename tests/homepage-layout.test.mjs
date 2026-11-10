@@ -63,9 +63,29 @@ test("lunch plate frames use cover framing instead of letterboxed tall voids", (
   );
 });
 
-test("hero poster and venue band keep readable landscape proportions", () => {
+test("hero poster stays full-bleed without aspect-ratio width shrink", () => {
   const css = read(cssPath);
-  assert.match(css, /\.poster\s*\{[\s\S]*?aspect-ratio:/, "poster declares an aspect ratio");
+  const poster = read(path.join(root, "src/components/PosterSlider.tsx"));
+
+  assert.match(css, /\.poster\s*\{[\s\S]*?width:\s*100%/, "poster locks to full content width");
+  assert.match(css, /\.poster\s*\{[\s\S]*?height:\s*min\(70vh,\s*42rem\)/, "poster height is viewport-driven");
+  assert.doesNotMatch(
+    css,
+    /\.poster\s*\{[^}]*aspect-ratio:/,
+    "poster must not use aspect-ratio (pairs with height caps and shrinks/overflows width)",
+  );
+  assert.match(css, /\.poster-frame img\s*\{[\s\S]*?object-fit:\s*cover/, "hero image covers the full-bleed frame");
+  assert.match(poster, /poster-band/, "hero wraps in a full-bleed band");
+  assert.match(poster, /poster-credit/, "stock-photo honesty caption remains available");
+  assert.doesNotMatch(
+    poster,
+    /<figure className="poster-frame[\s\S]*?poster-credit[\s\S]*?<\/figure>/,
+    "honesty caption must not float as an overlay inside the hero frame",
+  );
+  const creditRule = css.match(/\.poster-credit\s*\{[^}]*\}/);
+  assert.ok(creditRule, "poster-credit rule exists");
+  assert.doesNotMatch(creditRule[0], /position:\s*absolute/, "poster-credit is not absolutely positioned over the hero");
+
   assert.match(css, /\.venue-shot img\s*\{[\s\S]*?aspect-ratio:/, "venue band declares an aspect ratio");
   assert.match(css, /\.venue-shot img\s*\{[\s\S]*?object-fit:\s*cover/, "venue uses cover crop");
   assert.doesNotMatch(

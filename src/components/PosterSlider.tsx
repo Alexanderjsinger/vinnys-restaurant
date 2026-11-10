@@ -25,50 +25,54 @@ export function PosterSlider({ posters }: { posters: Poster[] }) {
   }, [count]);
 
   return (
-    <section
-      className="poster"
-      aria-roledescription={count > 1 ? "carousel" : undefined}
-      aria-label={count === 0 ? HERO_LINE : "Event posters"}
-    >
-      {count === 0 ? (
-        <figure className="poster-frame is-active">
-          <img src={HERO_PLACEHOLDER.src} alt={HERO_PLACEHOLDER.alt} width={1800} height={1203} />
-          <figcaption className="poster-line">{HERO_LINE}</figcaption>
-          <p className="poster-credit">Friends at a restaurant table. Not a photo of the dining room.</p>
-        </figure>
-      ) : (
-        posters.map((poster, posterIndex) => (
-          <figure
-            key={poster.src}
-            className={posterIndex === index ? "poster-frame is-active" : "poster-frame"}
-            hidden={posterIndex !== index}
-          >
-            <img src={poster.src} alt={poster.alt} width={1200} height={1600} />
+    <div className="poster-band">
+      <section
+        className="poster"
+        aria-roledescription={count > 1 ? "carousel" : undefined}
+        aria-label={count === 0 ? HERO_LINE : "Event posters"}
+      >
+        {count === 0 ? (
+          <figure className="poster-frame is-active">
+            <img src={HERO_PLACEHOLDER.src} alt={HERO_PLACEHOLDER.alt} width={1800} height={1203} />
             <figcaption className="poster-line">{HERO_LINE}</figcaption>
           </figure>
-        ))
-      )}
-      {count > 1 ? (
-        <div className="poster-controls">
-          <button
-            type="button"
-            className="btn"
-            onClick={() => setIndex((current) => (current - 1 + count) % count)}
-          >
-            Previous poster
-          </button>
-          <button
-            type="button"
-            className="btn"
-            onClick={() => setIndex((current) => (current + 1) % count)}
-          >
-            Next poster
-          </button>
-          <p className="poster-count">
-            {index + 1} / {count}
-          </p>
-        </div>
+        ) : (
+          posters.map((poster, posterIndex) => (
+            <figure
+              key={poster.src}
+              className={posterIndex === index ? "poster-frame is-active" : "poster-frame"}
+              hidden={posterIndex !== index}
+            >
+              <img src={poster.src} alt={poster.alt} width={1200} height={1600} />
+              <figcaption className="poster-line">{HERO_LINE}</figcaption>
+            </figure>
+          ))
+        )}
+        {count > 1 ? (
+          <div className="poster-controls">
+            <button
+              type="button"
+              className="btn"
+              onClick={() => setIndex((current) => (current - 1 + count) % count)}
+            >
+              Previous poster
+            </button>
+            <button
+              type="button"
+              className="btn"
+              onClick={() => setIndex((current) => (current + 1) % count)}
+            >
+              Next poster
+            </button>
+            <p className="poster-count">
+              {index + 1} / {count}
+            </p>
+          </div>
+        ) : null}
+      </section>
+      {count === 0 ? (
+        <p className="poster-credit">Friends at a restaurant table. Not a photo of the dining room.</p>
       ) : null}
-    </section>
+    </div>
   );
 }
