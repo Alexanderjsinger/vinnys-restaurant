@@ -2,10 +2,10 @@ import type { Metadata } from "next";
 import { PRODUCTION_ORIGIN } from "@/lib/public";
 
 const shareImage = {
-  url: "/hero/meet-me.jpg",
-  width: 1800,
-  height: 1203,
-  alt: "Friends at a restaurant table. Not a photo of the dining room.",
+  url: "/photos/storefront.webp",
+  width: 1110,
+  height: 886,
+  alt: "Exterior of Vinny's Bar & Grill at 705 W. Cross St.",
 };
 
 export function pageMeta(path: string, title: string | { absolute: string }, description: string): Metadata {

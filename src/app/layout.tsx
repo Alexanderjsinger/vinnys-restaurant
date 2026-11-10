@@ -48,10 +48,10 @@ export async function generateMetadata(): Promise<Metadata> {
       type: "website",
       images: [
         {
-          url: "/hero/meet-me.jpg",
-          width: 1800,
-          height: 1203,
-          alt: "Friends at a restaurant table with drinks and appetizers",
+          url: "/photos/storefront.webp",
+          width: 1110,
+          height: 886,
+          alt: "Exterior of Vinny's Bar & Grill at 705 W. Cross St.",
         },
       ],
     },
