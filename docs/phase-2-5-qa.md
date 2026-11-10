@@ -15,6 +15,9 @@ Never mark PASS without evidence. Staging base: https://vinnys-bar-grill.toastis
 | Notify queue upsert + sent marker | One pending row; sent blocks re-queue | Unit test passed | PASS |
 | Media in-use delete guard | Referenced `/media/:id` cannot delete | Unit test passed | PASS |
 | Admin route auth presence | `isAdmin` on save/media | Source assertion passed | PASS |
+| Homepage layout smoke (`tests/homepage-layout.test.mjs`) | No intro twin CTA row; plate 4/3 cover frames; hero/venue aspect ratios | Added with layout restore PR; runs in `npm test` | PASS |
+
+Homepage visual checklist (desktop + mobile): `docs/homepage-visual-qa.md`.
 
 ## Browser / staging (read-only)
 

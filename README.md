@@ -41,6 +41,8 @@ npm test
 npm run ci
 ```
 
+Homepage image-frame / CTA smoke coverage is in `tests/homepage-layout.test.mjs`. Manual visual checklist: [`docs/homepage-visual-qa.md`](docs/homepage-visual-qa.md).
+
 Optional Vite local preview:
 
 ```bash
