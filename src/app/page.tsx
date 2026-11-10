@@ -98,13 +98,13 @@ export default async function HomePage({
 
       <figure className="venue-shot">
         <img
-          src="/photos/storefront.webp"
-          alt="Exterior of Vinny's Bar & Grill at 705 W. Cross St."
-          width={1110}
-          height={886}
+          src="/hero/meet-me.jpg"
+          alt="Friends at a restaurant table with drinks and appetizers"
+          width={1800}
+          height={1203}
         />
         <figcaption>
-          Storefront at 705 W. Cross St. This is a listing photo of the exterior, not an owner photo of the dining room.
+          Friends at a restaurant table. Not a photo of the dining room.
         </figcaption>
       </figure>
 

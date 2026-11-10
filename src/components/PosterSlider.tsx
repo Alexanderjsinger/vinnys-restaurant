@@ -6,8 +6,8 @@ import { HERO_LINE } from "@/lib/public";
 type Poster = { src: string; alt: string };
 
 const HERO_PLACEHOLDER: Poster = {
-  src: "/hero/meet-me.jpg",
-  alt: "Friends at a restaurant table with drinks and appetizers",
+  src: "/photos/storefront.webp",
+  alt: "Exterior of Vinny's Bar & Grill at 705 W. Cross St.",
 };
 
 export function PosterSlider({ posters }: { posters: Poster[] }) {
@@ -33,7 +33,7 @@ export function PosterSlider({ posters }: { posters: Poster[] }) {
       >
         {count === 0 ? (
           <figure className="poster-frame is-active">
-            <img src={HERO_PLACEHOLDER.src} alt={HERO_PLACEHOLDER.alt} width={1800} height={1203} />
+            <img src={HERO_PLACEHOLDER.src} alt={HERO_PLACEHOLDER.alt} width={1110} height={886} />
             <figcaption className="poster-line">{HERO_LINE}</figcaption>
           </figure>
         ) : (
@@ -71,7 +71,9 @@ export function PosterSlider({ posters }: { posters: Poster[] }) {
         ) : null}
       </section>
       {count === 0 ? (
-        <p className="poster-credit">Friends at a restaurant table. Not a photo of the dining room.</p>
+        <p className="poster-credit">
+          Storefront at 705 W. Cross St. This is a listing photo of the exterior, not an owner photo of the dining room.
+        </p>
       ) : null}
     </div>
   );
