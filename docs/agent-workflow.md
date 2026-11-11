@@ -12,7 +12,22 @@ Permanent AI development loop for this repository. Config lives in git so every 
 
 **Project Coordinator** is **not** a `.cursor/agents/` file. Roadmap, architecture decisions, and Product Owner consolidation stay in the Cursor Project. Do not add a duplicate Coordinator subagent.
 
-Shared facts and pointers: [`project-context.md`](project-context.md). Next checklist: [`next-execution-plan.md`](next-execution-plan.md).
+Shared facts and pointers: [`project-context.md`](project-context.md). Next checklist: [`next-execution-plan.md`](next-execution-plan.md). CSRF closure: [`security-closure-csrf.md`](security-closure-csrf.md).
+
+## Status vocabulary (use consistently)
+
+When reporting or updating docs, separate these layers — do not collapse them into a single “done”:
+
+| Layer | Meaning |
+| --- | --- |
+| **Completed eng** | Merged (or ready) code/docs on the named SHA |
+| **Verified staging** | Independent evidence on the live staging Worker for that SHA |
+| **Outstanding product** | Product HOLD / UX / CMS work not cleared |
+| **Unresolved defects** | Known FAIL or open bugs with evidence |
+| **Owner deps** | R2, Resend, business facts, deploy/DNS approval |
+| **Prod requirements** | Explicit bar before production/DNS — staging PASS alone is not enough |
+
+**Current checkpoint (2026-11-11):** CSRF is **completed eng** + **verified staging PASS** on `main` `b7bf813`. Events/CMS remain **outstanding product (HOLD)**. R2 / Resend / business info remain **owner deps**.
 
 ## Custom subagent frontmatter
 
@@ -29,6 +44,7 @@ Each file under `.cursor/agents/` starts with Cursor YAML frontmatter (`name`, `
 - Assignments to Engineer / UX / QA
 - Consolidation of reviews for the Product Owner
 - Relaying Product Owner approval for merge, deploy, and DNS
+- Keeping Events/CMS HOLD vs security PASS clearly separated in owner-facing summaries
 
 ## Default loop
 
@@ -46,12 +62,14 @@ Parallel UX + QA is preferred after Engineer handoff. Neither reviewer may autho
 - Keep assignments config/docs-only or app-scoped as stated; do not mix GIL or other projects into the same run.
 - Prefer extending these specs over creating one-off conflicting instructions. Update the markdown in a PR when the permanent workflow changes.
 - Agents should re-read [`project-context.md`](project-context.md) for staging URL, blockers, and Phase doc pointers instead of pasting long audits into every prompt.
+- After security or infra deploys, point agents at [`security-closure-csrf.md`](security-closure-csrf.md) so they do not re-open closed CSRF work or treat CSRF PASS as Events/CMS clearance.
 
 ## Standing constraints
 
 - Repo only: `Alexanderjsinger/vinnys-restaurant`
 - Never invent restaurant facts; never commit secrets
 - Known owner blockers: R2 and Resend — see [`phase-2-status.md`](phase-2-status.md) and [`owner-setup.md`](owner-setup.md)
-- Staging: https://vinnys-bar-grill.toastisadog.workers.dev/
+- Staging: https://vinnys-bar-grill.toastisadog.workers.dev/ (CSRF merge staging-verified; see security closure)
+- Events/CMS product **HOLD** remains until Coordinator clears it after product Eng/UX/QA work
 - Do not rewrite Phase 2.5 audits when updating workflow docs; link them
 - No merge, deploy, or DNS without Product Owner approval relayed by Coordinator

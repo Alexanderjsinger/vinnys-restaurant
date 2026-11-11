@@ -1,36 +1,84 @@
 # Next execution plan
 
-Prioritized checklist after Phase 2.5 code on `main` (`057f651` verified 2026-11-11). Split by who can finish the item. Full owner how-to: [`owner-setup.md`](owner-setup.md). Status narrative: [`project-context.md`](project-context.md). Phase 2.5 history: [`phase-2-5-handoff.md`](phase-2-5-handoff.md).
+Prioritized checklist after Phase 2.5 + admin CSRF on `main` (`b7bf813` verified 2026-11-11). Split by who can finish the item. Full owner how-to: [`owner-setup.md`](owner-setup.md). Status narrative: [`project-context.md`](project-context.md). Phase 2.5 history: [`phase-2-5-handoff.md`](phase-2-5-handoff.md). CSRF closure: [`security-closure-csrf.md`](security-closure-csrf.md).
 
 **Standing constraints:** no DNS, no live D1 mutation, no deploy/merge without Product Owner approval via Coordinator.
+
+## Status snapshot (do not collapse)
+
+| Layer | State |
+| --- | --- |
+| Completed eng | Phase 2.5 + CSRF on `main` `b7bf813` (PRs #2, #7, #8, #9) |
+| Verified staging | CSRF matrix **PASS**; Worker `22ba677c-9192-40da-8dfe-6666d0a5b039`; headers live |
+| Outstanding product | Events/CMS **HOLD** |
+| Unresolved defects | Photo placeholder, `next_step` admin gap, empty-state UX, related CMS clarity |
+| Owner deps | R2, Resend, business info confirmation |
+| Prod requirements | Separate PO approval; HOLD cleared; facts + infra evidence |
 
 ## Priority order
 
 | # | Workstream | Completable by | Depends on |
 | --- | --- | --- | --- |
-| 1 | GitHub → Cloudflare staging sync | Eng **after** owner deploy approval | Owner: authorize Workers deploy of `main` |
+| 0 | Admin CSRF staging verify | — | **DONE** — staging-verified PASS (`b7bf813`) |
+| 1 | Events / CMS product backlog | Eng/UX after Coord consolidate | HOLD remains; security gate closed |
 | 2 | R2 media | Owner enable → Eng bind/deploy/smoke | Cloudflare R2 account enablement |
 | 3 | Resend inquiry email | Owner secrets → Eng verify + Retry | Verified sender + Worker secrets |
 | 4 | Business info approval | Owner (Eng assists in CMS only if asked) | Owner decisions on facts |
-| 5 | Independent QA / perf | QA (+ UX); Eng fixes defects | Prefer post-deploy staging (#1) |
+| 5 | Independent QA / perf | QA (+ UX); Eng fixes defects | Current staging baseline; R2/Resend still BLOCKED until configured |
 | 6 | Phase 3 UX | Coord scopes → Eng/UX | Prefer #1–#4 unblocked or explicitly deferred |
+| 7 | Production / DNS | Owner only | Explicit prod requirements — not staging CSRF alone |
 
 ---
 
-## 1. GitHub → Cloudflare staging sync
+## 0. Admin CSRF (closed)
 
-**Goal:** Staging Workers matches approved GitHub `main` (security headers, hero parity, Phase 2.5 behavior).
+**Goal:** Close the authenticated missing-header / CSRF gap on staging.
 
-### Owner-approval required
+- [x] Eng: PR #9 merge `b7bf813`
+- [x] Owner-authorized staging deploy
+- [x] Independent QA STG-01…09 **PASS**
+- [ ] ~~Treat as Events/CMS clearance~~ — **no**; HOLD unchanged
 
-- [ ] Explicit approval to run authorized `npm run deploy:vinext` (or equivalent) for a named SHA
-- [ ] Confirm Cloudflare account / Worker `vinnys-bar-grill` access for the deployer
+Record: [`security-closure-csrf.md`](security-closure-csrf.md).
 
-### Eng-completable (after approval)
+---
 
-- [ ] Deploy named `main` SHA to staging
-- [ ] Record deployed version / evidence (`curl -sI` for security headers; smoke home, menu, admin login page)
-- [ ] Note any remaining staging drift in handoff
+## 1. Events / CMS product (HOLD)
+
+**Goal:** Clear product HOLD only after Coordinator consolidates specialist findings and Eng/UX land agreed fixes — **not** because CSRF passed.
+
+### Owner-approval / Coordinator
+
+- [ ] Coordinator consolidates Eng/UX/QA Events reports into the backlog section below
+- [ ] Scope eng PR(s); keep CSRF/security regressions out of “done” confusion
+- [ ] Owner approval before any deploy of product fixes
+
+### Eng / UX (after consolidate)
+
+- [ ] Empty-state copy + recovery CTAs; avoid home→empty Events dead-end
+- [ ] Event photo placeholder vs `cleanEventPhoto` / `/media/1`
+- [ ] Admin `next_step` field aligned with public render
+- [ ] Draft/publish / dual-status clarity as scoped
+- [ ] UX review + QA re-verify before merge recommendation
+
+### PLACEHOLDER — Events assessment backlog (pending coordinator consolidate)
+
+> **Coordinator will send a follow-up to fill this section after Eng/QA/UX reports land**, or amend this PR via a second commit when asked.
+>
+> Until then, do **not** invent backlog items beyond the known HOLD themes already listed above.
+> Specialist reports currently live in the Project store (not yet folded into this repo checklist):
+>
+> - `/cursor/stores/bc-9372d14d-41c8-4fa9-84cf-39adea69c698/docs/events-assessment-engineering.md`
+> - `/cursor/stores/bc-9372d14d-41c8-4fa9-84cf-39adea69c698/docs/events-assessment-qa.md`
+> - `/cursor/stores/bc-9372d14d-41c8-4fa9-84cf-39adea69c698/docs/events-assessment-ux.md`
+> - `/cursor/stores/bc-9372d14d-41c8-4fa9-84cf-39adea69c698/docs/events-assessment-coordinated-summary.md`
+>
+> **Fill-in checklist (leave blank for Coordinator):**
+>
+> - [ ] Prioritized defect list (P0/P1/P2) with owners
+> - [ ] Acceptance criteria per item (QA vocabulary)
+> - [ ] Suggested PR slice order
+> - [ ] Explicit non-goals / still-HOLD items
 
 ---
 
@@ -102,7 +150,8 @@ Prioritized checklist after Phase 2.5 code on `main` (`057f651` verified 2026-11
 
 ### QA / UX (read-only reviewers)
 
-- [ ] Refresh [`phase-2-5-qa.md`](phase-2-5-qa.md)-style matrix on post-deploy staging
+- [x] CSRF staging matrix PASS (see security closure) — does **not** replace full Phase 2.5 refresh
+- [ ] Refresh [`phase-2-5-qa.md`](phase-2-5-qa.md)-style matrix on current staging as needed
 - [ ] Mark R2/Resend paths BLOCKED until configured; do not invent PASS
 - [ ] Lab CWV / LCP note for Phase 3 backlog (prior lab: LCP ~4.2s mobile)
 - [ ] Live CMS writes stay NOT TESTED unless Coordinator/owner authorizes
@@ -125,9 +174,23 @@ Prioritized checklist after Phase 2.5 code on `main` (`057f651` verified 2026-11
 
 ---
 
+## 7. Production requirements (gate)
+
+Not started. Staging CSRF PASS is **necessary but not sufficient**.
+
+- [ ] Explicit Product Owner approval for production Worker + DNS
+- [ ] Owner-confirmed business facts live
+- [ ] R2/Resend PASS or written deferral
+- [ ] Events/CMS HOLD cleared by Coordinator
+- [ ] Independent QA on intended production SHA
+- [ ] No secrets in git; rollback plan understood
+
+---
+
 ## Explicitly out of band (until owner says otherwise)
 
 - DNS cutover for vinnysbargrill.com
 - Merge/deploy without Coordinator-relayed owner approval
 - Live D1 mutation / inquiry spam for testing
 - Creating a Coordinator custom subagent in `.cursor/agents/`
+- Treating CSRF staging PASS as Events/CMS or production clearance

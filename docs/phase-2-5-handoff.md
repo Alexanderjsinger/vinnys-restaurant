@@ -2,11 +2,24 @@
 
 ## Summary
 
-Phase 2.5 reliability/security hardening originally landed in PR #2. This follow-up (`cursor/phase-2-5-followup-a5de`) closes remaining **code-level** gaps found while auditing `main` against the 2026-11-11 brief: port the hero/storefront swap onto `main`, add baseline security headers, tighten Referer handling, extend tests, refresh docs, and re-run QA with measured lab CWV.
+Phase 2.5 reliability/security hardening originally landed in PR #2. Follow-up PR #7 closed remaining **code-level** gaps: hero/storefront swap onto `main`, baseline security headers, Referer tightening, extended tests, refreshed docs, and lab CWV notes.
 
-R2 and Resend remain **owner-blocked**. No DNS changes. No secrets committed. Staging was **not** redeployed from this branch (`cf` CLI unavailable in this environment).
+**CSRF follow-through (2026-11-11):** PR #9 merged to `main` as `b7bf813` (tip `3c838e6`). PO-authorized staging deploy + independent QA → **staging-verified PASS**. See [`security-closure-csrf.md`](security-closure-csrf.md).
 
-## Changes made (this follow-up)
+R2 and Resend remain **owner-blocked**. Business facts remain **owner**. Events/CMS product remains **HOLD**. No DNS. No secrets committed.
+
+## Status by layer
+
+| Layer | Status |
+| --- | --- |
+| Completed eng (Phase 2.5 + CSRF) | On `main` through `b7bf813` (PRs #2, #7, #9; docs #8) |
+| Verified staging | CSRF + security headers on Worker `22ba677c-9192-40da-8dfe-6666d0a5b039` — **PASS** |
+| Outstanding product | Events/CMS HOLD (empty-state, photo, `next_step`, draft/publish UX) |
+| Unresolved defects | See Events assessment findings; not cleared by CSRF |
+| Owner deps | R2, Resend, hours/emails/Toast/address confirmation, further deploy/DNS approval |
+| Prod requirements | Separate owner approval; HOLD cleared; facts + infra evidence |
+
+## Changes made (Phase 2.5 follow-up — PR #7)
 
 ### Content / UX consistency with staging
 
@@ -20,44 +33,46 @@ R2 and Resend remain **owner-blocked**. No DNS changes. No secrets committed. St
 ### Tests / CI
 
 - Extended `tests/phase25.test.mjs` (Referer, headers helper, birthday closed, hero assets)
-- `npm test` 18 passed; `typecheck` clean; `build:vinext` success
+- `npm test` / `typecheck` / `build:vinext` green on that branch
 
 ### Documentation
 
 - Updated `docs/phase-2-5-audit.md`, `docs/phase-2-5-qa.md`, `docs/owner-setup.md`, this handoff
 - Corrected stale claims in `docs/cms-architecture.md`
 
-## Already on main from PR #2 (unchanged here)
+## Already on main from PR #2 (unchanged by #7)
 
 - Notify queue status/retry + admin visibility
 - Media magic bytes / UUID keys / R2 rollback / in-use delete
 - CI workflow, owner-setup, D1 backup/recovery docs
 
-## Tests performed
+## CSRF hardening (PR #9 — completed + staging-verified)
 
-- `npm test` — 18 passed
-- `npm run typecheck` — clean
-- `npm run build:vinext` — success
-- Staging read-only HTTP/HTML QA (see `phase-2-5-qa.md`)
-- Lighthouse mobile lab CWV on staging homepage (LCP 4.2s; CLS 0; perf 0.85)
+- Reject missing Origin/Referer/Sec-Fetch-Site on POSTs (`sameOriginPost`)
+- Session-bound CSRF on admin save / media / logout
+- Admin form CSRF embedding; unit tests
+- Staging matrix STG-01…09 **PASS**; disposable test data cleaned
+- Detail: [`admin-csrf.md`](admin-csrf.md), [`security-closure-csrf.md`](security-closure-csrf.md)
 
 ## Outstanding / BLOCKED
 
-1. **GitHub → Cloudflare staging sync** — authorized deploy of current `main` so Workers match git (security headers / parity)
-2. **Cloudflare R2** enablement + bucket + `MEDIA` binding + redeploy + upload smoke
-3. **Resend** verified sender + `RESEND_API_KEY` / `RESEND_FROM` + notify email + Retry queue
-4. Owner confirms hours and business email (and related facts in `owner-setup.md`)
-5. Independent QA/perf refresh after deploy
-6. Live CMS write workflows still NOT TESTED on staging D1 (intentional)
-7. Phase 3 UX / LCP (scoped later)
+1. ~~GitHub → Cloudflare staging sync for CSRF SHA~~ — **done** for `b7bf813` (staging-verified). Further deploys still need PO approval.
+2. **Events/CMS product HOLD** — empty-state UX, photo placeholder, `next_step` admin field, draft/publish clarity (Coordinator consolidate backlog in [`next-execution-plan.md`](next-execution-plan.md))
+3. **Cloudflare R2** enablement + bucket + `MEDIA` binding + redeploy + upload smoke
+4. **Resend** verified sender + `RESEND_API_KEY` / `RESEND_FROM` + notify email + Retry queue
+5. Owner confirms hours and business email (and related facts in `owner-setup.md`)
+6. Independent full QA/perf refresh beyond CSRF slice
+7. Live CMS write workflows outside CSRF disposable path still lightly covered / NOT TESTED by policy
+8. Phase 3 UX / LCP (scoped later)
+9. Production / DNS — **not** authorized
 
 Prioritized eng-vs-owner checklist: [`next-execution-plan.md`](next-execution-plan.md). Durable status: [`project-context.md`](project-context.md).
 
 ## Deployment status
 
-- Staging worker already serves the hero/storefront swap from an earlier authorized deploy
-- Security headers and full `main` source parity require authorized `npm run deploy:vinext` of current `main`
-- **Do not deploy without approval; do not change DNS**
+- Staging worker serves CSRF merge `b7bf813` / Worker Version `22ba677c…` with live security headers (QA PASS)
+- Rollback target if needed: Worker Version `c9db5b34-879e-46ca-a226-4c88d7d3674c`
+- **Do not deploy further or change DNS without Product Owner approval relayed by Coordinator**
 
 ## Rollback
 
@@ -67,10 +82,9 @@ Prioritized eng-vs-owner checklist: [`next-execution-plan.md`](next-execution-pl
 
 ## Recommended next steps
 
-Phase 2.5 follow-up code is on `main`. Execute in order (detail in [`next-execution-plan.md`](next-execution-plan.md)):
-
-1. Owner authorizes staging deploy of `main`; Eng syncs Workers and records evidence
-2. Owner completes R2 + Resend per `owner-setup.md`; Eng binds/smokes
+1. Coordinator fills **Events assessment backlog** in next-execution-plan after Eng/UX/QA consolidate
+2. Owner completes R2 + Resend per `owner-setup.md`; Eng binds/smokes when enabled
 3. Owner content / business-info checklist
-4. Independent QA + lab perf on post-deploy staging
+4. Independent QA + lab perf refresh on current staging (beyond CSRF)
 5. Then Phase 3 visual/UX — LCP improvement is a natural Phase 3 item
+6. Production only after explicit requirements in [`security-closure-csrf.md`](security-closure-csrf.md) / project-context
