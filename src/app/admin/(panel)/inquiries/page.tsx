@@ -1,3 +1,4 @@
+import { AdminForm } from "@/components/AdminForm";
 import { SaveBanner } from "@/components/SaveBanner";
 import { getInquiryNotifyStatus, listInquiries, listPendingNotifies } from "@/lib/content";
 import { formatLongDate, formatTimestamp } from "@/lib/format";
@@ -36,12 +37,12 @@ export default async function InquiriesPage({
             {pending.length} pending or failed notification{pending.length === 1 ? "" : "s"} (max{" "}
             {NOTIFY_MAX_ATTEMPTS} attempts each).
           </p>
-          <form action="/api/admin/save" method="post">
+          <AdminForm action="/api/admin/save">
             <input type="hidden" name="intent" value="notify-retry" />
             <button className="btn btn-solid" type="submit">
               Retry failed notifications
             </button>
-          </form>
+          </AdminForm>
         </section>
       ) : null}
       {inquiries.length === 0 ? <p>No inquiries yet.</p> : null}
@@ -69,7 +70,7 @@ export default async function InquiriesPage({
               {label}
             </p>
             <p className="lede">{inquiry.message}</p>
-            <form className="row-actions" action="/api/admin/save" method="post">
+            <AdminForm className="row-actions" action="/api/admin/save">
               <input type="hidden" name="intent" value="inquiry-delete" />
               <input type="hidden" name="id" value={inquiry.id} />
               <label className="check">
@@ -79,7 +80,7 @@ export default async function InquiriesPage({
               <button className="btn btn-small btn-danger" type="submit">
                 Delete inquiry
               </button>
-            </form>
+            </AdminForm>
           </article>
         );
       })}

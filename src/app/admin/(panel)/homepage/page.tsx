@@ -1,6 +1,6 @@
+import { AdminForm } from "@/components/AdminForm";
 import { SaveBanner } from "@/components/SaveBanner";
-import { listMedia } from "@/lib/content";
-import { getSettings } from "@/lib/content";
+import { getSettings, listMedia } from "@/lib/content";
 import { firstQuery } from "@/lib/messages";
 
 export const dynamic = "force-dynamic";
@@ -19,7 +19,7 @@ export default async function HomepageAdminPage({
       <h1>Homepage</h1>
       <SaveBanner saved={firstQuery(query.saved)} error={firstQuery(query.error)} />
       <p>These fields are the heading, the sentence under it, the optional hero image, and the footer tagline.</p>
-      <form className="form-grid" action="/api/admin/save" method="post">
+      <AdminForm className="form-grid" action="/api/admin/save">
         <input type="hidden" name="intent" value="homepage" />
         <div className="field">
           <label htmlFor="hero_heading">Heading</label>
@@ -55,7 +55,7 @@ export default async function HomepageAdminPage({
         <button className="btn btn-solid" type="submit" name="action" value="publish">
           Publish
         </button>
-      </form>
+      </AdminForm>
     </>
   );
 }

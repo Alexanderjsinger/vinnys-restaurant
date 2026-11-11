@@ -1,3 +1,4 @@
+import { AdminForm } from "@/components/AdminForm";
 import { SaveBanner } from "@/components/SaveBanner";
 import { listMenu } from "@/lib/content";
 import { firstQuery } from "@/lib/messages";
@@ -23,7 +24,7 @@ export default async function MenuAdminPage({
       </p>
       {menu.map((section) => (
         <article key={section.id} className="item-card">
-          <form className="form-grid" action="/api/admin/save" method="post">
+          <AdminForm className="form-grid" action="/api/admin/save">
             <input type="hidden" name="intent" value="section-update" />
             <input type="hidden" name="id" value={section.id} />
             <div className="field">
@@ -37,25 +38,25 @@ export default async function MenuAdminPage({
             <button className="btn" type="submit">
               Save section
             </button>
-          </form>
+          </AdminForm>
           <div className="row-actions">
-            <form action="/api/admin/save" method="post">
+            <AdminForm action="/api/admin/save">
               <input type="hidden" name="intent" value="section-move" />
               <input type="hidden" name="id" value={section.id} />
               <input type="hidden" name="dir" value="up" />
               <button className="btn btn-small" type="submit">
                 Move section up
               </button>
-            </form>
-            <form action="/api/admin/save" method="post">
+            </AdminForm>
+            <AdminForm action="/api/admin/save">
               <input type="hidden" name="intent" value="section-move" />
               <input type="hidden" name="id" value={section.id} />
               <input type="hidden" name="dir" value="down" />
               <button className="btn btn-small" type="submit">
                 Move section down
               </button>
-            </form>
-            <form action="/api/admin/save" method="post">
+            </AdminForm>
+            <AdminForm action="/api/admin/save">
               <input type="hidden" name="intent" value="section-delete" />
               <input type="hidden" name="id" value={section.id} />
               <label className="check">
@@ -65,10 +66,10 @@ export default async function MenuAdminPage({
               <button className="btn btn-small btn-danger" type="submit">
                 Delete section
               </button>
-            </form>
+            </AdminForm>
           </div>
           {section.items.map((item) => (
-            <form key={item.id} className="form-grid item-card" action="/api/admin/save" method="post">
+            <AdminForm key={item.id} className="form-grid item-card" action="/api/admin/save">
               <input type="hidden" name="intent" value="item-update" />
               <input type="hidden" name="id" value={item.id} />
               {item.is_sample ? <span className="badge badge-warn">Sample</span> : null}
@@ -131,27 +132,27 @@ export default async function MenuAdminPage({
                   Publish
                 </button>
               </div>
-            </form>
+            </AdminForm>
           ))}
           {section.items.map((item) => (
             <div key={`move-${item.id}`} className="row-actions">
-              <form action="/api/admin/save" method="post">
+              <AdminForm action="/api/admin/save">
                 <input type="hidden" name="intent" value="item-move" />
                 <input type="hidden" name="id" value={item.id} />
                 <input type="hidden" name="dir" value="up" />
                 <button className="btn btn-small" type="submit">
                   Move {item.name} up
                 </button>
-              </form>
-              <form action="/api/admin/save" method="post">
+              </AdminForm>
+              <AdminForm action="/api/admin/save">
                 <input type="hidden" name="intent" value="item-move" />
                 <input type="hidden" name="id" value={item.id} />
                 <input type="hidden" name="dir" value="down" />
                 <button className="btn btn-small" type="submit">
                   Move {item.name} down
                 </button>
-              </form>
-              <form action="/api/admin/save" method="post">
+              </AdminForm>
+              <AdminForm action="/api/admin/save">
                 <input type="hidden" name="intent" value="item-delete" />
                 <input type="hidden" name="id" value={item.id} />
                 <label className="check">
@@ -161,11 +162,11 @@ export default async function MenuAdminPage({
                 <button className="btn btn-small btn-danger" type="submit">
                   Delete item
                 </button>
-              </form>
+              </AdminForm>
             </div>
           ))}
           <h3>Add item to {section.name}</h3>
-          <form className="form-grid" action="/api/admin/save" method="post">
+          <AdminForm className="form-grid" action="/api/admin/save">
             <input type="hidden" name="intent" value="item-add" />
             <input type="hidden" name="section_id" value={section.id} />
             <div className="field">
@@ -197,11 +198,11 @@ export default async function MenuAdminPage({
                 Publish
               </button>
             </div>
-          </form>
+          </AdminForm>
         </article>
       ))}
       <h2>Add section</h2>
-      <form className="form-grid" action="/api/admin/save" method="post">
+      <AdminForm className="form-grid" action="/api/admin/save">
         <input type="hidden" name="intent" value="section-add" />
         <div className="field">
           <label htmlFor="new-section-name">Section name</label>
@@ -214,7 +215,7 @@ export default async function MenuAdminPage({
         <button className="btn btn-solid" type="submit">
           Add section
         </button>
-      </form>
+      </AdminForm>
     </>
   );
 }

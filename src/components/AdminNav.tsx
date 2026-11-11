@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { CsrfInput } from "./CsrfInput";
 
 const LINKS = [
   { href: "/admin", label: "Overview" },
@@ -15,7 +16,7 @@ const LINKS = [
   { href: "/admin/preview", label: "Preview" },
 ];
 
-export function AdminNav() {
+export function AdminNav({ csrfToken }: { csrfToken: string }) {
   const path = usePathname();
   return (
     <div className="admin-bar">
@@ -34,6 +35,7 @@ export function AdminNav() {
         </ul>
       </nav>
       <form action="/api/admin/logout" method="post">
+        <CsrfInput token={csrfToken} />
         <button className="btn btn-small" type="submit">
           Log out
         </button>

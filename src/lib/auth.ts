@@ -2,6 +2,9 @@ import "server-only";
 import { createHmac, timingSafeEqual } from "crypto";
 import { cookies, headers } from "next/headers";
 import { connection } from "next/server";
+import { CSRF_FIELD, csrfTokenForSession, verifyCsrfToken } from "./csrf";
+
+export { CSRF_FIELD, csrfTokenForSession, verifyCsrfToken } from "./csrf";
 
 export const SESSION_COOKIE = "vinnys_admin";
 export const DRAFT_COOKIE = "vinnys_party_draft";
@@ -62,16 +65,37 @@ export function createSessionToken(password: string): string {
   return `${expiry}.${sign(expiry, password)}`;
 }
 
-export async function isAdmin(): Promise<boolean> {
-  const jar = await cookies();
-  const token = jar.get(SESSION_COOKIE)?.value;
-  const state = await authState();
-  if (!token || !state.password) return false;
+function parseSession(token: string, password: string): boolean {
   const [expiry, mac] = token.split(".");
   if (!expiry || !mac || !/^\d+$/.test(expiry)) return false;
   if (Number(expiry) < Date.now()) return false;
-  const expected = sign(expiry, state.password);
+  const expected = sign(expiry, password);
   return safeEqual(mac, expected);
+}
+
+async function readValidSession(): Promise<{ token: string; password: string } | null> {
+  const jar = await cookies();
+  const token = jar.get(SESSION_COOKIE)?.value;
+  const state = await authState();
+  if (!token || !state.password) return null;
+  if (!parseSession(token, state.password)) return null;
+  return { token, password: state.password };
+}
+
+export async function isAdmin(): Promise<boolean> {
+  return (await readValidSession()) !== null;
+}
+
+export async function getCsrfToken(): Promise<string | null> {
+  const session = await readValidSession();
+  if (!session) return null;
+  return csrfTokenForSession(session.token, session.password);
+}
+
+export async function verifyCsrfForm(form: FormData): Promise<boolean> {
+  const session = await readValidSession();
+  if (!session) return false;
+  return verifyCsrfToken(session.token, session.password, String(form.get(CSRF_FIELD) ?? ""));
 }
 
 export async function cookieBase(): Promise<{

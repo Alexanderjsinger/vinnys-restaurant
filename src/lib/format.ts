@@ -229,9 +229,8 @@ export function sameOriginPost(request: Request): boolean {
       return false;
     }
   }
-  // Browsers usually send Origin on cross-site POSTs. When Origin is absent,
-  // require same-origin/same-site Sec-Fetch-Site; if that is also absent, trust
-  // Referer when present; allow non-browser tooling that sends none of these.
+  // Browsers send Origin and/or Sec-Fetch-Site and/or Referer on POSTs.
+  // Missing headers are not proof of trust — reject when none are present.
   const site = (request.headers.get("sec-fetch-site") || "").toLowerCase();
   if (site) {
     return site === "same-origin" || site === "same-site" || site === "none";
@@ -244,5 +243,5 @@ export function sameOriginPost(request: Request): boolean {
       return false;
     }
   }
-  return true;
+  return false;
 }
