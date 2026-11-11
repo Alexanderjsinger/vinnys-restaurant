@@ -178,6 +178,55 @@ test("sameOriginPost rejects cross-site sec-fetch-site without matching origin",
     headers: { origin: "https://vinnys.example" },
   });
   assert.equal(sameOriginPost(ok), true);
+  const spoofedReferer = new Request("https://vinnys.example/api/inquiries", {
+    method: "POST",
+    headers: { referer: "https://evil.example/parties" },
+  });
+  assert.equal(sameOriginPost(spoofedReferer), false);
+  const sameReferer = new Request("https://vinnys.example/api/inquiries", {
+    method: "POST",
+    headers: { referer: "https://vinnys.example/parties" },
+  });
+  assert.equal(sameOriginPost(sameReferer), true);
+});
+
+test("security headers helper includes nosniff and frame options", async () => {
+  const { SECURITY_HEADERS, applySecurityHeaders } = await import(
+    pathToFileURL(path.join(root, "src/lib/security-headers.ts")).href,
+  );
+  const keys = SECURITY_HEADERS.map(([key]) => key);
+  assert.ok(keys.includes("X-Content-Type-Options"));
+  assert.ok(keys.includes("X-Frame-Options"));
+  assert.ok(keys.includes("Referrer-Policy"));
+  const headers = new Headers();
+  applySecurityHeaders(headers);
+  assert.equal(headers.get("X-Content-Type-Options"), "nosniff");
+  assert.equal(headers.get("X-Frame-Options"), "SAMEORIGIN");
+  const middleware = fs.readFileSync(path.join(root, "src/middleware.ts"), "utf8");
+  assert.match(middleware, /applySecurityHeaders/);
+});
+
+test("birthday signup route stays closed and homepage has no signup inputs", () => {
+  const signup = fs.readFileSync(path.join(root, "src/app/api/signup/route.ts"), "utf8");
+  assert.match(signup, /join=closed/);
+  assert.doesNotMatch(signup, /addSignup|INSERT INTO signups/);
+  const home = fs.readFileSync(path.join(root, "src/app/page.tsx"), "utf8");
+  assert.match(home, /birthday list is closed/i);
+  assert.doesNotMatch(home, /action="\/api\/signup"/);
+  assert.doesNotMatch(home, /name="email"/);
+});
+
+test("homepage hero uses storefront exterior and venue uses table photo", () => {
+  const poster = fs.readFileSync(path.join(root, "src/components/PosterSlider.tsx"), "utf8");
+  const page = fs.readFileSync(path.join(root, "src/app/page.tsx"), "utf8");
+  const layout = fs.readFileSync(path.join(root, "src/app/layout.tsx"), "utf8");
+  const seo = fs.readFileSync(path.join(root, "src/lib/seo.ts"), "utf8");
+  assert.match(poster, /\/photos\/storefront\.webp/);
+  assert.match(poster, /listing photo of the exterior/);
+  assert.match(page, /src="\/hero\/meet-me\.jpg"/);
+  assert.match(page, /Not a photo of the dining room/);
+  assert.match(layout, /\/photos\/storefront\.webp/);
+  assert.match(seo, /\/photos\/storefront\.webp/);
 });
 
 test("admin mutations require isAdmin in source", () => {

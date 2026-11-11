@@ -1,77 +1,59 @@
 # Phase 2.5 handoff
 
-## Changes made
+## Summary
 
-Reliability and security hardening on branch `cursor/phase-2-5-reliability-058e` (no production deploy from this workstream; no DNS changes).
+Phase 2.5 reliability/security hardening originally landed in PR #2. This follow-up (`cursor/phase-2-5-followup-a5de`) closes remaining **code-level** gaps found while auditing `main` against the 2026-11-11 brief: port the hero/storefront swap onto `main`, add baseline security headers, tighten Referer handling, extend tests, refresh docs, and re-run QA with measured lab CWV.
 
-### Notification reliability
+R2 and Resend remain **owner-blocked**. No DNS changes. No secrets committed. Staging was **not** redeployed from this branch (`cf` CLI unavailable in this environment).
 
-- Extended `notify_queue` with `status`, `attempts`, `last_attempt_at`, `sent_at`
-- Upsert enqueue; skip re-queue after `sent`
-- Record Resend API acceptance (`accepted-by-resend`)
-- Admin inquiries page shows status + **Retry failed notifications**
-- Backoff and max 5 attempts
+## Changes made (this follow-up)
 
-### Media hardening (R2 still owner-blocked)
+### Content / UX consistency with staging
 
-- Magic-byte image validation
-- UUID object keys
-- Rollback R2 object if DB insert fails
-- Delete with in-use guard (hero/events)
+- Ported PR #5 image swap onto the branch targeting `main`: hero/OG use `/photos/storefront.webp`; venue band uses `/hero/meet-me.jpg` with matching alts/captions.
 
-### Security / forms
+### Security
 
-- Tighter `sameOriginPost` when `Sec-Fetch-Site` is cross-site
-- Existing admin `isAdmin`, rate limits, honeypot retained
+- `src/lib/security-headers.ts` + `src/middleware.ts` + `next.config.ts` headers
+- `sameOriginPost` rejects cross-host Referer when Origin / Sec-Fetch-Site are absent
 
-### Tooling
+### Tests / CI
 
-- `npm run typecheck`, `npm run ci`
-- GitHub Actions workflow `.github/workflows/ci.yml`
-- Tests in `tests/phase25.test.mjs`
+- Extended `tests/phase25.test.mjs` (Referer, headers helper, birthday closed, hero assets)
+- `npm test` 18 passed; `typecheck` clean; `build:vinext` success
 
 ### Documentation
 
-- `docs/phase-2-5-audit.md`
-- `docs/phase-2-5-qa.md`
-- `docs/owner-setup.md`
-- `docs/d1-backup-recovery.md`
-- This handoff
+- Updated `docs/phase-2-5-audit.md`, `docs/phase-2-5-qa.md`, `docs/owner-setup.md`, this handoff
+- Corrected stale claims in `docs/cms-architecture.md`
 
-## Files affected (primary)
+## Already on main from PR #2 (unchanged here)
 
-- `src/lib/notify.ts`, `image-bytes.ts`, `media.ts`, `content.ts`, `db.ts`, `d1-store.ts`, `mutate.ts`, `format.ts`, `messages.ts`, `types.ts`
-- `src/app/api/admin/media/route.ts`
-- `src/app/admin/(panel)/media/page.tsx`, `inquiries/page.tsx`
-- `cloudflare.config.ts` (comments only)
-- `package.json`, `.github/workflows/ci.yml`, `.env.example`
-- `tests/phase25.test.mjs`
-- `docs/*` Phase 2.5 set
+- Notify queue status/retry + admin visibility
+- Media magic bytes / UUID keys / R2 rollback / in-use delete
+- CI workflow, owner-setup, D1 backup/recovery docs
 
 ## Tests performed
 
-- `npm test` — 12 passed
+- `npm test` — 18 passed
 - `npm run typecheck` — clean
 - `npm run build:vinext` — success
-- Read-only browser QA on staging (see `phase-2-5-qa.md`)
+- Staging read-only HTTP/HTML QA (see `phase-2-5-qa.md`)
+- Lighthouse mobile lab CWV on staging homepage (LCP 4.2s; CLS 0; perf 0.85)
 
-## Outstanding defects / notes
+## Outstanding / BLOCKED
 
-- Desktop header is not sticky (UX note, not a blocker)
-- Core Web Vitals not measured
-- Live CMS write tests on staging D1 not run (avoid mutating live data without deploy of this branch)
-
-## Owner-dependent blockers
-
-1. Cloudflare R2 enablement + bucket + `MEDIA` binding
-2. Resend verified sender + `RESEND_API_KEY` / `RESEND_FROM`
-3. Confirm hours and notification email
+1. **Cloudflare R2** enablement + bucket + `MEDIA` binding + redeploy + upload smoke
+2. **Resend** verified sender + `RESEND_API_KEY` / `RESEND_FROM` + notify email + Retry queue
+3. Owner confirms hours and business email
+4. Authorized Workers deploy of this branch (security headers not live until then)
+5. Live CMS write workflows still NOT TESTED on staging D1 (intentional)
 
 ## Deployment status
 
-- Staging worker still runs **pre–Phase 2.5** code until an authorized deploy of this branch
-- PR should target `main`; merge ≠ automatic Workers deploy unless your pipeline deploys on merge
-- **Do not deploy without approval**
+- Staging worker already serves the hero/storefront swap from an earlier authorized deploy
+- Security headers and `main` source parity require merging + authorized `npm run deploy:vinext`
+- **Do not deploy without approval; do not change DNS**
 
 ## Rollback
 
@@ -79,9 +61,10 @@ Reliability and security hardening on branch `cursor/phase-2-5-reliability-058e`
 2. **Public content emergency:** set worker var `VINNYS_SNAPSHOT=1` and redeploy — public reads use `src/lib/public-snapshot.json`; writes still hit D1; **do not delete inquiry rows**
 3. **Data:** restore from D1 backup export (see `docs/d1-backup-recovery.md`)
 
-## Recommended next phase
+## Recommended next steps
 
-1. Owner completes R2 + Resend; authorized deploy of this branch
-2. Smoke: media upload + inquiry email + admin retry
-3. Owner content checklist in `owner-setup.md`
-4. Then Phase 3 visual/UX refinement (out of scope here)
+1. Merge this PR to `main`
+2. Owner completes R2 + Resend per `owner-setup.md`
+3. Authorized deploy; smoke media upload + inquiry email + admin retry; confirm security headers with `curl -sI`
+4. Owner content checklist
+5. Then Phase 3 visual/UX (out of scope here) — LCP improvement is a natural Phase 3 item
