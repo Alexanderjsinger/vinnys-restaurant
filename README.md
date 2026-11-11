@@ -6,6 +6,8 @@ Restaurant site for Vinny's Bar & Grill in Ypsilanti (repo: `Alexanderjsinger/vi
 
 Phase 2 / 2.5 docs live under [`docs/`](docs/) (`phase-2-status.md`, `phase-2-5-audit.md`, `owner-setup.md`, `d1-backup-recovery.md`).
 
+Agent roles and the default Engineer → UX + QA → Coordinator → Product Owner loop: [`docs/agent-workflow.md`](docs/agent-workflow.md), [`docs/project-context.md`](docs/project-context.md), and [`.cursor/agents/`](.cursor/agents/).
+
 ## Run
 
 Requirements: Node.js 22 or newer, and build tools for `better-sqlite3` (`python3`, `make`, `g++`, and SQLite headers).
