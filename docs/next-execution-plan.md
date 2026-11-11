@@ -1,6 +1,6 @@
 # Next execution plan
 
-Prioritized checklist after Phase 2.5 + admin CSRF on `main` (`b7bf813` verified 2026-11-11). Split by who can finish the item. Full owner how-to: [`owner-setup.md`](owner-setup.md). Status narrative: [`project-context.md`](project-context.md). Phase 2.5 history: [`phase-2-5-handoff.md`](phase-2-5-handoff.md). CSRF closure: [`security-closure-csrf.md`](security-closure-csrf.md).
+Prioritized checklist after Phase 2.5 + admin CSRF on `main` (CSRF merge `b7bf813` staging-verified 2026-11-11; docs sync #10 also on `main`). Split by who can finish the item. Full owner how-to: [`owner-setup.md`](owner-setup.md). Status narrative: [`project-context.md`](project-context.md). Phase 2.5 history: [`phase-2-5-handoff.md`](phase-2-5-handoff.md). CSRF closure: [`security-closure-csrf.md`](security-closure-csrf.md). Events backlog: [`events-cms-backlog.md`](events-cms-backlog.md).
 
 **Standing constraints:** no DNS, no live D1 mutation, no deploy/merge without Product Owner approval via Coordinator.
 
@@ -8,10 +8,10 @@ Prioritized checklist after Phase 2.5 + admin CSRF on `main` (`b7bf813` verified
 
 | Layer | State |
 | --- | --- |
-| Completed eng | Phase 2.5 + CSRF on `main` `b7bf813` (PRs #2, #7, #8, #9) |
-| Verified staging | CSRF matrix **PASS**; Worker `22ba677c-9192-40da-8dfe-6666d0a5b039`; headers live |
-| Outstanding product | Events/CMS **HOLD** |
-| Unresolved defects | Photo placeholder, `next_step` admin gap, empty-state UX, related CMS clarity |
+| Completed eng | Phase 2.5 + CSRF on `main` `b7bf813` (PRs #2, #7, #8, #9); knowledge docs #10 |
+| Verified staging | CSRF matrix **PASS**; Worker `22ba677c-9192-40da-8dfe-6666d0a5b039`; headers live — [`security-closure-csrf.md`](security-closure-csrf.md) |
+| Outstanding product | Events/CMS **HOLD** — not cleared by CSRF |
+| Unresolved defects | P1 E1–E6 in [`events-cms-backlog.md`](events-cms-backlog.md) (empty-state, photo, status model, `next_step`, CMS matrix) |
 | Owner deps | R2, Resend, business info confirmation |
 | Prod requirements | Separate PO approval; HOLD cleared; facts + infra evidence |
 
@@ -20,7 +20,7 @@ Prioritized checklist after Phase 2.5 + admin CSRF on `main` (`b7bf813` verified
 | # | Workstream | Completable by | Depends on |
 | --- | --- | --- | --- |
 | 0 | Admin CSRF staging verify | — | **DONE** — staging-verified PASS (`b7bf813`) |
-| 1 | Events / CMS product backlog | Eng/UX after Coord consolidate | HOLD remains; security gate closed |
+| 1 | Events / CMS product backlog | Eng/UX after PO approves sequence | **HOLD** remains; see consolidated backlog |
 | 2 | R2 media | Owner enable → Eng bind/deploy/smoke | Cloudflare R2 account enablement |
 | 3 | Resend inquiry email | Owner secrets → Eng verify + Retry | Verified sender + Worker secrets |
 | 4 | Business info approval | Owner (Eng assists in CMS only if asked) | Owner decisions on facts |
@@ -45,40 +45,41 @@ Record: [`security-closure-csrf.md`](security-closure-csrf.md).
 
 ## 1. Events / CMS product (HOLD)
 
-**Goal:** Clear product HOLD only after Coordinator consolidates specialist findings and Eng/UX land agreed fixes — **not** because CSRF passed.
+**Goal:** Clear product HOLD only after Eng/UX land agreed P1 fixes and QA re-verifies — **not** because CSRF passed. Security gate is closed ([`security-closure-csrf.md`](security-closure-csrf.md)); product B–D still open.
+
+**Durable backlog:** [`events-cms-backlog.md`](events-cms-backlog.md) (repo copy of Coordinator consolidate). Specialist Eng/QA/UX assessments dated 2026-11-11 remain in **Project Context** `docs/` (`events-cms-*-2026-11-11.md`).
 
 ### Owner-approval / Coordinator
 
-- [ ] Coordinator consolidates Eng/UX/QA Events reports into the backlog section below
+- [x] Coordinator consolidates Eng/UX/QA Events reports → [`events-cms-backlog.md`](events-cms-backlog.md)
+- [ ] Product Owner approves PR-A → PR-B → PR-C sequence/scope below before Eng starts
 - [ ] Scope eng PR(s); keep CSRF/security regressions out of “done” confusion
 - [ ] Owner approval before any deploy of product fixes
 
-### Eng / UX (after consolidate)
+### Consolidated priority summary
 
-- [ ] Empty-state copy + recovery CTAs; avoid home→empty Events dead-end
-- [ ] Event photo placeholder vs `cleanEventPhoto` / `/media/1`
-- [ ] Admin `next_step` field aligned with public render
-- [ ] Draft/publish / dual-status clarity as scoped
-- [ ] UX review + QA re-verify before merge recommendation
+| Priority | Status | Items |
+| --- | --- | --- |
+| **P0** | None open (security) | No staging authz hole after CSRF |
+| **P1** | Required to lift **HOLD** | **E1** guest empty “Placeholder.” copy · **E2** empty `/events` recovery CTAs · **E3** photo `/media/1` vs `cleanEventPhoto` · **E4** dual Status + Draft/Publish; Archived unreachable · **E5** `next_step` public render / mutate `""` · **E6** CMS publish/update/past matrix (QA after eng) |
+| **P2** | Improvements | **I1** ET wording / home CTA when empty · **I2** photo errors / 44px nav / end-next-day hint · **I3** Events product automated tests · **I4** soft-archive vs hard-delete messaging |
 
-### PLACEHOLDER — Events assessment backlog (pending coordinator consolidate)
+Owner deps unchanged: **O-R2**, **O-Resend**, **O-Biz** (see backlog).
 
-> **Coordinator will send a follow-up to fill this section after Eng/QA/UX reports land**, or amend this PR via a second commit when asked.
->
-> Until then, do **not** invent backlog items beyond the known HOLD themes already listed above.
-> Specialist reports currently live in the Project store (not yet folded into this repo checklist):
->
-> - `/cursor/stores/bc-9372d14d-41c8-4fa9-84cf-39adea69c698/docs/events-assessment-engineering.md`
-> - `/cursor/stores/bc-9372d14d-41c8-4fa9-84cf-39adea69c698/docs/events-assessment-qa.md`
-> - `/cursor/stores/bc-9372d14d-41c8-4fa9-84cf-39adea69c698/docs/events-assessment-ux.md`
-> - `/cursor/stores/bc-9372d14d-41c8-4fa9-84cf-39adea69c698/docs/events-assessment-coordinated-summary.md`
->
-> **Fill-in checklist (leave blank for Coordinator):**
->
-> - [ ] Prioritized defect list (P0/P1/P2) with owners
-> - [ ] Acceptance criteria per item (QA vocabulary)
-> - [ ] Suggested PR slice order
-> - [ ] Explicit non-goals / still-HOLD items
+### Recommended next 1–3 eng PRs (do not start until PO approves)
+
+1. **PR-A — Guest empty-state + recovery CTAs** (E1+E2) — highest guest trust impact; small surface.
+2. **PR-B — Events CMS status model + photo path/docs/errors** (E4+E3) — owner safety.
+3. **PR-C — `next_step` decision + field or removal** (E5) — then QA **E6** matrix to lift HOLD.
+
+### Eng / UX (after PO approval)
+
+- [ ] PR-A: Empty-state copy + recovery CTAs; avoid home→empty Events dead-end (E1+E2)
+- [ ] PR-B: Single status model + event photo placeholder vs `cleanEventPhoto` / `/media/1` (E4+E3)
+- [ ] PR-C: Admin `next_step` field aligned with public render **or** stop rendering (E5)
+- [ ] UX review + QA E6 CMS matrix before merge / HOLD-clear recommendation
+
+**Events/CMS remains HOLD** until product B–D acceptance in the backlog is met.
 
 ---
 
