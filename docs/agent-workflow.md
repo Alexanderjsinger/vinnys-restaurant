@@ -4,13 +4,23 @@ Permanent AI development loop for this repository. Config lives in git so every 
 
 ## Roles
 
-| Spec | Path |
-| --- | --- |
-| Full-Stack Engineer | [`.cursor/agents/full-stack-engineer.md`](../.cursor/agents/full-stack-engineer.md) |
-| UX/Design Reviewer | [`.cursor/agents/ux-design-reviewer.md`](../.cursor/agents/ux-design-reviewer.md) |
-| QA Reviewer | [`.cursor/agents/qa-reviewer.md`](../.cursor/agents/qa-reviewer.md) |
+| Spec | Path | Cursor subagent notes |
+| --- | --- | --- |
+| Full-Stack Engineer | [`.cursor/agents/full-stack-engineer.md`](../.cursor/agents/full-stack-engineer.md) | Writable implementer (`readonly: false`) |
+| UX/Design Reviewer | [`.cursor/agents/ux-design-reviewer.md`](../.cursor/agents/ux-design-reviewer.md) | `readonly: true` — review/recommend only |
+| QA Reviewer | [`.cursor/agents/qa-reviewer.md`](../.cursor/agents/qa-reviewer.md) | `readonly: true` — verify with evidence only |
 
-Shared facts and pointers: [`project-context.md`](project-context.md).
+**Project Coordinator** is **not** a `.cursor/agents/` file. Roadmap, architecture decisions, and Product Owner consolidation stay in the Cursor Project. Do not add a duplicate Coordinator subagent.
+
+Shared facts and pointers: [`project-context.md`](project-context.md). Next checklist: [`next-execution-plan.md`](next-execution-plan.md).
+
+## Custom subagent frontmatter
+
+Each file under `.cursor/agents/` starts with Cursor YAML frontmatter (`name`, `description`, `model`, `readonly`) per [Cursor subagents docs](https://cursor.com/docs/subagents). Preserve the instruction body when editing frontmatter.
+
+- **`description`** steers automatic delegation — keep it specific about when to use (and not use) the role.
+- **`readonly: true`** on UX and QA restricts file edits and state-changing shell commands.
+- Prefer `/full-stack-engineer`, `/ux-design-reviewer`, `/qa-reviewer`, or Task-tool delegation by those names.
 
 ## Coordinator owns
 
@@ -32,7 +42,7 @@ Parallel UX + QA is preferred after Engineer handoff. Neither reviewer may autho
 
 ## How to use `.cursor/agents/` in this repo
 
-- When spawning or briefing a Cursor agent for Vinny work, **attach or @-mention** the matching file under `.cursor/agents/`.
+- When spawning or briefing a Cursor agent for Vinny work, **attach, @-mention, or `/`-invoke** the matching file under `.cursor/agents/`.
 - Keep assignments config/docs-only or app-scoped as stated; do not mix GIL or other projects into the same run.
 - Prefer extending these specs over creating one-off conflicting instructions. Update the markdown in a PR when the permanent workflow changes.
 - Agents should re-read [`project-context.md`](project-context.md) for staging URL, blockers, and Phase doc pointers instead of pasting long audits into every prompt.
@@ -44,3 +54,4 @@ Parallel UX + QA is preferred after Engineer handoff. Neither reviewer may autho
 - Known owner blockers: R2 and Resend — see [`phase-2-status.md`](phase-2-status.md) and [`owner-setup.md`](owner-setup.md)
 - Staging: https://vinnys-bar-grill.toastisadog.workers.dev/
 - Do not rewrite Phase 2.5 audits when updating workflow docs; link them
+- No merge, deploy, or DNS without Product Owner approval relayed by Coordinator

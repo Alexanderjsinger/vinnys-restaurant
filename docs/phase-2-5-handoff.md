@@ -43,16 +43,20 @@ R2 and Resend remain **owner-blocked**. No DNS changes. No secrets committed. St
 
 ## Outstanding / BLOCKED
 
-1. **Cloudflare R2** enablement + bucket + `MEDIA` binding + redeploy + upload smoke
-2. **Resend** verified sender + `RESEND_API_KEY` / `RESEND_FROM` + notify email + Retry queue
-3. Owner confirms hours and business email
-4. Authorized Workers deploy of this branch (security headers not live until then)
-5. Live CMS write workflows still NOT TESTED on staging D1 (intentional)
+1. **GitHub → Cloudflare staging sync** — authorized deploy of current `main` so Workers match git (security headers / parity)
+2. **Cloudflare R2** enablement + bucket + `MEDIA` binding + redeploy + upload smoke
+3. **Resend** verified sender + `RESEND_API_KEY` / `RESEND_FROM` + notify email + Retry queue
+4. Owner confirms hours and business email (and related facts in `owner-setup.md`)
+5. Independent QA/perf refresh after deploy
+6. Live CMS write workflows still NOT TESTED on staging D1 (intentional)
+7. Phase 3 UX / LCP (scoped later)
+
+Prioritized eng-vs-owner checklist: [`next-execution-plan.md`](next-execution-plan.md). Durable status: [`project-context.md`](project-context.md).
 
 ## Deployment status
 
 - Staging worker already serves the hero/storefront swap from an earlier authorized deploy
-- Security headers and `main` source parity require merging + authorized `npm run deploy:vinext`
+- Security headers and full `main` source parity require authorized `npm run deploy:vinext` of current `main`
 - **Do not deploy without approval; do not change DNS**
 
 ## Rollback
@@ -63,8 +67,10 @@ R2 and Resend remain **owner-blocked**. No DNS changes. No secrets committed. St
 
 ## Recommended next steps
 
-1. Merge this PR to `main`
-2. Owner completes R2 + Resend per `owner-setup.md`
-3. Authorized deploy; smoke media upload + inquiry email + admin retry; confirm security headers with `curl -sI`
-4. Owner content checklist
-5. Then Phase 3 visual/UX (out of scope here) — LCP improvement is a natural Phase 3 item
+Phase 2.5 follow-up code is on `main`. Execute in order (detail in [`next-execution-plan.md`](next-execution-plan.md)):
+
+1. Owner authorizes staging deploy of `main`; Eng syncs Workers and records evidence
+2. Owner completes R2 + Resend per `owner-setup.md`; Eng binds/smokes
+3. Owner content / business-info checklist
+4. Independent QA + lab perf on post-deploy staging
+5. Then Phase 3 visual/UX — LCP improvement is a natural Phase 3 item
