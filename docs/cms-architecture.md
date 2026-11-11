@@ -12,14 +12,16 @@ No production D1 query was sent. `cloudflare.config.ts` binds the live database 
 
 One test creates a throwaway database, changes Vinny’s Burger from 16 to 99, renames the restaurant to “Fixture Grill,” and stores `fixture-guest@example.com`. With `VINNYS_SNAPSHOT=1`, the same file still has those rows, and the public read does not. The public menu price stays 16. The public name stays Vinny’s Bar & Grill. `getDb()` and `listInquiries()` throw `SQLite is not used on the public site.` A second inquiry, `snapshot-only@example.com`, is handed to the D1 stand-in and is absent from SQLite. Reopening the file without snapshot mode shows the 99 price and only the first email.
 
-The other tests lock the current gaps and the SEO that is already true:
+The other tests originally locked gaps that Phase 2 later closed. Current truth (also covered by `npm test`):
 
 - No public component reads `site.promo`, `site.story`, or `site.reservation`.
-- Order links use `toastUrl || ORDER_URL`, so clearing the CMS URL does not remove Toast.
-- `updateItem` does not write `gluten_free`.
+- Order links use the CMS Toast URL only; an empty URL hides Order (no hardcoded public fallback).
+- Menu updates write `gluten_free` and related dietary fields.
 - `pageMeta("/menu", …)` returns canonical `https://vinnysbargrill.com/menu`.
 - Source marks a `workers.dev` host `noindex` and blocks `/` in `robots.txt`.
 - A GET of the live worker returned `noindex`, that canonical, `Disallow: /`, and sitemap URLs for `/`, `/menu`, `/events`, `/parties`, and `/contact`.
+
+For live status, R2/Resend blockers, and Phase 2.5 hardening, see `docs/phase-2-status.md` and `docs/phase-2-5-handoff.md`.
 
 `site/data/site.sqlite` was not part of the fixture. Its file time is still November 8.
 

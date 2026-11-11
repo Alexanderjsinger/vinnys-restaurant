@@ -212,18 +212,37 @@ export function isEmail(value: string): boolean {
 }
 
 export function sameOriginPost(request: Request): boolean {
+  const requestHost = (() => {
+    try {
+      return new URL(request.url).host;
+    } catch {
+      return "";
+    }
+  })();
+  if (!requestHost) return false;
+
   const origin = request.headers.get("origin");
   if (origin) {
     try {
-      return new URL(origin).host === new URL(request.url).host;
+      return new URL(origin).host === requestHost;
     } catch {
       return false;
     }
   }
   // Browsers usually send Origin on cross-site POSTs. When Origin is absent,
-  // require same-origin/same-site Sec-Fetch-Site (or allow non-browser tooling
-  // that sends neither header).
+  // require same-origin/same-site Sec-Fetch-Site; if that is also absent, trust
+  // Referer when present; allow non-browser tooling that sends none of these.
   const site = (request.headers.get("sec-fetch-site") || "").toLowerCase();
-  if (!site) return true;
-  return site === "same-origin" || site === "same-site" || site === "none";
+  if (site) {
+    return site === "same-origin" || site === "same-site" || site === "none";
+  }
+  const referer = request.headers.get("referer");
+  if (referer) {
+    try {
+      return new URL(referer).host === requestHost;
+    } catch {
+      return false;
+    }
+  }
+  return true;
 }

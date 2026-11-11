@@ -2,20 +2,21 @@
 
 Plain-language steps for finishing Phase 2.5. **Do not paste API keys into chat, git, or screenshots.**
 
-## 1. Cloudflare R2 (photo uploads)
+## 1. Cloudflare R2 (photo uploads) — BLOCKED until you enable it
 
-Photo upload is built but turned off until R2 exists.
+Photo upload is built but turned off until R2 exists. Last enablement attempt returned Cloudflare API error **10042**: “Please enable R2 through the Cloudflare Dashboard.”
 
 1. Sign in to the [Cloudflare Dashboard](https://dash.cloudflare.com/).
 2. Open **R2 Object Storage**.
 3. If prompted, **Enable R2** (account setting). This may require billing confirmation — approve only if you intend to use R2. Free tier includes storage allowance; see Cloudflare pricing.
 4. Create a bucket, for example `vinnys-bar-grill-media` (name is yours to choose; keep it private).
-5. Tell your developer the bucket name. They will add a `MEDIA` binding in `cloudflare.config.ts` and redeploy.
+5. Tell your developer the bucket name. They will add a `MEDIA` binding in `cloudflare.config.ts` like:
+   `MEDIA: bindings.r2({ name: "vinnys-bar-grill-media" })` and redeploy.
 6. After deploy, open **Admin → Photos**, upload a small JPEG/PNG/WebP/GIF under 4 MB with alt text, then use `/media/<id>` on Homepage or Events.
 
 Until this is done, the Photos page shows that upload is off. Existing photos in the website folder (`/photos/...`, `/hero/...`) keep working.
 
-## 2. Resend (email when someone sends a party note)
+## 2. Resend (email when someone sends a party note) — BLOCKED until secrets exist
 
 Party notes are **always saved** in the database even when email is off.
 
@@ -58,8 +59,8 @@ The admin will say a notification was “accepted by Resend” when Resend’s A
 - [ ] R2 enabled and media smoke-tested
 - [ ] Resend verified and a test party note accepted
 - [ ] Hours and emails confirmed
-- [ ] Backup taken (see handoff / D1 export)
-- [ ] Explicit approval to deploy
+- [ ] Backup taken (see `docs/d1-backup-recovery.md`)
+- [ ] Explicit approval to deploy latest `main` (includes security headers)
 - [ ] DNS cutover for vinnysbargrill.com (separate decision — **do not change DNS until ready**)
 
 ## 6. What not to do
