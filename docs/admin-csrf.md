@@ -1,8 +1,8 @@
 # Admin CSRF and same-origin hardening
 
-**Status:** Implemented on branch / PR (awaiting review). **Do not deploy** until Product Owner + QA accept.  
+**Status:** Merged to `main` as `b7bf813` (PR #9 tip `3c838e6`). Staging-verified **PASS** on Worker `22ba677c-9192-40da-8dfe-6666d0a5b039`. Closure record: [`security-closure-csrf.md`](security-closure-csrf.md).  
 **Repo:** `Alexanderjsinger/vinnys-restaurant`  
-**Related QA:** Events assessment HOLD — authenticated `POST /api/admin/save` previously accepted when Origin, Referer, and Sec-Fetch-Site were all absent (`sameOriginPost` treated missing headers as OK).
+**Related product:** Events/CMS remain **HOLD** — CSRF PASS does not clear product readiness. Prior gap: authenticated `POST /api/admin/save` accepted when Origin, Referer, and Sec-Fetch-Site were all absent (`sameOriginPost` treated missing headers as OK).
 
 ## Threat model
 
@@ -12,7 +12,7 @@
 | Stolen session cookie + scripted client | Cookie value only; cannot read HTML of `/admin/*` | Replay CMS mutations without a browser |
 | Public guest | No admin cookie | Submit party inquiry / contact flows only |
 
-**Out of scope for this change:** full login CSRF tokens (login still requires same-origin checks + rate limit + password), security-header redeploy on staging (separate ops), R2/Resend enablement.
+**Out of scope for this change:** full login CSRF tokens (login still requires same-origin checks + rate limit + password), R2/Resend enablement, Events/CMS product UX. Security headers are live on staging with the CSRF deploy (see security closure).
 
 ## Controls
 
@@ -80,9 +80,9 @@ Expected:
 - CSRF unit cases: stable token per session; wrong session/password/token → false.
 - Source guards: admin save/media/logout call `verifyCsrfForm`; panel pages use `AdminForm`; parties form unchanged.
 
-Staging live probe of the old “no Origin” admin save path is **not** required for this PR and must not mutate customer D1. Redeploy is out of scope until PO approval.
+Staging verification of the missing-header / CSRF matrix is **complete** (independent QA PASS). See [`security-closure-csrf.md`](security-closure-csrf.md) for evidence pointers. Do not re-mutate customer D1 for casual re-probes.
 
-## Manual browser check (after authorized deploy)
+## Manual browser check (post-deploy smoke)
 
 1. Sign in at `/admin/login` → Overview loads.
 2. Edit a draft field and save → success banner (CSRF present in form).
