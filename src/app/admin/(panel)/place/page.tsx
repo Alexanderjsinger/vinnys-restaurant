@@ -1,3 +1,4 @@
+import { AdminForm } from "@/components/AdminForm";
 import { Field } from "@/components/Field";
 import { SaveBanner } from "@/components/SaveBanner";
 import { getSettings, listHours } from "@/lib/content";
@@ -22,7 +23,7 @@ export default async function PlacePage({
         Name, address, phone, and hours show on the public site. Listings used for the starting
         phone and hours are unconfirmed until you check them. 12:00 a.m. is midnight.
       </p>
-      <form className="form-grid" action="/api/admin/save" method="post">
+      <AdminForm className="form-grid" action="/api/admin/save">
         <input type="hidden" name="intent" value="place" />
         <Field
           label="Restaurant name"
@@ -122,10 +123,10 @@ export default async function PlacePage({
         <button className="btn btn-solid" type="submit">
           Save place
         </button>
-      </form>
+      </AdminForm>
 
       <h2>Temporary hours</h2>
-      <form className="form-grid" action="/api/admin/save" method="post">
+      <AdminForm className="form-grid" action="/api/admin/save">
         <input type="hidden" name="intent" value="holiday-add" />
         <div className="field">
           <label htmlFor="holiday-label">Label</label>
@@ -154,10 +155,10 @@ export default async function PlacePage({
         <button className="btn" type="submit">
           Add temporary hours
         </button>
-      </form>
+      </AdminForm>
 
       <h2>Add hours</h2>
-      <form className="form-grid" action="/api/admin/save" method="post">
+      <AdminForm className="form-grid" action="/api/admin/save">
         <input type="hidden" name="intent" value="hour-add" />
         <div className="field">
           <label htmlFor="new-hour-label">Label</label>
@@ -176,27 +177,27 @@ export default async function PlacePage({
         <button className="btn" type="submit">
           Add hours
         </button>
-      </form>
+      </AdminForm>
 
       {hours.map((hour) => (
         <div key={`actions-${hour.id}`} className="row-actions">
-          <form action="/api/admin/save" method="post">
+          <AdminForm action="/api/admin/save">
             <input type="hidden" name="intent" value="hour-move" />
             <input type="hidden" name="id" value={hour.id} />
             <input type="hidden" name="dir" value="up" />
             <button className="btn btn-small" type="submit">
               Move {hour.label} up
             </button>
-          </form>
-          <form action="/api/admin/save" method="post">
+          </AdminForm>
+          <AdminForm action="/api/admin/save">
             <input type="hidden" name="intent" value="hour-move" />
             <input type="hidden" name="id" value={hour.id} />
             <input type="hidden" name="dir" value="down" />
             <button className="btn btn-small" type="submit">
               Move {hour.label} down
             </button>
-          </form>
-          <form action="/api/admin/save" method="post">
+          </AdminForm>
+          <AdminForm action="/api/admin/save">
             <input type="hidden" name="intent" value="hour-delete" />
             <input type="hidden" name="id" value={hour.id} />
             <label className="check">
@@ -206,7 +207,7 @@ export default async function PlacePage({
             <button className="btn btn-small btn-danger" type="submit">
               Delete hours
             </button>
-          </form>
+          </AdminForm>
         </div>
       ))}
     </>

@@ -1,3 +1,4 @@
+import { AdminForm } from "@/components/AdminForm";
 import { SaveBanner } from "@/components/SaveBanner";
 import { listEvents } from "@/lib/content";
 import { formatEventStart } from "@/lib/format";
@@ -35,7 +36,7 @@ export default async function EventsAdminPage({
             <span className="badge">{event.status}</span> {formatEventStart(event.starts_at)}
           </p>
           <EventForm event={event} />
-          <form className="row-actions" action="/api/admin/save" method="post">
+          <AdminForm className="row-actions" action="/api/admin/save">
             <input type="hidden" name="intent" value="event-delete" />
             <input type="hidden" name="id" value={event.id} />
             <label className="check">
@@ -45,7 +46,7 @@ export default async function EventsAdminPage({
             <button className="btn btn-small btn-danger" type="submit">
               Delete event
             </button>
-          </form>
+          </AdminForm>
         </article>
       ))}
     </>
@@ -68,7 +69,7 @@ function EventForm({
 }) {
   const id = event ? `-${event.id}` : "";
   return (
-    <form className="form-grid" action="/api/admin/save" method="post">
+    <AdminForm className="form-grid" action="/api/admin/save">
       <input type="hidden" name="intent" value={event ? "event-update" : "event-add"} />
       {event ? <input type="hidden" name="id" value={event.id} /> : null}
       <div className="field">
@@ -117,6 +118,6 @@ function EventForm({
           Publish
         </button>
       </div>
-    </form>
+    </AdminForm>
   );
 }

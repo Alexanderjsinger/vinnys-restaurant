@@ -1,6 +1,6 @@
 import { revalidatePath } from "next/cache";
 import { NextResponse } from "next/server";
-import { isAdmin } from "@/lib/auth";
+import { isAdmin, verifyCsrfForm } from "@/lib/auth";
 import { sameOriginPost } from "@/lib/format";
 import { applyAdminSave } from "@/lib/mutate";
 
@@ -12,6 +12,9 @@ export async function POST(request: Request) {
     return NextResponse.redirect(new URL("/admin/login", request.url), 303);
   }
   const form = await request.formData();
+  if (!(await verifyCsrfForm(form))) {
+    return NextResponse.redirect(new URL("/admin/login?error=1", request.url), 303);
+  }
   let path = "/admin?error=save";
   try {
     path = await applyAdminSave(form);

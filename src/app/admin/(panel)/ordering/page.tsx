@@ -1,3 +1,4 @@
+import { AdminForm } from "@/components/AdminForm";
 import { SaveBanner } from "@/components/SaveBanner";
 import { getSettings } from "@/lib/content";
 import { safeHttpUrl } from "@/lib/format";
@@ -28,7 +29,7 @@ export default async function OrderingPage({
       <p>
         The public Order button uses this URL only. Leave it blank to hide Order.
       </p>
-      <form className="form-grid" action="/api/admin/save" method="post">
+      <AdminForm className="form-grid" action="/api/admin/save">
         <input type="hidden" name="intent" value="ordering" />
         <div className="field">
           <label htmlFor="toast_ordering_url">Toast ordering URL</label>
@@ -43,7 +44,7 @@ export default async function OrderingPage({
         <button className="btn btn-solid" type="submit">
           Save ordering link
         </button>
-      </form>
+      </AdminForm>
     </>
   );
 }

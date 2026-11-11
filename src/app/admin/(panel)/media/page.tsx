@@ -1,3 +1,4 @@
+import { AdminForm } from "@/components/AdminForm";
 import { SaveBanner } from "@/components/SaveBanner";
 import { listMedia, mediaInUse } from "@/lib/content";
 import { mediaEnabled } from "@/lib/media";
@@ -21,7 +22,7 @@ export default async function MediaAdminPage({
       <h1>Photos</h1>
       <SaveBanner saved={firstQuery(query.saved)} error={firstQuery(query.error)} />
       {enabled ? (
-        <form className="form-grid" action="/api/admin/media" method="post" encType="multipart/form-data">
+        <AdminForm className="form-grid" action="/api/admin/media" encType="multipart/form-data">
           <input type="hidden" name="intent" value="upload" />
           <div className="field">
             <label htmlFor="file">Image</label>
@@ -35,7 +36,7 @@ export default async function MediaAdminPage({
           <button className="btn btn-solid" type="submit">
             Upload
           </button>
-        </form>
+        </AdminForm>
       ) : (
         <p className="banner banner-bad" role="status">
           Photo upload is off. This deployment has no R2 bucket bound, so files cannot be stored. See{" "}
@@ -53,7 +54,7 @@ export default async function MediaAdminPage({
               {inUse.get(item.id) ? (
                 <p className="hint">In use on the site. Remove it from homepage/events before deleting.</p>
               ) : (
-                <form className="row-actions" action="/api/admin/media" method="post">
+                <AdminForm className="row-actions" action="/api/admin/media">
                   <input type="hidden" name="intent" value="delete" />
                   <input type="hidden" name="id" value={item.id} />
                   <label className="check">
@@ -63,7 +64,7 @@ export default async function MediaAdminPage({
                   <button className="btn btn-small btn-danger" type="submit">
                     Delete
                   </button>
-                </form>
+                </AdminForm>
               )}
             </li>
           ))}

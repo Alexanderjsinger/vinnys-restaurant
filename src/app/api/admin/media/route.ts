@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { isAdmin } from "@/lib/auth";
+import { isAdmin, verifyCsrfForm } from "@/lib/auth";
 import { addMedia, allowRate, deleteMediaRecord } from "@/lib/content";
 import { sameOriginPost } from "@/lib/format";
 import { newMediaObjectKey, validateImageUpload } from "@/lib/image-bytes";
@@ -18,6 +18,9 @@ export async function POST(request: Request) {
   }
 
   const form = await request.formData();
+  if (!(await verifyCsrfForm(form))) {
+    return NextResponse.redirect(new URL("/admin/login?error=1", request.url), 303);
+  }
   const intent = String(form.get("intent") ?? "upload");
   if (intent === "delete") {
     const id = Number(form.get("id"));

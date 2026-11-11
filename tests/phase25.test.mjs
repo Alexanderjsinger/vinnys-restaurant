@@ -188,6 +188,8 @@ test("sameOriginPost rejects cross-site sec-fetch-site without matching origin",
     headers: { referer: "https://vinnys.example/parties" },
   });
   assert.equal(sameOriginPost(sameReferer), true);
+  const noHeaders = new Request("https://vinnys.example/api/inquiries", { method: "POST" });
+  assert.equal(sameOriginPost(noHeaders), false);
 });
 
 test("security headers helper includes nosniff and frame options", async () => {
@@ -235,4 +237,6 @@ test("admin mutations require isAdmin in source", () => {
   assert.match(save, /isAdmin/);
   assert.match(media, /isAdmin/);
   assert.match(media, /validateImageUpload/);
+  assert.match(save, /verifyCsrfForm/);
+  assert.match(media, /verifyCsrfForm/);
 });
