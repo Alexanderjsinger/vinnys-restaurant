@@ -3,7 +3,7 @@
 Repo: `Alexanderjsinger/vinnys-restaurant`  
 Public brand: Vinny’s Bar & Grill (Ypsilanti). Intended eventual host for vinnysbargrill.com — **DNS is not changed by this project until the owner approves.**
 
-**Git checkpoint (verified 2026-11-11):** `main` HEAD `b7bf813` — eight merged PRs on `main` (#1–#4, #6–#9). Includes durable next-plan docs (#8) and admin CSRF hardening (#9). Prior checkpoint `057f651` / “six PRs” is superseded.
+**Git checkpoint (verified 2026-11-11):** CSRF merge on `main` `b7bf813` (PRs #1–#4, #6–#9); knowledge/docs sync #10 also on `main`. Includes durable next-plan docs (#8), admin CSRF hardening (#9), CSRF closure docs (#10). Prior checkpoint `057f651` / “six PRs” is superseded.
 
 ## Who decides what
 
@@ -37,15 +37,13 @@ Distinguish **completed eng**, **verified staging**, **outstanding product**, **
 
 ### Outstanding product / HOLD
 
-- **Events / CMS product: HOLD** — CSRF PASS does **not** clear this. Empty-state UX, event photo placeholder, `next_step` admin gap, draft/publish clarity remain. Not production-ready for Events/CMS hardening ship.
+- **Events / CMS product: HOLD** — CSRF PASS does **not** clear this. Consolidated P1 backlog (E1–E6): empty-state UX, event photo placeholder, status model, `next_step` admin gap. Not production-ready. Repo summary: [`events-cms-backlog.md`](events-cms-backlog.md). Specialist assessments live in Project Context `docs/` (`events-cms-*-2026-11-11.md`).
 - Phase 3 visual / UX / LCP — after infra + facts (or explicitly deferred).
 
 ### Unresolved defects (known)
 
-- Event photo path vs CMS placeholder (`/media/1` / `cleanEventPhoto`).
-- `next_step` on public render without admin form field.
-- Guest empty-state copy / recovery CTAs; home Events loop to empty page.
-- Mobile primary nav touch targets (UX P2).
+- P1 E1–E6 — see [`events-cms-backlog.md`](events-cms-backlog.md) (guest “Placeholder.” copy, empty `/events` recovery, photo `/media/1` vs `cleanEventPhoto`, dual status / Archived, `next_step`, CMS matrix).
+- Mobile primary nav touch targets (UX P2 / I2).
 - Broad CMS write paths (menu/place/hours) **NOT TESTED** in CSRF pass by design.
 
 ### Owner dependencies (blockers)
@@ -65,7 +63,7 @@ Prioritized checklist: [`next-execution-plan.md`](next-execution-plan.md). Owner
 
 ## Prioritized roadmap
 
-1. **Events assessment backlog** — Coordinator consolidates Eng/UX/QA product findings; eng slice after CSRF (already done for security).
+1. **Events / CMS product (HOLD)** — consolidated backlog in [`events-cms-backlog.md`](events-cms-backlog.md); eng PR-A→B→C only after PO approves sequence (security already closed).
 2. **Unblock media + email** — R2 then Resend per owner-setup; eng wiring only after enablement.
 3. **Owner fact lock** — hours, emails, Toast URL, photos policy before domain talk.
 4. **Independent QA / lab perf** — refresh matrices on current staging baseline; no rubber-stamp of eng self-tests.
@@ -123,6 +121,7 @@ Use QA vocabulary: **PASS** / **FAIL** / **BLOCKED** / **NOT TESTED**. Never PAS
 | Phase 2.5 QA matrix | [`phase-2-5-qa.md`](phase-2-5-qa.md) |
 | Phase 2.5 handoff | [`phase-2-5-handoff.md`](phase-2-5-handoff.md) |
 | CSRF security closure | [`security-closure-csrf.md`](security-closure-csrf.md) |
+| Events/CMS coordinated backlog (HOLD) | [`events-cms-backlog.md`](events-cms-backlog.md) |
 | Next execution checklist | [`next-execution-plan.md`](next-execution-plan.md) |
 | Owner R2 / Resend / content checklist | [`owner-setup.md`](owner-setup.md) |
 | CMS / D1 choice background | [`cms-architecture.md`](cms-architecture.md) |
@@ -133,7 +132,7 @@ Use QA vocabulary: **PASS** / **FAIL** / **BLOCKED** / **NOT TESTED**. Never PAS
 - **Staging worker:** https://vinnys-bar-grill.toastisadog.workers.dev/ — currently on CSRF merge `b7bf813` / Worker `22ba677c…` (staging-verified).
 - **D1:** live business data on the bound database — treat as production-like; do not mutate without approval.
 - **Blocked (owner):** Cloudflare R2 (photo upload); Resend (`RESEND_API_KEY` / `RESEND_FROM`). Details in Phase 2 status and owner-setup.
-- **Product HOLD:** Events/CMS — see next-execution-plan placeholder + Coordinator consolidate.
+- **Product HOLD:** Events/CMS — [`events-cms-backlog.md`](events-cms-backlog.md) + [`next-execution-plan.md`](next-execution-plan.md) §1.
 - **Admin:** `/admin/login` with Worker secret `ADMIN_PASSWORD` — never commit passwords.
 
 ## Isolation

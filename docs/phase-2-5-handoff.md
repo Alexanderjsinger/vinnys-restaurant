@@ -14,8 +14,8 @@ R2 and Resend remain **owner-blocked**. Business facts remain **owner**. Events/
 | --- | --- |
 | Completed eng (Phase 2.5 + CSRF) | On `main` through `b7bf813` (PRs #2, #7, #9; docs #8) |
 | Verified staging | CSRF + security headers on Worker `22ba677c-9192-40da-8dfe-6666d0a5b039` — **PASS** |
-| Outstanding product | Events/CMS HOLD (empty-state, photo, `next_step`, draft/publish UX) |
-| Unresolved defects | See Events assessment findings; not cleared by CSRF |
+| Outstanding product | Events/CMS **HOLD** — [`events-cms-backlog.md`](events-cms-backlog.md) (E1–E6) |
+| Unresolved defects | Consolidated P1 in Events backlog; not cleared by CSRF |
 | Owner deps | R2, Resend, hours/emails/Toast/address confirmation, further deploy/DNS approval |
 | Prod requirements | Separate owner approval; HOLD cleared; facts + infra evidence |
 
@@ -57,7 +57,7 @@ R2 and Resend remain **owner-blocked**. Business facts remain **owner**. Events/
 ## Outstanding / BLOCKED
 
 1. ~~GitHub → Cloudflare staging sync for CSRF SHA~~ — **done** for `b7bf813` (staging-verified). Further deploys still need PO approval.
-2. **Events/CMS product HOLD** — empty-state UX, photo placeholder, `next_step` admin field, draft/publish clarity (Coordinator consolidate backlog in [`next-execution-plan.md`](next-execution-plan.md))
+2. **Events/CMS product HOLD** — empty-state UX, photo placeholder, status model, `next_step` (P1 E1–E6). Durable backlog: [`events-cms-backlog.md`](events-cms-backlog.md); checklist: [`next-execution-plan.md`](next-execution-plan.md) §1. Specialist assessments in Project Context `docs/`.
 3. **Cloudflare R2** enablement + bucket + `MEDIA` binding + redeploy + upload smoke
 4. **Resend** verified sender + `RESEND_API_KEY` / `RESEND_FROM` + notify email + Retry queue
 5. Owner confirms hours and business email (and related facts in `owner-setup.md`)
@@ -82,9 +82,9 @@ Prioritized eng-vs-owner checklist: [`next-execution-plan.md`](next-execution-pl
 
 ## Recommended next steps
 
-1. Coordinator fills **Events assessment backlog** in next-execution-plan after Eng/UX/QA consolidate
+1. PO approves Events PR-A→B→C sequence in [`events-cms-backlog.md`](events-cms-backlog.md) / [`next-execution-plan.md`](next-execution-plan.md) §1 — **HOLD** until product B–D met; CSRF already closed ([`security-closure-csrf.md`](security-closure-csrf.md))
 2. Owner completes R2 + Resend per `owner-setup.md`; Eng binds/smokes when enabled
 3. Owner content / business-info checklist
-4. Independent QA + lab perf refresh on current staging (beyond CSRF)
+4. Independent QA + lab perf refresh on current staging (beyond CSRF); Events E6 matrix after eng PRs
 5. Then Phase 3 visual/UX — LCP improvement is a natural Phase 3 item
 6. Production only after explicit requirements in [`security-closure-csrf.md`](security-closure-csrf.md) / project-context
