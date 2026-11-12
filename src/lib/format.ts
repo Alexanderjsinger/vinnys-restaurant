@@ -71,6 +71,23 @@ export function cleanEventPhoto(value: string): string | null {
   return safeHttpUrl(trimmed);
 }
 
+/** Optional per-event guest action: blank, http(s) URL, or dialable phone. */
+export function cleanEventNextStep(value: string): string | null {
+  const trimmed = value.trim();
+  if (!trimmed) return "";
+  const url = safeHttpUrl(trimmed);
+  if (url) return url;
+  if (phoneHref(trimmed)) return trimmed;
+  return null;
+}
+
+/** Href for a stored next_step value (http(s) or tel:), else null for plain text. */
+export function eventNextStepHref(value: string): string | null {
+  const trimmed = value.trim();
+  if (!trimmed) return null;
+  return safeHttpUrl(trimmed) ?? phoneHref(trimmed);
+}
+
 export function safeHttpUrl(value: string): string | null {
   const trimmed = value.trim();
   if (!trimmed) return null;

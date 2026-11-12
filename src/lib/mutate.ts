@@ -25,6 +25,7 @@ import {
 } from "./content";
 import {
   asId,
+  cleanEventNextStep,
   cleanEventPhoto,
   cleanText,
   detroitToday,
@@ -325,10 +326,12 @@ async function saveEventAdd(form: FormData): Promise<string> {
   const times = eventTimes(form);
   const price = normalizePrice(cleanText(form.get("price"), 40), false);
   const photo = cleanEventPhoto(cleanText(form.get("photo"), 300));
+  const nextStep = cleanEventNextStep(cleanText(form.get("next_step"), 300));
   const status = recordStatus(form);
   if (!title || !blurb || !times) return "/admin/events?error=required";
   if (price === null) return "/admin/events?error=price";
   if (photo === null) return "/admin/events?error=photo";
+  if (nextStep === null) return "/admin/events?error=nextstep";
   await addEvent({
     title,
     startsAt: times.startsAt,
@@ -337,7 +340,7 @@ async function saveEventAdd(form: FormData): Promise<string> {
     isSample: false,
     price,
     photo,
-    nextStep: "",
+    nextStep,
     status,
   });
   return saved("/admin/events", status);
@@ -350,10 +353,12 @@ async function saveEventUpdate(form: FormData): Promise<string> {
   const times = eventTimes(form);
   const price = normalizePrice(cleanText(form.get("price"), 40), false);
   const photo = cleanEventPhoto(cleanText(form.get("photo"), 300));
+  const nextStep = cleanEventNextStep(cleanText(form.get("next_step"), 300));
   const status = recordStatus(form);
   if (!id || !title || !blurb || !times) return "/admin/events?error=required";
   if (price === null) return "/admin/events?error=price";
   if (photo === null) return "/admin/events?error=photo";
+  if (nextStep === null) return "/admin/events?error=nextstep";
   await updateEvent({
     id,
     title,
@@ -363,7 +368,7 @@ async function saveEventUpdate(form: FormData): Promise<string> {
     isSample: false,
     price,
     photo,
-    nextStep: "",
+    nextStep,
     status,
   });
   return saved("/admin/events", status);
