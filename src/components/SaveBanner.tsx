@@ -19,6 +19,20 @@ export function SaveBanner({ saved, error }: { saved?: string; error?: string })
   if (saved === "archived") {
     return (
       <p className="banner banner-good" role="status">
+        Archived. It is off the public site and preview. You can restore it to a draft later.
+      </p>
+    );
+  }
+  if (saved === "deleted") {
+    return (
+      <p className="banner banner-good" role="status">
+        Deleted. This event is gone.
+      </p>
+    );
+  }
+  if (saved === "removed") {
+    return (
+      <p className="banner banner-good" role="status">
         Removed from the public site.
       </p>
     );

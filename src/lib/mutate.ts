@@ -54,6 +54,7 @@ function recordStatus(form: FormData): PublishStatus {
   const action = String(form.get("action") ?? "");
   if (action === "publish") return "published";
   if (action === "draft") return "draft";
+  if (action === "archive") return "archived";
   const posted = String(form.get("status") ?? "");
   if (posted === "draft" || posted === "published" || posted === "archived") return posted;
   return "published";
@@ -290,7 +291,7 @@ async function saveItemDelete(form: FormData): Promise<string> {
   const id = asId(form.get("id"));
   if (!id || !checked(form, "yes")) return "/admin/menu?error=confirm";
   await deleteItem(id);
-  return "/admin/menu?saved=archived";
+  return "/admin/menu?saved=removed";
 }
 
 async function saveItemMove(form: FormData): Promise<string> {
@@ -327,7 +328,7 @@ async function saveEventAdd(form: FormData): Promise<string> {
   const status = recordStatus(form);
   if (!title || !blurb || !times) return "/admin/events?error=required";
   if (price === null) return "/admin/events?error=price";
-  if (photo === null) return "/admin/events?error=url";
+  if (photo === null) return "/admin/events?error=photo";
   await addEvent({
     title,
     startsAt: times.startsAt,
@@ -352,7 +353,7 @@ async function saveEventUpdate(form: FormData): Promise<string> {
   const status = recordStatus(form);
   if (!id || !title || !blurb || !times) return "/admin/events?error=required";
   if (price === null) return "/admin/events?error=price";
-  if (photo === null) return "/admin/events?error=url";
+  if (photo === null) return "/admin/events?error=photo";
   await updateEvent({
     id,
     title,
@@ -372,14 +373,14 @@ async function saveEventDelete(form: FormData): Promise<string> {
   const id = asId(form.get("id"));
   if (!id || !checked(form, "yes")) return "/admin/events?error=confirm";
   await deleteEvent(id);
-  return "/admin/events?saved=archived";
+  return "/admin/events?saved=deleted";
 }
 
 async function saveInquiryDelete(form: FormData): Promise<string> {
   const id = asId(form.get("id"));
   if (!id || !checked(form, "yes")) return "/admin/inquiries?error=confirm";
   await deleteInquiry(id);
-  return "/admin/inquiries?saved=archived";
+  return "/admin/inquiries?saved=removed";
 }
 
 type InquiryResult =

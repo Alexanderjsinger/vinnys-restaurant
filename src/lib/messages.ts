@@ -14,6 +14,8 @@ export function adminError(code: string | undefined): string | null {
       return "Opening date must be a real calendar date, or left blank.";
     case "url":
       return "Links must start with http:// or https://.";
+    case "photo":
+      return "That photo did not save. Use a full https:// link, or leave the photo blank. Paths like /media/1 are not accepted for events yet.";
     case "link":
       return "A promo link needs both a label and a URL, or neither.";
     case "provider":

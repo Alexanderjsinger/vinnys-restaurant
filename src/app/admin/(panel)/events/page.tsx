@@ -1,8 +1,9 @@
 import { AdminForm } from "@/components/AdminForm";
 import { SaveBanner } from "@/components/SaveBanner";
 import { listEvents } from "@/lib/content";
-import { formatEventStart } from "@/lib/format";
+import { cleanEventPhoto, formatEventStart } from "@/lib/format";
 import { firstQuery } from "@/lib/messages";
+import Link from "next/link";
 
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
@@ -27,7 +28,12 @@ export default async function EventsAdminPage({
     <>
       <h1>Events</h1>
       <SaveBanner saved={firstQuery(query.saved)} error={firstQuery(query.error)} />
-      <p>Times are America/Detroit. Save a draft to keep it off the public site. Publish when it is real. Past events leave the upcoming list on their own.</p>
+      <p>
+        Times are America/Detroit. <strong>Save draft</strong> keeps an event off the public site.{" "}
+        <strong>Publish</strong> puts it live. <strong>Archive</strong> hides it from guests and preview but
+        keeps it here so you can restore it. <strong>Delete</strong> removes it for good. Past published
+        events leave Upcoming on their own. <Link href="/admin/preview">Preview site</Link>
+      </p>
       <h2>New event</h2>
       <EventForm />
       {events.map((event) => (
@@ -68,6 +74,8 @@ function EventForm({
   };
 }) {
   const id = event ? `-${event.id}` : "";
+  const archived = event?.status === "archived";
+  const previewPhoto = event?.photo ? cleanEventPhoto(event.photo) : "";
   return (
     <AdminForm className="form-grid" action="/api/admin/save">
       <input type="hidden" name="intent" value={event ? "event-update" : "event-add"} />
@@ -99,24 +107,34 @@ function EventForm({
         <input id={`price${id}`} name="price" defaultValue={event?.price} />
       </div>
       <div className="field">
-        <label htmlFor={`photo${id}`}>Photo path or URL, optional</label>
-        <input id={`photo${id}`} name="photo" defaultValue={event?.photo} placeholder="/media/1" />
-      </div>
-      <div className="field">
-        <label htmlFor={`status${id}`}>Status</label>
-        <select id={`status${id}`} name="status" defaultValue={event?.status ?? "draft"}>
-          <option value="draft">Draft</option>
-          <option value="published">Published</option>
-          <option value="archived">Archived</option>
-        </select>
+        <label htmlFor={`photo${id}`}>Photo URL, optional</label>
+        <input id={`photo${id}`} name="photo" defaultValue={event?.photo} placeholder="https://" />
+        <p className="hint">
+          Full web address starting with https://. Leave blank for no photo. Uploaded /media/… paths are not
+          available for events until photo upload is turned on.
+        </p>
+        {previewPhoto ? <img src={previewPhoto} alt={event?.title || "Event photo"} style={{ maxWidth: "12rem", height: "auto" }} /> : null}
       </div>
       <div className="row-actions">
-        <button className="btn" type="submit" name="action" value="draft">
-          Save draft
-        </button>
-        <button className="btn btn-solid" type="submit" name="action" value="publish">
-          Publish
-        </button>
+        {archived ? (
+          <button className="btn" type="submit" name="action" value="draft">
+            Restore draft
+          </button>
+        ) : (
+          <>
+            <button className="btn" type="submit" name="action" value="draft">
+              Save draft
+            </button>
+            <button className="btn btn-solid" type="submit" name="action" value="publish">
+              Publish
+            </button>
+            {event ? (
+              <button className="btn" type="submit" name="action" value="archive">
+                Archive
+              </button>
+            ) : null}
+          </>
+        )}
       </div>
     </AdminForm>
   );

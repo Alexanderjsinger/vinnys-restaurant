@@ -39,7 +39,7 @@ export async function POST(request: Request) {
         console.error(error);
       }
     }
-    return NextResponse.redirect(new URL("/admin/media?saved=archived", request.url), 303);
+    return NextResponse.redirect(new URL("/admin/media?saved=removed", request.url), 303);
   }
 
   const bucket = await mediaBucket();
