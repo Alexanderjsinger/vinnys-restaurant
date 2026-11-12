@@ -12,7 +12,7 @@ Photo upload is built but turned off until R2 exists. Last enablement attempt re
 4. Create a bucket, for example `vinnys-bar-grill-media` (name is yours to choose; keep it private).
 5. Tell your developer the bucket name. They will add a `MEDIA` binding in `cloudflare.config.ts` like:
    `MEDIA: bindings.r2({ name: "vinnys-bar-grill-media" })` and redeploy.
-6. After deploy, open **Admin → Photos**, upload a small JPEG/PNG/WebP/GIF under 4 MB with alt text, then use `/media/<id>` on Homepage or Events.
+6. After deploy, open **Admin → Photos**, upload a small JPEG/PNG/WebP/GIF under 4 MB with alt text, then use `/media/<id>` on Homepage (hero and related settings). Events photo fields do **not** accept `/media/<id>` until a follow-up enables that path — until then use a full `https://` image URL, a static `/events/…` path from the site folder, or leave the photo blank.
 
 Until this is done, the Photos page shows that upload is off. Existing photos in the website folder (`/photos/...`, `/hero/...`) keep working.
 
@@ -50,7 +50,7 @@ The admin will say a notification was “accepted by Resend” when Resend’s A
 | Toast ordering URL | Set in CMS | Confirm still correct |
 | Reservations | Call only (`none` provider) | Confirm |
 | Notify / place email | Interim notify address seeded; unconfirmed | Set final business email |
-| Events | Empty on public site (good) | Add real events only |
+| Events | Empty on public site (good) | Add real events only; optional photo = full https URL (or blank) until R2 event paths are enabled |
 | Birthday list | Closed | Keep closed until offer + DOB + opt-out exist |
 | Photos | Repo stock / venue images | Replace with owner-approved photos when R2 is on |
 
