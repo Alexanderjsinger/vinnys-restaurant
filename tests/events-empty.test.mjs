@@ -133,4 +133,9 @@ test("events empty-state CSS keeps recovery CTAs wrapping on narrow widths", () 
   assert.match(css, /\.events-empty\s*\{/);
   assert.match(css, /\.home-card \.events-empty \.cta-row[\s\S]*?flex-wrap:\s*wrap/);
   assert.match(css, /\.home-card \.events-empty \.btn[\s\S]*?margin-top:\s*0/);
+  assert.match(
+    css,
+    /\.home-card \.hint\s*\{\s*color:\s*#5c5148\s*;\s*\}/,
+    "home-card hints must use paper-readable muted (UX-A1)",
+  );
 });

@@ -506,6 +506,8 @@ address { font-style: normal; }
 }
 .highlights small, .upcoming small { display: block; color: #5c5148; font-size: 0.85rem; font-weight: 450; }
 .home-card .price { color: var(--paper-ink); }
+/* Paper surfaces need darker muted text than --muted (brass-on-dark). */
+.home-card .hint { color: #5c5148; }
 
 .visit-band {
   background: var(--paper);
