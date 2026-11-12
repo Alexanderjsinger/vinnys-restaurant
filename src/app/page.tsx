@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ConfirmedEvents } from "@/components/ConfirmedEvents";
+import { ConfirmedEvents, EventsEmptyState } from "@/components/ConfirmedEvents";
 import { PosterSlider } from "@/components/PosterSlider";
 import { HoursList } from "@/components/HoursList";
 import { listEvents, listMenu } from "@/lib/content";
@@ -130,10 +130,21 @@ export default async function HomePage({
 
         <article className="home-card">
           <h2>Events</h2>
-          <ConfirmedEvents events={upcoming} />
-          <Link className="btn" href="/events">
-            Events
-          </Link>
+          {upcoming.length ? (
+            <>
+              <ConfirmedEvents events={upcoming} />
+              <Link className="btn" href="/events">
+                All events
+              </Link>
+            </>
+          ) : (
+            <EventsEmptyState
+              surface="home"
+              phoneHref={site.phoneHref}
+              phone={site.phone}
+              toastUrl={site.toastUrl}
+            />
+          )}
         </article>
 
         <article className="home-card">
