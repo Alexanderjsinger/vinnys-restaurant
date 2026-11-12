@@ -560,6 +560,30 @@ address { font-style: normal; }
 }
 .event time { color: var(--brass); }
 
+.events-empty {
+  display: grid;
+  gap: 0.55rem;
+}
+.events-empty > p { margin: 0; }
+.events-empty .cta-row {
+  margin: 0.35rem 0 0;
+}
+.home-card .events-empty {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+}
+.home-card .events-empty .cta-row {
+  margin-top: auto;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+}
+.home-card .events-empty .btn {
+  margin-top: 0;
+}
+
 .form-grid, .stack { display: grid; gap: 0.9rem; }
 .field { display: grid; gap: 0.35rem; }
 .field-label, .check, .row-actions, .admin-bar {

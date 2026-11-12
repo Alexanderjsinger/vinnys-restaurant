@@ -1,6 +1,7 @@
-import { ConfirmedEvents } from "@/components/ConfirmedEvents";
+import { ConfirmedEvents, EventsEmptyState } from "@/components/ConfirmedEvents";
 import { TrackView } from "@/components/TrackView";
 import { listEvents } from "@/lib/content";
+import { splitPublicEvents } from "@/lib/events-public";
 import { detroitNowLocal } from "@/lib/format";
 import { pageMeta } from "@/lib/seo";
 
@@ -15,14 +16,13 @@ export const metadata = pageMeta(
 export default async function EventsPage() {
   const now = detroitNowLocal();
   const events = await listEvents("public");
-  const upcoming = events.filter((event) => (event.ends_at || event.starts_at) >= now);
-  const earlier = events.filter((event) => (event.ends_at || event.starts_at) < now);
+  const { upcoming, earlier } = splitPublicEvents(events, now);
   return (
     <div className="page wrap">
       <TrackView name="event_view" />
       <h1>Events</h1>
-      <p className="lede">Times are America/Detroit. Only published events are listed.</p>
-      {upcoming.length === 0 ? <ConfirmedEvents events={[]} /> : null}
+      <p className="lede">Times are America/Detroit. Only confirmed events are listed.</p>
+      {upcoming.length === 0 ? <EventsEmptyState surface="page" hasEarlier={earlier.length > 0} /> : null}
       {upcoming.length ? (
         <section aria-labelledby="upcoming-heading">
           <h2 id="upcoming-heading">Upcoming</h2>
