@@ -138,7 +138,12 @@ export default async function HomePage({
               </Link>
             </>
           ) : (
-            <EventsEmptyState surface="home" />
+            <EventsEmptyState
+              surface="home"
+              phoneHref={site.phoneHref}
+              phone={site.phone}
+              toastUrl={site.toastUrl}
+            />
           )}
         </article>
 

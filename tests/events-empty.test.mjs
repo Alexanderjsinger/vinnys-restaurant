@@ -61,9 +61,13 @@ test("empty-state recovery CTAs reach Parties, Contact, and Call", () => {
   assert.match(empty, /RESERVE_TEL|tel:7349057051/);
   assert.match(empty, /role="status"/);
   assert.match(empty, /aria-label="Next steps when no events are posted"/);
+  assert.match(empty, /OrderLink className="btn btn-solid" url=\{toastUrl\}/);
+  assert.doesNotMatch(empty, /\bORDER_URL\b/, "empty-state must not hardcode ORDER_URL");
 
   const home = read("src/app/page.tsx");
-  assert.match(home, /EventsEmptyState surface="home"/);
+  assert.match(home, /EventsEmptyState[\s\S]*?surface="home"/);
+  assert.match(home, /phoneHref=\{site\.phoneHref\}/);
+  assert.match(home, /toastUrl=\{site\.toastUrl\}/);
   assert.match(home, /All events/);
   assert.doesNotMatch(
     home,
@@ -72,9 +76,25 @@ test("empty-state recovery CTAs reach Parties, Contact, and Call", () => {
   );
 
   const page = read("src/app/events/page.tsx");
+  assert.match(page, /getSite/);
   assert.match(page, /EventsEmptyState surface="page"/);
   assert.match(page, /hasEarlier=\{earlier\.length > 0\}/);
+  assert.match(page, /toastUrl:\s*site\.toastUrl/);
   assert.match(page, /Only confirmed events are listed/);
+});
+
+test("empty CMS ordering URL does not expose a hardcoded ordering link on Events empty-state", () => {
+  const empty = read("src/components/ConfirmedEvents.tsx");
+  const page = read("src/app/events/page.tsx");
+  const orderLink = read("src/components/OrderLink.tsx");
+
+  assert.doesNotMatch(empty, /\bORDER_URL\b/);
+  assert.doesNotMatch(page, /\bORDER_URL\b/);
+  assert.doesNotMatch(empty, /toastUrl\s*\|\|\s*ORDER_URL/);
+  assert.doesNotMatch(page, /toastUrl\s*\|\|\s*ORDER_URL/);
+  assert.doesNotMatch(empty, /order\.toasttab\.com/);
+  assert.match(orderLink, /if \(!url\) return null/, "OrderLink hides when CMS URL is empty");
+  assert.match(empty, /url=\{toastUrl\}/);
 });
 
 test("splitPublicEvents covers empty, upcoming, and past fixtures", async () => {

@@ -2,7 +2,7 @@ import Link from "next/link";
 import { OrderLink } from "@/components/OrderLink";
 import { GUEST_EVENTS_EMPTY_LINE } from "@/lib/events-public";
 import { cleanEventPhoto, formatLongDate, formatPrice, formatTime, phoneHref, safeHttpUrl } from "@/lib/format";
-import { ORDER_URL, PHONE_DISPLAY, RESERVE_TEL } from "@/lib/public";
+import { PHONE_DISPLAY, RESERVE_TEL } from "@/lib/public";
 import type { EventRow } from "@/lib/types";
 
 export { splitPublicEvents } from "@/lib/events-public";
@@ -20,21 +20,35 @@ function nextStepHref(value: string): string | null {
   return safeHttpUrl(value) ?? phoneHref(value);
 }
 
+type EmptyContact = {
+  /** CMS phone href when configured; falls back to known reserve tel. */
+  phoneHref?: string | null;
+  /** CMS phone display when configured. */
+  phone?: string | null;
+  /** CMS Toast ordering URL; Order CTA hidden when empty. */
+  toastUrl?: string | null;
+};
+
 /** Guest empty copy for public Events surfaces (admin may still say placeholder). */
 export function EventsEmptyState({
   surface,
   hasEarlier = false,
+  phoneHref: sitePhoneHref = null,
+  phone: sitePhone = null,
+  toastUrl = null,
 }: {
   surface: "page" | "home";
   /** When earlier events exist, avoid a recovery wall above the past list. */
   hasEarlier?: boolean;
-}) {
+} & EmptyContact) {
   const detail =
     surface === "page" && !hasEarlier
       ? "Check back later, plan a private party, or get in touch."
       : surface === "home" && !hasEarlier
         ? "Nothing is listed yet. Plan a private party or get in touch."
         : null;
+  const callHref = sitePhoneHref || RESERVE_TEL;
+  const callLabel = sitePhone || PHONE_DISPLAY;
 
   return (
     <div className="events-empty" role="status">
@@ -48,10 +62,10 @@ export function EventsEmptyState({
           <Link className="btn" href="/contact">
             Contact
           </Link>
-          <a className="btn" href={RESERVE_TEL} data-track="phone_click">
-            Call {PHONE_DISPLAY}
+          <a className="btn" href={callHref} data-track="phone_click">
+            Call {callLabel}
           </a>
-          {surface === "page" ? <OrderLink className="btn btn-solid" url={ORDER_URL} /> : null}
+          {surface === "page" ? <OrderLink className="btn btn-solid" url={toastUrl} /> : null}
         </div>
       ) : surface === "home" ? (
         <div className="cta-row" aria-label="Browse past and related pages">
@@ -67,9 +81,23 @@ export function EventsEmptyState({
   );
 }
 
-export function ConfirmedEvents({ events }: { events: EventRow[] }) {
+export function ConfirmedEvents({
+  events,
+  phoneHref: sitePhoneHref = null,
+  phone: sitePhone = null,
+  toastUrl = null,
+}: {
+  events: EventRow[];
+} & EmptyContact) {
   if (!events.length) {
-    return <EventsEmptyState surface="page" />;
+    return (
+      <EventsEmptyState
+        surface="page"
+        phoneHref={sitePhoneHref}
+        phone={sitePhone}
+        toastUrl={toastUrl}
+      />
+    );
   }
   return (
     <div className="event-list">
