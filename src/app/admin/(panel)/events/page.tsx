@@ -70,6 +70,7 @@ function EventForm({
     blurb: string;
     price: string;
     photo: string;
+    next_step: string;
     status: string;
   };
 }) {
@@ -114,6 +115,21 @@ function EventForm({
           available for events until photo upload is turned on.
         </p>
         {previewPhoto ? <img src={previewPhoto} alt={event?.title || "Event photo"} style={{ maxWidth: "12rem", height: "auto" }} /> : null}
+      </div>
+      <div className="field">
+        <label htmlFor={`next${id}`}>Next step, optional</label>
+        <input
+          id={`next${id}`}
+          name="next_step"
+          defaultValue={event?.next_step}
+          placeholder="Phone or https://"
+          inputMode="text"
+          autoComplete="off"
+        />
+        <p className="hint">
+          Guest action for this event: a phone number or a full http:// or https:// link. Leave blank for no
+          action. Guests see this text as the clickable next step on the public Events page.
+        </p>
       </div>
       <div className="row-actions">
         {archived ? (

@@ -16,6 +16,8 @@ export function adminError(code: string | undefined): string | null {
       return "Links must start with http:// or https://.";
     case "photo":
       return "That photo did not save. Use a full https:// link, or leave the photo blank. Paths like /media/1 are not accepted for events yet.";
+    case "nextstep":
+      return "That next step did not save. Use a phone number or a full http:// or https:// link, or leave it blank.";
     case "link":
       return "A promo link needs both a label and a URL, or neither.";
     case "provider":

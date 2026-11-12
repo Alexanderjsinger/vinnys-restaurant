@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { OrderLink } from "@/components/OrderLink";
 import { GUEST_EVENTS_EMPTY_LINE } from "@/lib/events-public";
-import { cleanEventPhoto, formatLongDate, formatPrice, formatTime, phoneHref, safeHttpUrl } from "@/lib/format";
+import { cleanEventPhoto, eventNextStepHref, formatLongDate, formatPrice, formatTime } from "@/lib/format";
 import { PHONE_DISPLAY, RESERVE_TEL } from "@/lib/public";
 import type { EventRow } from "@/lib/types";
 
@@ -14,10 +14,6 @@ export function eventDatePart(value: string): string {
 export function eventTimePart(value: string): string {
   const match = /T(\d{2}:\d{2})/.exec(value);
   return match ? match[1] : "";
-}
-
-function nextStepHref(value: string): string | null {
-  return safeHttpUrl(value) ?? phoneHref(value);
 }
 
 type EmptyContact = {
@@ -104,7 +100,7 @@ export function ConfirmedEvents({
       {events.map((event) => {
         const photo = cleanEventPhoto(event.photo);
         const time = eventTimePart(event.starts_at);
-        const stepHref = event.next_step ? nextStepHref(event.next_step) : null;
+        const stepHref = event.next_step ? eventNextStepHref(event.next_step) : null;
         return (
           <article key={event.id} className="event">
             <h3>{event.title}</h3>
