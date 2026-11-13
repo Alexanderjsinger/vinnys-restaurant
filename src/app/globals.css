@@ -756,10 +756,9 @@ button.framed-play:hover { background: var(--gold-hot); transform: translate(-50
 .photo-row .shot {
   display: block;
   width: 100%;
-  max-width: 18rem;
-  /* Lunch plate assets are portrait (~3:4); match them so cover does not zoom-crop */
+  /* Size via max-width only so 3:4 stays honest (max-height was flattening to landscape) */
+  max-width: min(14rem, 72vw);
   aspect-ratio: 3 / 4;
-  max-height: min(15rem, 40vh);
   overflow: hidden;
   background: #161310;
   margin-inline: auto;
@@ -1015,8 +1014,7 @@ button.framed-play:hover { background: var(--gold-hot); transform: translate(-50
   .shot img { max-height: 34rem; }
   .plate .shot,
   .photo-row .shot {
-    max-width: 16.5rem;
-    max-height: min(14rem, 36vh);
+    max-width: 13.5rem;
     margin-inline: 0;
   }
   .plate .shot img,
@@ -1176,8 +1174,7 @@ input[type="checkbox"] { width: 1.15rem; height: 1.15rem; min-height: 0; accent-
   }
   .plate .shot,
   .photo-row .shot {
-    max-width: 15.5rem;
-    max-height: min(13.5rem, 38vh);
+    max-width: min(12.5rem, 68vw);
   }
   .poster {
     height: min(52vh, 28rem);
