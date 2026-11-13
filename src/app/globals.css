@@ -328,14 +328,17 @@ address { font-style: normal; }
   line-height: 1.55;
 }
 
-.framed-hero { margin: 0 auto; }
+.framed-hero { margin: 0 auto; max-width: 56rem; }
 .framed-hero-frame {
   position: relative;
   overflow: hidden;
   border-radius: 1.15rem;
   background: #140f0c;
   box-shadow: 0 24px 60px rgba(20, 16, 10, 0.18);
-  min-height: min(58vh, 34rem);
+  /* Cap framed media so it reads as a panel, not a near-full-viewport poster */
+  aspect-ratio: 16 / 10;
+  max-height: min(28rem, 52vh);
+  min-height: 14rem;
   animation: frame-in 900ms ease both;
 }
 .framed-hero-media {
@@ -485,14 +488,18 @@ button.framed-play:hover { background: var(--gold-hot); transform: translate(-50
 }
 .story-frame {
   margin: 0;
+  max-width: 32rem;
+  justify-self: end;
   background: var(--black);
-  border: 0.55rem solid var(--black);
+  border: 0.45rem solid var(--black);
   box-shadow: var(--shadow);
 }
 .story-frame img {
   width: 100%;
   height: auto;
+  /* Storefront source is ~5:4; keep honest, cap so the frame never dominates */
   aspect-ratio: 5 / 4;
+  max-height: min(20rem, 46vh);
   object-fit: cover;
   object-position: center;
   display: block;
@@ -531,14 +538,12 @@ button.framed-play:hover { background: var(--gold-hot); transform: translate(-50
   margin: 1.6rem 0 0;
   padding: 0;
   display: grid;
-  gap: 0.8rem;
-  grid-template-columns: 1fr;
-}
-@media (min-width: 700px) {
-  .ritual-strip { grid-template-columns: repeat(2, 1fr); }
+  gap: 0.75rem;
+  /* Two-up on phones so portrait food never becomes a full-screen scroll tax */
+  grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 @media (min-width: 980px) {
-  .ritual-strip { grid-template-columns: repeat(4, 1fr); }
+  .ritual-strip { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 0.85rem; }
 }
 .ritual-strip figure {
   margin: 0;
@@ -547,18 +552,23 @@ button.framed-play:hover { background: var(--gold-hot); transform: translate(-50
 }
 .ritual-strip img {
   width: 100%;
-  aspect-ratio: 4 / 3;
+  height: auto;
+  /* Square preferred; max-height keeps cards dense when the column is wide */
+  aspect-ratio: 1 / 1;
+  max-height: min(12.5rem, 38vh);
   object-fit: cover;
+  object-position: center 32%;
   display: block;
   transition: transform 420ms ease;
 }
-.ritual-strip li:hover img { transform: scale(1.04); }
+.ritual-strip li:hover img { transform: scale(1.03); }
 .ritual-strip figcaption {
-  padding: 0.65rem 0.75rem 0.8rem;
+  padding: 0.55rem 0.65rem 0.7rem;
   color: #d7d0c4;
-  font-size: 0.82rem;
+  font-size: 0.78rem;
   letter-spacing: 0.04em;
   text-transform: uppercase;
+  line-height: 1.35;
 }
 .social-ctas {
   justify-content: center;
@@ -746,9 +756,12 @@ button.framed-play:hover { background: var(--gold-hot); transform: translate(-50
 .photo-row .shot {
   display: block;
   width: 100%;
-  aspect-ratio: 4 / 3;
+  /* Size via max-width only so 3:4 stays honest (max-height was flattening to landscape) */
+  max-width: min(14rem, 72vw);
+  aspect-ratio: 3 / 4;
   overflow: hidden;
   background: #161310;
+  margin-inline: auto;
 }
 .plate .shot img,
 .photo-row .shot img {
@@ -756,7 +769,7 @@ button.framed-play:hover { background: var(--gold-hot); transform: translate(-50
   height: 100%;
   max-height: none;
   object-fit: cover;
-  object-position: center 40%;
+  object-position: center 28%;
   margin: 0;
 }
 .plate h3 { margin-top: 0.65rem; }
@@ -999,9 +1012,17 @@ button.framed-play:hover { background: var(--gold-hot); transform: translate(-50
 @media (min-width: 800px) {
   .photo-row, .plate-list { grid-template-columns: 1fr 1fr; }
   .shot img { max-height: 34rem; }
+  .plate .shot,
+  .photo-row .shot {
+    max-width: 13.5rem;
+    margin-inline: 0;
+  }
   .plate .shot img,
   .photo-row .shot img { max-height: none; }
-  .event img { max-height: 28rem; }
+  .event img { max-height: 22rem; }
+  .story-frame { max-width: 28rem; }
+  .story-frame img { max-height: min(18rem, 42vh); }
+  .ritual-strip img { max-height: min(13.5rem, 34vh); }
 }
 .chip {
   display: inline-block;
@@ -1126,8 +1147,11 @@ input[type="checkbox"] { width: 1.15rem; height: 1.15rem; min-height: 0; accent-
 }
 
 @media (max-width: 799px) {
+  .framed-hero { max-width: none; }
   .framed-hero-frame {
-    min-height: min(52vh, 26rem);
+    aspect-ratio: 4 / 3;
+    max-height: min(22rem, 48vh);
+    min-height: 12rem;
     border-radius: 0.9rem;
   }
   .framed-hero-overlay {
@@ -1137,6 +1161,20 @@ input[type="checkbox"] { width: 1.15rem; height: 1.15rem; min-height: 0; accent-
     width: 3.6rem;
     height: 3.6rem;
     top: 42%;
+  }
+  .story-frame {
+    max-width: none;
+    justify-self: stretch;
+  }
+  .story-frame img {
+    max-height: min(16rem, 42vh);
+  }
+  .ritual-strip img {
+    max-height: min(11rem, 34vh);
+  }
+  .plate .shot,
+  .photo-row .shot {
+    max-width: min(12.5rem, 68vw);
   }
   .poster {
     height: min(52vh, 28rem);
