@@ -65,15 +65,22 @@ test("lunch plate frames use cover framing instead of letterboxed tall voids", (
 test("framed hero keeps rounded media + honest poster structure", () => {
   const css = read(cssPath);
   const hero = read(path.join(root, "src/components/HeroMedia.tsx"));
+  const page = read(pagePath);
+  const reelPath = path.join(root, "public/hero/vinnys-sizzle-reel-1080p.mp4");
 
   assert.match(css, /\.framed-hero-frame\s*\{[\s\S]*?border-radius:/, "hero media is rounded/framed");
   assert.match(css, /\.framed-hero-media img[\s\S]*?object-fit:\s*cover/, "hero image covers the frame");
   assert.match(hero, /framed-hero/, "hero wraps in framed band");
   assert.match(hero, /framed-hero-credit/, "stock-photo honesty caption remains available");
-  assert.match(hero, /videoSrc/, "hero structure is ready for an approved video src later");
+  const heroLib = read(path.join(root, "src/lib/hero.ts"));
+  assert.match(heroLib, /SIZZLE_REEL/, "approved sizzle reel constant is defined");
+  assert.match(heroLib, /durationLabel:\s*"0:30"/, "duration matches measured ~30s file");
+  assert.match(page, /SIZZLE_REEL\.src/, "homepage wires the approved sizzle reel");
+  assert.match(page, /durationLabel=\{SIZZLE_REEL\.durationLabel\}/, "homepage passes measured duration only");
+  assert.ok(fs.existsSync(reelPath), "sizzle reel mp4 is present under public/hero");
   assert.match(hero, /prefers-reduced-motion/, "hero respects reduced motion");
-  assert.match(hero, /still frame|Atmosphere/, "no fake dazzle-reel duration copy");
-  assert.doesNotMatch(hero, /1:13|DAZZLE REEL/i);
+  assert.match(hero, /still frame|Atmosphere/, "honest atmosphere copy (no invented dazzle branding)");
+  assert.doesNotMatch(hero, /1:13|1:20|DAZZLE REEL/i);
   assert.doesNotMatch(
     hero,
     /<figure className="framed-hero-media[\s\S]*?framed-hero-credit[\s\S]*?<\/figure>/,

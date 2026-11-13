@@ -4,9 +4,9 @@ import type { ReactNode } from "react";
 import { useEffect, useRef, useState } from "react";
 
 /**
- * Framed homepage hero media (Stitch composition). Video src is optional —
- * when absent we ship the poster/static frame with play UI structure.
- * Never invent footage; only wire a real file under public/ when one exists.
+ * Framed homepage hero media (Stitch composition).
+ * Approved sizzle reel lives under public/hero; poster remains meet-me.jpg.
+ * Duration labels must come from a measured file — never invent timecodes.
  */
 const DEFAULT_POSTER = {
   src: "/hero/meet-me.jpg",
@@ -14,15 +14,18 @@ const DEFAULT_POSTER = {
   width: 1800,
   height: 1203,
   credit:
-    "Friends at a restaurant table. Not a photo of Vinny’s dining room.",
+    "Atmosphere reel from Vinny’s. Poster still is a stock table photo — Not a photo of Vinny’s dining room.",
 } as const;
 
 export function HeroMedia({
   videoSrc = null,
+  durationLabel = null,
   poster = DEFAULT_POSTER,
   overlay,
 }: {
   videoSrc?: string | null;
+  /** Honest measured length only (e.g. "0:30"). Omit rather than invent. */
+  durationLabel?: string | null;
   poster?: {
     src: string;
     alt: string;
@@ -33,9 +36,14 @@ export function HeroMedia({
   overlay?: ReactNode;
 }) {
   const videoRef = useRef<HTMLVideoElement | null>(null);
-  const [paused, setPaused] = useState(true);
+  const [paused, setPaused] = useState(false);
   const [reduceMotion, setReduceMotion] = useState(false);
   const canPlayVideo = Boolean(videoSrc) && !reduceMotion;
+  const watchLabel = canPlayVideo
+    ? durationLabel
+      ? `Watch atmosphere reel (${durationLabel})`
+      : "Watch atmosphere reel"
+    : "Atmosphere · still frame";
 
   useEffect(() => {
     const media = window.matchMedia("(prefers-reduced-motion: reduce)");
@@ -53,7 +61,8 @@ export function HeroMedia({
       return;
     }
     void el.play().catch(() => {
-      /* Autoplay can fail; poster remains visible. */
+      /* Autoplay can fail; keep poster/chrome honest. */
+      setPaused(true);
     });
   }, [canPlayVideo, paused]);
 
@@ -68,6 +77,7 @@ export function HeroMedia({
               muted
               playsInline
               loop
+              autoPlay
               poster={poster.src}
               aria-label={poster.alt}
             >
@@ -84,9 +94,7 @@ export function HeroMedia({
         </figure>
 
         <div className="framed-hero-chrome" aria-hidden={canPlayVideo ? undefined : true}>
-          <p className="framed-hero-watch">
-            {canPlayVideo ? "Watch atmosphere reel" : "Atmosphere · still frame"}
-          </p>
+          <p className="framed-hero-watch">{watchLabel}</p>
           {canPlayVideo ? (
             <button
               type="button"
@@ -95,7 +103,7 @@ export function HeroMedia({
               aria-pressed={!paused}
               aria-label={paused ? "Play video" : "Pause video"}
             >
-              <span className="framed-play-icon" data-paused={paused || undefined} />
+              <span className="framed-play-icon" data-paused={paused ? "true" : "false"} />
             </button>
           ) : (
             <span className="framed-play" aria-hidden="true">
