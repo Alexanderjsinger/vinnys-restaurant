@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { ConfirmedEvents, EventsEmptyState } from "@/components/ConfirmedEvents";
 import { HeroMedia } from "@/components/HeroMedia";
+import { SIZZLE_REEL } from "@/lib/hero";
 import { HoursList } from "@/components/HoursList";
 import { listEvents, listMenu } from "@/lib/content";
 import { detroitNowLocal, formatPrice } from "@/lib/format";
@@ -84,6 +85,8 @@ export default async function HomePage({
 
         <div className="wrap">
           <HeroMedia
+            videoSrc={SIZZLE_REEL.src}
+            durationLabel={SIZZLE_REEL.durationLabel}
             overlay={
               <>
                 <div className="framed-hero-copy">
