@@ -12,21 +12,22 @@ function read(file) {
   return fs.readFileSync(file, "utf8");
 }
 
-test("homepage intro does not duplicate header-style CTA row", () => {
+test("header chrome matches Stitch light composition (Call + Order)", () => {
   const page = read(pagePath);
   const header = read(headerPath);
 
   assert.match(header, /header-actions/, "header utility CTAs stay in SiteHeader");
-  assert.match(header, /Call to reserve/, "header keeps call CTA");
-  assert.match(header, /Directions/, "header keeps directions CTA");
+  assert.match(header, /Call/, "header keeps call CTA");
   assert.match(header, /OrderLink/, "header keeps order CTA");
+  assert.match(header, /brand-mark/, "wordmark present");
+  assert.match(header, /Ypsilanti, MI/, "location subtitle without invented EST year");
+  assert.doesNotMatch(header, /EST\.\s*1964|Happy Hour|Weekend Brunch/i);
+  assert.doesNotMatch(header, /positioning/, "old brass positioning strip removed");
 
-  const introMatch = page.match(/className="page wrap home-intro[^"]*"[\s\S]*?<\/section>/);
-  assert.ok(introMatch, "home-intro section exists");
-  const intro = introMatch[0];
-  assert.doesNotMatch(intro, /cta-row/, "home-intro must not render a twin cta-row");
-  assert.doesNotMatch(intro, /View Menu/, "menu CTA belongs in nav/cards, not a duplicate intro button row");
-  assert.doesNotMatch(intro, /Get Directions/, "directions stays in header/visit, not intro twin row");
+  const hero = page.match(/className="stitch-hero"[\s\S]*?<\/section>/);
+  assert.ok(hero, "stitch-hero section exists");
+  assert.match(hero[0], /framed-hero-actions/, "media dual CTAs live on framed hero");
+  assert.doesNotMatch(hero[0], /Reserve a Table|Happy Hour|EST\.\s*1964/i);
 });
 
 test("lunch plate frames use cover framing instead of letterboxed tall voids", () => {
@@ -44,8 +45,6 @@ test("lunch plate frames use cover framing instead of letterboxed tall voids", (
     "plate images are not capped into a letterbox box",
   );
 
-  // Regression: desktop must not force generic .shot img to width:100% without a height,
-  // which letterboxed portrait photos into tall black columns.
   const desktopBlocks = [...css.matchAll(/@media \(min-width:\s*800px\)\s*\{([\s\S]*?)\n\}/g)].map(
     (match) => match[1],
   );
@@ -63,30 +62,26 @@ test("lunch plate frames use cover framing instead of letterboxed tall voids", (
   );
 });
 
-test("hero poster stays full-bleed without aspect-ratio width shrink", () => {
+test("framed hero keeps rounded media + honest poster structure", () => {
   const css = read(cssPath);
   const hero = read(path.join(root, "src/components/HeroMedia.tsx"));
 
-  assert.match(css, /\.poster\s*\{[\s\S]*?width:\s*100%/, "poster locks to full content width");
-  assert.match(css, /\.poster\s*\{[\s\S]*?height:\s*min\(70vh,\s*42rem\)/, "poster height is viewport-driven");
-  assert.doesNotMatch(
-    css,
-    /\.poster\s*\{[^}]*aspect-ratio:/,
-    "poster must not use aspect-ratio (pairs with height caps and shrinks/overflows width)",
-  );
-  assert.match(css, /\.poster-frame img\s*\{[\s\S]*?object-fit:\s*cover/, "hero image covers the full-bleed frame");
-  assert.match(hero, /poster-band/, "hero wraps in a full-bleed band");
-  assert.match(hero, /poster-credit/, "stock-photo honesty caption remains available");
+  assert.match(css, /\.framed-hero-frame\s*\{[\s\S]*?border-radius:/, "hero media is rounded/framed");
+  assert.match(css, /\.framed-hero-media img[\s\S]*?object-fit:\s*cover/, "hero image covers the frame");
+  assert.match(hero, /framed-hero/, "hero wraps in framed band");
+  assert.match(hero, /framed-hero-credit/, "stock-photo honesty caption remains available");
   assert.match(hero, /videoSrc/, "hero structure is ready for an approved video src later");
   assert.match(hero, /prefers-reduced-motion/, "hero respects reduced motion");
+  assert.match(hero, /still frame|Atmosphere/, "no fake dazzle-reel duration copy");
+  assert.doesNotMatch(hero, /1:13|DAZZLE REEL/i);
   assert.doesNotMatch(
     hero,
-    /<figure className="poster-frame[\s\S]*?poster-credit[\s\S]*?<\/figure>/,
-    "honesty caption must not float as an overlay inside the hero frame",
+    /<figure className="framed-hero-media[\s\S]*?framed-hero-credit[\s\S]*?<\/figure>/,
+    "honesty caption must not float as an overlay inside the hero media figure",
   );
-  const creditRule = css.match(/\.poster-credit\s*\{[^}]*\}/);
-  assert.ok(creditRule, "poster-credit rule exists");
-  assert.doesNotMatch(creditRule[0], /position:\s*absolute/, "poster-credit is not absolutely positioned over the hero");
+  const creditRule = css.match(/\.framed-hero-credit\s*\{[^}]*\}/);
+  assert.ok(creditRule, "framed-hero-credit rule exists");
+  assert.doesNotMatch(creditRule[0], /position:\s*absolute/, "credit is not absolutely positioned over media");
 
   assert.match(css, /\.venue-shot img\s*\{[\s\S]*?aspect-ratio:/, "venue band declares an aspect ratio");
   assert.match(css, /\.venue-shot img\s*\{[\s\S]*?object-fit:\s*cover/, "venue uses cover crop");
@@ -97,11 +92,19 @@ test("hero poster stays full-bleed without aspect-ratio width shrink", () => {
   );
 });
 
-test("hybrid homepage keeps authenticity constraints in markup", () => {
+test("stitch homepage keeps authenticity constraints in markup", () => {
   const page = read(pagePath);
   assert.match(page, /HeroMedia/, "homepage uses video-ready HeroMedia");
-  assert.doesNotMatch(page, /18 Cold Craft Taps|dry-aged|stone-fired|truffle fries|Happy Hour|Campus Nights|Pease Auditorium|Good Food, Great Times|SCRATCH TAVERN/i);
+  assert.match(page, /stitch-hero/, "cream Stitch hero composition");
+  assert.match(page, /story-split/, "cream story split");
+  assert.match(page, /social-rituals/, "dark social rituals band");
+  assert.doesNotMatch(
+    page,
+    /18 Cold Craft Taps|dry-aged|stone-fired|truffle fries|Happy Hour|Campus Nights|Pease Auditorium|Good Food, Great Times|SCRATCH TAVERN|EST\.\s*1964|Reserve a Table|Weekend Brunch/i,
+  );
   assert.doesNotMatch(page, /testimonial|inquiry form|name="event_type"/i);
   assert.match(page, /Call to plan a private party/);
+  assert.match(page, /Meet me at Vinny/);
   assert.match(page, /listMenu\("public"\)/);
+  assert.match(page, /Listing photo of the exterior/);
 });
