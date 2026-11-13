@@ -218,15 +218,18 @@ test("birthday signup route stays closed and homepage has no signup inputs", () 
   assert.doesNotMatch(home, /name="email"/);
 });
 
-test("homepage hero uses storefront exterior and venue uses table photo", () => {
+test("homepage hero uses table photo and story uses storefront exterior", () => {
+  const hero = fs.readFileSync(path.join(root, "src/components/HeroMedia.tsx"), "utf8");
   const poster = fs.readFileSync(path.join(root, "src/components/PosterSlider.tsx"), "utf8");
   const page = fs.readFileSync(path.join(root, "src/app/page.tsx"), "utf8");
   const layout = fs.readFileSync(path.join(root, "src/app/layout.tsx"), "utf8");
   const seo = fs.readFileSync(path.join(root, "src/lib/seo.ts"), "utf8");
+  assert.match(hero, /\/hero\/meet-me\.jpg/);
+  assert.match(hero, /Not a photo of Vinny/);
   assert.match(poster, /\/photos\/storefront\.webp/);
   assert.match(poster, /listing photo of the exterior/);
-  assert.match(page, /src="\/hero\/meet-me\.jpg"/);
-  assert.match(page, /Not a photo of the dining room/);
+  assert.match(page, /\/photos\/storefront\.webp/);
+  assert.match(page, /Listing photo of the exterior/);
   assert.match(layout, /\/photos\/storefront\.webp/);
   assert.match(seo, /\/photos\/storefront\.webp/);
 });
