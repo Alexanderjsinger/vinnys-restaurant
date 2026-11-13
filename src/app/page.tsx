@@ -66,23 +66,138 @@ export default async function HomePage({
   const addressLine = site.address || MAP_QUERY;
   const phoneHref = site.phoneHref || RESERVE_TEL;
   const phoneLabel = site.phone || PHONE_DISPLAY;
+  const heroSupport =
+    site.heroText?.trim() ||
+    "A bar and grill across from EMU on Cross Street. Lunch daily, 11–3pm.";
 
   return (
     <>
-      <HeroMedia line={HERO_LINE} />
+      <section className="stitch-hero" aria-labelledby="home-heading">
+        <div className="wrap stitch-hero-copy">
+          <p className="micro-label stitch-hero-label">Historic Cross Street / Ypsilanti, Michigan</p>
+          <h1 id="home-heading" className="stitch-wordmark">
+            Vinny&apos;s
+          </h1>
+          <div className="gold-rule" aria-hidden="true" />
+          <p className="stitch-hero-support">{heroSupport}</p>
+        </div>
 
-      <section className="page wrap home-intro band-obsidian" aria-labelledby="home-heading">
-        <p className="status-pill">
-          <span className="status-pill-dot" aria-hidden="true" />
-          {addressLine}
-        </p>
-        <h1 id="home-heading">{site.heroHeading}</h1>
-        <p className="lede">{site.heroText}</p>
-        {site.heroImage ? (
-          <figure className="shot">
-            <img src={site.heroImage} alt="" />
+        <div className="wrap">
+          <HeroMedia
+            overlay={
+              <>
+                <div className="framed-hero-copy">
+                  <p className="micro-label framed-hero-kicker">Across from EMU</p>
+                  <p className="framed-hero-title">{HERO_LINE}</p>
+                  <p className="framed-hero-text">
+                    {addressLine}. Warm neighborhood energy on historic Cross Street.
+                  </p>
+                </div>
+                <p className="framed-hero-actions">
+                  <a className="btn btn-gold" href={phoneHref} data-track="phone_click">
+                    Call {phoneLabel}
+                  </a>
+                  <Link className="btn btn-light" href="/menu">
+                    View menus
+                  </Link>
+                </p>
+              </>
+            }
+          />
+        </div>
+      </section>
+
+      <section className="story-split" aria-labelledby="story-heading">
+        <div className="wrap story-grid">
+          <div className="story-copy">
+            <p className="micro-label">Our home on historic Cross Street</p>
+            <h2 id="story-heading">
+              705 W Cross St: across from EMU, built for gathering
+            </h2>
+            <p>
+              {site.heroText?.trim() ||
+                "Vinny’s is a bar and grill on historic Cross Street in Ypsilanti, directly across from Eastern Michigan University."}
+            </p>
+            <p>
+              Lunch is served daily, 11–3pm, from the published menu. Call for the room, or order
+              takeout when Toast is connected.
+            </p>
+            <p className="story-links">
+              <Link className="btn btn-ink" href="/contact">
+                Visit & hours →
+              </Link>
+              <a className="text-link" href={phoneHref} data-track="phone_click">
+                Call to plan an evening →
+              </a>
+            </p>
+          </div>
+          <figure className="story-frame">
+            <img
+              src="/photos/storefront.webp"
+              alt="Exterior of Vinny's Bar & Grill at 705 W. Cross St."
+              width={1110}
+              height={886}
+            />
+            <figcaption>
+              <span>705 W Cross St · Across from EMU / Ypsilanti, MI</span>
+              <span className="story-frame-note">
+                Listing photo of the exterior, not an owner photo of the dining room.
+              </span>
+            </figcaption>
           </figure>
-        ) : null}
+        </div>
+      </section>
+
+      <section className="social-rituals" aria-labelledby="rituals-heading">
+        <div className="wrap">
+          <p className="micro-label">Social rituals & gatherings</p>
+          <h2 id="rituals-heading">Curated for every Cross Street night</h2>
+          <p className="band-lede social-lede">
+            Published events when we have them, private parties by phone, and lunch from the menu.
+          </p>
+          <ul className="ritual-strip">
+            <li>
+              <figure>
+                <img
+                  src="/hero/meet-me.jpg"
+                  alt="Friends sharing drinks and plates at a restaurant table"
+                  width={900}
+                  height={600}
+                />
+                <figcaption>Meet me at Vinny&apos;s</figcaption>
+              </figure>
+            </li>
+            {plates.map(({ plate, item }) => (
+              <li key={item.id}>
+                <figure>
+                  <img src={plate.src} alt={plate.alt} width={plate.width} height={plate.height} />
+                  <figcaption>
+                    {item.name} · {formatPrice(item.price)}
+                  </figcaption>
+                </figure>
+              </li>
+            ))}
+            <li>
+              <figure>
+                <img
+                  src="/photos/storefront.webp"
+                  alt="Vinny's Bar & Grill storefront exterior"
+                  width={555}
+                  height={443}
+                />
+                <figcaption>705 W Cross St</figcaption>
+              </figure>
+            </li>
+          </ul>
+          <p className="cta-row social-ctas">
+            <Link className="btn btn-gold" href="/events">
+              Events
+            </Link>
+            <a className="btn btn-outline-light" href={phoneHref} data-track="phone_click">
+              Call about private parties
+            </a>
+          </p>
+        </div>
       </section>
 
       <section className="band-cream food-band" aria-labelledby="plates-heading">
@@ -119,45 +234,13 @@ export default async function HomePage({
             </div>
           ) : null}
           <p className="menu-banner">
-            <Link className="btn btn-solid" href="/menu">
+            <Link className="btn btn-ink" href="/menu">
               Full lunch menu
             </Link>
-            <OrderLink className="btn" url={site.toastUrl}>
+            <OrderLink className="btn btn-gold" url={site.toastUrl}>
               Order takeout
             </OrderLink>
           </p>
-        </div>
-      </section>
-
-      <section className="band-obsidian story-band" aria-labelledby="story-heading">
-        <div className="wrap story-grid">
-          <div>
-            <p className="micro-label">Our story</p>
-            <h2 id="story-heading">Across from EMU on Cross Street</h2>
-            <p className="lede">
-              {site.heroText ||
-                "A bar and grill across from EMU in Ypsilanti. Lunch is served daily, 11–3pm, from the printed menu."}
-            </p>
-            <p className="cta-row">
-              <Link className="btn" href="/contact">
-                Visit & hours
-              </Link>
-              <a className="btn btn-solid" href={phoneHref} data-track="phone_click">
-                Call {phoneLabel}
-              </a>
-            </p>
-          </div>
-          <figure className="venue-shot story-shot">
-            <img
-              src="/photos/storefront.webp"
-              alt="Exterior of Vinny's Bar & Grill at 705 W. Cross St."
-              width={1110}
-              height={886}
-            />
-            <figcaption>
-              Storefront at 705 W. Cross St. Listing photo of the exterior, not an owner photo of the dining room.
-            </figcaption>
-          </figure>
         </div>
       </section>
 
@@ -184,7 +267,7 @@ export default async function HomePage({
         <article className="home-card">
           <h2>Private parties</h2>
           <p>Call to plan a private party. Room capacity and party prices are not published.</p>
-          <a className="btn btn-solid" href={phoneHref} data-track="phone_click">
+          <a className="btn btn-ink" href={phoneHref} data-track="phone_click">
             {phoneLabel}
           </a>
           <Link className="btn" href="/parties">
@@ -213,7 +296,7 @@ export default async function HomePage({
               </a>
             </p>
             <p>
-              <OrderLink className="btn btn-solid" url={site.toastUrl} />
+              <OrderLink className="btn btn-ink" url={site.toastUrl} />
             </p>
           </div>
           <iframe

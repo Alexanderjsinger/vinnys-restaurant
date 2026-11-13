@@ -1,11 +1,11 @@
 "use client";
 
+import type { ReactNode } from "react";
 import { useEffect, useRef, useState } from "react";
-import { HERO_LINE } from "@/lib/public";
 
 /**
- * Full-bleed homepage hero. Video src is optional — when absent we ship the
- * poster/static frame so the layout is ready for an approved loop later.
+ * Framed homepage hero media (Stitch composition). Video src is optional —
+ * when absent we ship the poster/static frame with play UI structure.
  * Never invent footage; only wire a real file under public/ when one exists.
  */
 const DEFAULT_POSTER = {
@@ -20,7 +20,7 @@ const DEFAULT_POSTER = {
 export function HeroMedia({
   videoSrc = null,
   poster = DEFAULT_POSTER,
-  line = HERO_LINE,
+  overlay,
 }: {
   videoSrc?: string | null;
   poster?: {
@@ -30,10 +30,10 @@ export function HeroMedia({
     height: number;
     credit: string;
   };
-  line?: string;
+  overlay?: ReactNode;
 }) {
   const videoRef = useRef<HTMLVideoElement | null>(null);
-  const [paused, setPaused] = useState(false);
+  const [paused, setPaused] = useState(true);
   const [reduceMotion, setReduceMotion] = useState(false);
   const canPlayVideo = Boolean(videoSrc) && !reduceMotion;
 
@@ -58,9 +58,9 @@ export function HeroMedia({
   }, [canPlayVideo, paused]);
 
   return (
-    <div className="poster-band hero-media-band">
-      <section className="poster hero-media" aria-label={line}>
-        <figure className="poster-frame is-active">
+    <div className="framed-hero">
+      <section className="framed-hero-frame" aria-label="Vinny's atmosphere">
+        <figure className="framed-hero-media">
           {canPlayVideo && videoSrc ? (
             <video
               ref={videoRef}
@@ -68,7 +68,6 @@ export function HeroMedia({
               muted
               playsInline
               loop
-              autoPlay
               poster={poster.src}
               aria-label={poster.alt}
             >
@@ -82,22 +81,32 @@ export function HeroMedia({
               height={poster.height}
             />
           )}
-          <figcaption className="poster-line">{line}</figcaption>
         </figure>
-        {canPlayVideo ? (
-          <div className="poster-controls hero-media-controls">
+
+        <div className="framed-hero-chrome" aria-hidden={canPlayVideo ? undefined : true}>
+          <p className="framed-hero-watch">
+            {canPlayVideo ? "Watch atmosphere reel" : "Atmosphere · still frame"}
+          </p>
+          {canPlayVideo ? (
             <button
               type="button"
-              className="btn"
+              className="framed-play"
               onClick={() => setPaused((value) => !value)}
-              aria-pressed={paused}
+              aria-pressed={!paused}
+              aria-label={paused ? "Play video" : "Pause video"}
             >
-              {paused ? "Play video" : "Pause video"}
+              <span className="framed-play-icon" data-paused={paused || undefined} />
             </button>
-          </div>
-        ) : null}
+          ) : (
+            <span className="framed-play" aria-hidden="true">
+              <span className="framed-play-icon" data-paused="" />
+            </span>
+          )}
+        </div>
+
+        {overlay ? <div className="framed-hero-overlay">{overlay}</div> : null}
       </section>
-      <p className="poster-credit">{poster.credit}</p>
+      <p className="framed-hero-credit">{poster.credit}</p>
     </div>
   );
 }
