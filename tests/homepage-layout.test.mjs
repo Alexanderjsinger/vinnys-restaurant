@@ -21,7 +21,7 @@ test("homepage intro does not duplicate header-style CTA row", () => {
   assert.match(header, /Directions/, "header keeps directions CTA");
   assert.match(header, /OrderLink/, "header keeps order CTA");
 
-  const introMatch = page.match(/className="page wrap home-intro"[\s\S]*?<\/section>/);
+  const introMatch = page.match(/className="page wrap home-intro[^"]*"[\s\S]*?<\/section>/);
   assert.ok(introMatch, "home-intro section exists");
   const intro = introMatch[0];
   assert.doesNotMatch(intro, /cta-row/, "home-intro must not render a twin cta-row");
@@ -65,7 +65,7 @@ test("lunch plate frames use cover framing instead of letterboxed tall voids", (
 
 test("hero poster stays full-bleed without aspect-ratio width shrink", () => {
   const css = read(cssPath);
-  const poster = read(path.join(root, "src/components/PosterSlider.tsx"));
+  const hero = read(path.join(root, "src/components/HeroMedia.tsx"));
 
   assert.match(css, /\.poster\s*\{[\s\S]*?width:\s*100%/, "poster locks to full content width");
   assert.match(css, /\.poster\s*\{[\s\S]*?height:\s*min\(70vh,\s*42rem\)/, "poster height is viewport-driven");
@@ -75,10 +75,12 @@ test("hero poster stays full-bleed without aspect-ratio width shrink", () => {
     "poster must not use aspect-ratio (pairs with height caps and shrinks/overflows width)",
   );
   assert.match(css, /\.poster-frame img\s*\{[\s\S]*?object-fit:\s*cover/, "hero image covers the full-bleed frame");
-  assert.match(poster, /poster-band/, "hero wraps in a full-bleed band");
-  assert.match(poster, /poster-credit/, "stock-photo honesty caption remains available");
+  assert.match(hero, /poster-band/, "hero wraps in a full-bleed band");
+  assert.match(hero, /poster-credit/, "stock-photo honesty caption remains available");
+  assert.match(hero, /videoSrc/, "hero structure is ready for an approved video src later");
+  assert.match(hero, /prefers-reduced-motion/, "hero respects reduced motion");
   assert.doesNotMatch(
-    poster,
+    hero,
     /<figure className="poster-frame[\s\S]*?poster-credit[\s\S]*?<\/figure>/,
     "honesty caption must not float as an overlay inside the hero frame",
   );
@@ -93,4 +95,13 @@ test("hero poster stays full-bleed without aspect-ratio width shrink", () => {
     /\.venue-shot img\s*\{[^}]*max-height:\s*14rem/,
     "venue band must not crush to the old 14rem max-height",
   );
+});
+
+test("hybrid homepage keeps authenticity constraints in markup", () => {
+  const page = read(pagePath);
+  assert.match(page, /HeroMedia/, "homepage uses video-ready HeroMedia");
+  assert.doesNotMatch(page, /18 Cold Craft Taps|dry-aged|stone-fired|truffle fries|Happy Hour|Campus Nights|Pease Auditorium|Good Food, Great Times|SCRATCH TAVERN/i);
+  assert.doesNotMatch(page, /testimonial|inquiry form|name="event_type"/i);
+  assert.match(page, /Call to plan a private party/);
+  assert.match(page, /listMenu\("public"\)/);
 });

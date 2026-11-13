@@ -1,6 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { headers } from "next/headers";
-import { Fraunces, Outfit } from "next/font/google";
+import { Playfair_Display, Plus_Jakarta_Sans } from "next/font/google";
 import { LocalBusinessJsonLd } from "@/components/LocalBusinessJsonLd";
 import { SiteFooter } from "@/components/SiteFooter";
 import { SiteHeader } from "@/components/SiteHeader";
@@ -12,20 +12,22 @@ import "./globals.css";
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
 
-const display = Fraunces({
+const display = Playfair_Display({
   subsets: ["latin"],
+  weight: ["600", "700"],
   variable: "--font-display",
   display: "swap",
 });
 
-const sans = Outfit({
+const sans = Plus_Jakarta_Sans({
   subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
   variable: "--font-body",
   display: "swap",
 });
 
 export const viewport: Viewport = {
-  themeColor: "#100e0c",
+  themeColor: "#121110",
   width: "device-width",
   initialScale: 1,
 };

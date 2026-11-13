@@ -8,6 +8,7 @@ export function SiteHeader({ site }: { site: PublicSite }) {
   const phoneHref = site.phoneHref || RESERVE_TEL;
   const phoneLabel = site.phone || PHONE_DISPLAY;
   const directions = site.mapUrl || DIRECTIONS_URL;
+  const brandName = site.name || "Vinny's Bar & Grill";
   return (
     <header className="site-header">
       <div className="sticky-bar">
@@ -24,8 +25,9 @@ export function SiteHeader({ site }: { site: PublicSite }) {
         </div>
         <div className="wrap brand-row">
           <Link className="brand" href="/">
-            {site.name}
+            <span className="brand-mark">{brandName}</span>
           </Link>
+          <PrimaryNav />
           <div className="header-actions">
             <a className="btn" href={phoneHref} data-track="phone_click">
               <span className="label-long">Call to reserve</span>
@@ -35,11 +37,10 @@ export function SiteHeader({ site }: { site: PublicSite }) {
               Directions
               <span className="sr-only"> (opens in a new tab)</span>
             </a>
-            <OrderLink className="btn btn-solid" url={site.toastUrl} />
+            <OrderLink className="btn btn-solid" url={site.toastUrl}>
+              Order
+            </OrderLink>
           </div>
-        </div>
-        <div className="wrap">
-          <PrimaryNav />
         </div>
       </div>
       <p className="positioning">{POSITIONING}</p>

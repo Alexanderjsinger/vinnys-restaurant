@@ -4,11 +4,10 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 
 const LINKS = [
-  { href: "/", label: "Home" },
-  { href: "/menu", label: "Menu" },
+  { href: "/menu", label: "Food & Menus" },
   { href: "/events", label: "Events" },
-  { href: "/parties", label: "Parties" },
-  { href: "/contact", label: "Contact" },
+  { href: "/parties", label: "Private Gatherings" },
+  { href: "/contact", label: "Visit & Hours" },
 ];
 
 export function PrimaryNav() {
@@ -17,7 +16,7 @@ export function PrimaryNav() {
     <nav aria-label="Primary" className="primary-nav">
       <ul>
         {LINKS.map((link) => {
-          const current = link.href === "/" ? path === "/" : path === link.href;
+          const current = path === link.href;
           return (
             <li key={link.href}>
               <Link href={link.href} aria-current={current ? "page" : undefined}>
