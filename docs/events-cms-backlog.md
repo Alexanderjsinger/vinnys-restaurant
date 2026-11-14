@@ -1,7 +1,7 @@
 # Events/CMS — coordinated backlog & next cycle
 
 **Source:** Coordinator consolidate 2026-11-11 (Vinny only)  
-**Checkpoint:** CSRF staging-verified on `main` merge `b7bf813` (Worker `22ba677c-9192-40da-8dfe-6666d0a5b039`); docs sync PR #10 also on `main`  
+**Checkpoint:** Approved `main` `2b77538` (PR #28); staging content fingerprints match (2026-11-14). Events eng **PR #12–#14** (E1–E5) merged; **E6** QA still open. CSRF closure remains on earlier `b7bf813` baseline — [`security-closure-csrf.md`](security-closure-csrf.md).
 **CSRF:** staging-verified PASS — see [`security-closure-csrf.md`](security-closure-csrf.md)  
 **Events/CMS product:** **HOLD** — not production-ready
 
@@ -35,12 +35,12 @@ None open for **security** on staging after CSRF. Product HOLD is driven by **P1
 
 | ID | Problem | Evidence | Solution | Owner | Dependencies | Acceptance | Tests | Deliverable |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| E1 | Guest empty copy says “Placeholder.” | UX RB1; QA D5; live `/events` | Guest-facing empty string; reserve “placeholder” for admin | Full-Stack + UX review | None | No “Placeholder.” on public `/events` or home Events card | QA public empty matrix | Focused PR |
-| E2 | Empty `/events` dead end | UX RB2 | Recovery CTA group (Parties/Contact/Call/Order as appropriate) | Full-Stack + UX | E1 ideally same PR | At least one recovery path on empty Events | UX spot-check mobile/desktop | Same or stacked PR |
-| E3 | Photo `/media/1` vs `cleanEventPhoto` | Eng F4; QA D4; UX RB3 | Align placeholder, docs, validator; clear error copy until R2 | Full-Stack | R2 optional later | Saving with invalid path fails with photo-specific message; docs match | Unit + admin form QA | Focused PR |
-| E4 | Dual Status + Draft/Publish; Archived unreachable | Eng F5; UX RB4 | Single status model (buttons OR select, not conflicting) | Full-Stack + UX | None | Archived reachable intentionally; draft/publish unambiguous | CMS mutation tests (disposable) | Focused PR |
-| E5 | `next_step` public render / mutate `""` | Eng F6; QA D3; UX O3 | Admin field **or** stop rendering until supported | Full-Stack | Product choice | Either editable end-to-end or removed from public | QA ADM-10 | Focused PR |
-| E6 | CMS publish/update/past matrix incomplete | QA NOT TESTED ADM-06–09 | Intentional disposable CMS acceptance after E1–E5 | QA | Eng PRs | HOLD-release criteria B–D in QA doc met | Documented matrix PASS | QA report |
+| E1 | Guest empty copy says “Placeholder.” | UX RB1; QA D5 | Guest-facing empty string | Full-Stack + UX | — | No “Placeholder.” on public `/events` or home Events card | QA public empty matrix | **Merged PR #12** |
+| E2 | Empty `/events` dead end | UX RB2 | Recovery CTA group (Contact/Call/Order) | Full-Stack + UX | E1 | Recovery paths on empty Events | UX spot-check | **Merged PR #12** |
+| E3 | Photo `/media/1` vs `cleanEventPhoto` | Eng F4; QA D4 | Validator + photo-specific errors | Full-Stack | R2 optional later | Invalid path → `error=photo` | Unit + admin form QA | **Merged PR #13** |
+| E4 | Dual Status + Draft/Publish; Archived unreachable | Eng F5; UX RB4 | Button-only status model | Full-Stack + UX | — | Archived reachable; lifecycle unambiguous | CMS mutation tests | **Merged PR #13** |
+| E5 | `next_step` public render / mutate `""` | Eng F6; QA D3 | Editable admin field + public link | Full-Stack | — | Phone/https end-to-end | QA ADM-10 | **Merged PR #14** |
+| E6 | CMS publish/update/past matrix incomplete | QA NOT TESTED ADM-06–09 | Disposable CMS acceptance on staging | QA | E1–E5 on `main` | HOLD-release B–D met | Documented matrix PASS | QA report (open) |
 
 ### P2 — Improvements
 
@@ -62,15 +62,14 @@ None open for **security** on staging after CSRF. Product HOLD is driven by **P1
 ## Exact HOLD release (from QA)
 
 - Security section A: **met** on staging (see [`security-closure-csrf.md`](security-closure-csrf.md)).
-- Product B–D (guest copy, photo/`next_step`/archive UX, intentional CMS matrix): **not met**.
+- Product B–C (guest copy, photo/status/`next_step` eng): **met on `main`** (#12–#14); live QA still required for HOLD clear.
+- Product D (CMS matrix E6): **not met** until independent QA PASS.
 
-## Next 1–3 engineering tasks (recommendation)
+## Next tasks (recommendation)
 
-1. **PR-A — Guest empty-state + recovery CTAs** (E1+E2) — highest guest trust impact; small surface.
-2. **PR-B — Events CMS status model + photo path/docs/errors** (E4+E3) — owner safety.
-3. **PR-C — `next_step` decision + field or removal** (E5) — then QA E6 matrix to lift HOLD.
-
-Do **not** start implementation until Product Owner approves this sequence/scope.
+1. **Independent QA — E6 matrix** (ADM-06–10) on staging with PO-approved disposable CMS session — plan: Project store `internal/events-e6-acceptance-plan.md`.
+2. Coordinator HOLD-clear package after QA evidence.
+3. Owner deps unchanged (**O-R2**, **O-Resend**, **O-Biz**) — parallel track, not a substitute for E6.
 
 ## Workflow reminder
 

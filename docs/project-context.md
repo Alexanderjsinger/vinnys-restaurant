@@ -3,7 +3,7 @@
 Repo: `Alexanderjsinger/vinnys-restaurant`  
 Public brand: Vinny’s Bar & Grill (Ypsilanti). Intended eventual host for vinnysbargrill.com — **DNS is not changed by this project until the owner approves.**
 
-**Git checkpoint (verified 2026-11-11):** CSRF merge on `main` `b7bf813` (PRs #1–#4, #6–#9); knowledge/docs sync #10 also on `main`. Includes durable next-plan docs (#8), admin CSRF hardening (#9), CSRF closure docs (#10). Prior checkpoint `057f651` / “six PRs” is superseded.
+**Git checkpoint (verified 2026-11-14):** Approved `main` `2b77538` (PR #28 sizzle Worker OOM fix). Prior baseline: CSRF merge `b7bf813` (#9); Events/CMS product PRs **#12–#14** (E1–E5); homepage/sizzle/visual PRs **#15–#28**. PO-approved staging content fingerprints match `2b77538` (see Project store `internal/staging-verification.md`).
 
 ## Who decides what
 
@@ -27,22 +27,24 @@ Distinguish **completed eng**, **verified staging**, **outstanding product**, **
 - Phase 2.5 reliability/security: notify queue, media hardening, CI, security headers helper, Referer tightening, hero/storefront parity (#2, #7).
 - Permanent AI loop: three custom subagents under `.cursor/agents/` with Cursor YAML frontmatter; Coordinator remains Project-side only (#6, docs in #8).
 - Admin CSRF + same-origin reject-missing-headers (#9 tip `3c838e6`, merge `b7bf813`). Implementation: [`admin-csrf.md`](admin-csrf.md). Closure: [`security-closure-csrf.md`](security-closure-csrf.md).
+- Events/CMS product E1–E5 on `main` (PR #12 guest empty-state, PR #13 status/photo, PR #14 `next_step`).
+- Homepage visual system + approved sizzle reel through PR #28 (`/api/sizzle`, Range 206, streamed full GET).
 
 ### Verified on staging
 
 - Staging worker: https://vinnys-bar-grill.toastisadog.workers.dev/
-- Deployed merge `b7bf813` as Worker Version `22ba677c-9192-40da-8dfe-6666d0a5b039` (PO-authorized staging deploy).
-- Independent CSRF matrix **PASS** (STG-01…09); security headers live; rollback not required.
+- Content fingerprints match approved `main` `2b77538` (2026-11-14 read-only verify); includes PR #28 sizzle fix. (Prior CSRF deploy: `b7bf813` / Worker `22ba677c…`.)
+- Independent CSRF matrix **PASS** (STG-01…09); security headers live on current staging; rollback not required.
 - Evidence (Project store): `docs/admin-csrf-staging-qa.md`, `media/csrf-staging-qa/`, `internal/csrf-staging-deploy.md`.
 
 ### Outstanding product / HOLD
 
-- **Events / CMS product: HOLD** — CSRF PASS does **not** clear this. Consolidated P1 backlog (E1–E6): empty-state UX, event photo placeholder, status model, `next_step` admin gap. Not production-ready. Repo summary: [`events-cms-backlog.md`](events-cms-backlog.md). Specialist assessments live in Project Context `docs/` (`events-cms-*-2026-11-11.md`).
+- **Events / CMS product: HOLD** — CSRF PASS does **not** clear this. Eng **E1–E5 merged** (#12–#14); **E6** (live CMS matrix QA) and Coordinator HOLD-clear recommendation still open. Not production-ready until B–D acceptance. Repo summary: [`events-cms-backlog.md`](events-cms-backlog.md).
 - Phase 3 visual / UX / LCP — after infra + facts (or explicitly deferred).
 
 ### Unresolved defects (known)
 
-- P1 E1–E6 — see [`events-cms-backlog.md`](events-cms-backlog.md) (guest “Placeholder.” copy, empty `/events` recovery, photo `/media/1` vs `cleanEventPhoto`, dual status / Archived, `next_step`, CMS matrix).
+- P1 **E6** — live CMS publish/update/past matrix (ADM-06–09) + independent QA report; E1–E5 addressed on `main`.
 - Mobile primary nav touch targets (UX P2 / I2).
 - Broad CMS write paths (menu/place/hours) **NOT TESTED** in CSRF pass by design.
 
@@ -63,7 +65,7 @@ Prioritized checklist: [`next-execution-plan.md`](next-execution-plan.md). Owner
 
 ## Prioritized roadmap
 
-1. **Events / CMS product (HOLD)** — consolidated backlog in [`events-cms-backlog.md`](events-cms-backlog.md); eng PR-A→B→C only after PO approves sequence (security already closed).
+1. **Events / CMS product (HOLD)** — E1–E5 merged; **QA E6 matrix** + Coordinator package before HOLD clear ([`events-cms-backlog.md`](events-cms-backlog.md)).
 2. **Unblock media + email** — R2 then Resend per owner-setup; eng wiring only after enablement.
 3. **Owner fact lock** — hours, emails, Toast URL, photos policy before domain talk.
 4. **Independent QA / lab perf** — refresh matrices on current staging baseline; no rubber-stamp of eng self-tests.
@@ -129,7 +131,7 @@ Use QA vocabulary: **PASS** / **FAIL** / **BLOCKED** / **NOT TESTED**. Never PAS
 
 ## Staging and blockers
 
-- **Staging worker:** https://vinnys-bar-grill.toastisadog.workers.dev/ — currently on CSRF merge `b7bf813` / Worker `22ba677c…` (staging-verified).
+- **Staging worker:** https://vinnys-bar-grill.toastisadog.workers.dev/ — content matches approved `main` `2b77538` (2026-11-14); further deploys need PO approval.
 - **D1:** live business data on the bound database — treat as production-like; do not mutate without approval.
 - **Blocked (owner):** Cloudflare R2 (photo upload); Resend (`RESEND_API_KEY` / `RESEND_FROM`). Details in Phase 2 status and owner-setup.
 - **Product HOLD:** Events/CMS — [`events-cms-backlog.md`](events-cms-backlog.md) + [`next-execution-plan.md`](next-execution-plan.md) §1.
