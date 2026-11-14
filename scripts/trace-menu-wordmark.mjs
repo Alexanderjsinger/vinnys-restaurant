@@ -33,8 +33,12 @@ execSync(
   { stdio: "inherit" },
 );
 
-const { width, height } = parseIdentify(`${work}/menu-vinnys-trim.png`);
+const raster = parseIdentify(`${work}/menu-vinnys-trim.png`);
 const svg = fs.readFileSync(`${work}/menu-trace-group.svg`, "utf8");
+const transformMatch = svg.match(
+  /<g transform="translate\(0\.000000,([0-9.]+)\) scale\(0\.100000,-0\.100000\)"/,
+);
+const traceHeight = transformMatch ? Number(transformMatch[1]) : raster.height;
 const paths = [...svg.matchAll(/<path d="([^"]+)"\s*\/>/g)].map((m) => m[1].replace(/\s+/g, " ").trim());
 
 if (paths.length < 5) {
@@ -42,21 +46,65 @@ if (paths.length < 5) {
   process.exit(1);
 }
 
+const transform = `translate(0, ${traceHeight}) scale(0.1, -0.1)`;
+const bbox = measurePathBBox(paths, transform, traceHeight, work);
+const pad = 1.5;
+const viewX = Math.floor(bbox.x - pad);
+const viewY = Math.floor(bbox.y - pad);
+const viewW = Math.ceil(bbox.width + pad * 2);
+const viewH = Math.ceil(bbox.height + pad * 2);
+const viewBox = `${viewX} ${viewY} ${viewW} ${viewH}`;
+
 const outTs = path.join(root, "src/lib/vinny-wordmark-menu-paths.ts");
 const body = `/** Auto-generated from vinnys-menu-logomark.png — do not hand-edit; re-run scripts/trace-menu-wordmark.mjs */
-export const VINNY_MENU_TRACE_VIEWBOX = "0 0 ${width} ${height}" as const;
-export const VINNY_MENU_TRACE_TRANSFORM = "translate(0, ${height}) scale(0.1, -0.1)" as const;
+export const VINNY_MENU_TRACE_VIEWBOX = "${viewBox}" as const;
+export const VINNY_MENU_TRACE_TRANSFORM = ${JSON.stringify(transform)} as const;
 export const VINNY_MENU_TRACE_PATHS: readonly string[] = [
 ${paths.map((p) => `  ${JSON.stringify(p)},`).join("\n")}
 ] as const;
 `;
 
 fs.writeFileSync(outTs, body);
-fs.copyFileSync(`${work}/menu-trace-group.svg`, path.join(root, "public/brand/vinny-menu-wordmark-trace.svg"));
-console.log(`Wrote ${paths.length} paths → ${outTs} (${width}×${height})`);
+
+/** Store flat svg with measured viewBox for inspection */
+const flatSvg = `<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="${viewBox}" width="${viewW}" height="${viewH}">
+<g fill="#000" transform="${transform}">
+${paths.map((d) => `<path d="${d}"/>`).join("\n")}
+</g>
+</svg>`;
+fs.writeFileSync(path.join(root, "public/brand/vinny-menu-wordmark-trace.svg"), flatSvg);
+
+console.log(
+  `Wrote ${paths.length} paths → ${outTs} (raster ${raster.width}×${raster.height}, viewBox ${viewBox})`,
+);
 
 function parseIdentify(file) {
   const line = execSync(`identify -format "%w %h" "${file}"`, { encoding: "utf8" }).trim();
-  const [w, h] = line.split(/\s+/).map(Number);
-  return { width: w, height: h };
+  const [width, height] = line.split(/\s+/).map(Number);
+  return { width, height };
+}
+
+function measurePathBBox(pathList, transformAttr, canvasHeight, workDir) {
+  const pathsHtml = pathList.map((d) => `<path d="${d}"/>`).join("");
+  const measureSvg = path.join(workDir, "measure-bbox.svg");
+  const measurePng = path.join(workDir, "measure-bbox.png");
+  const canvasW = raster.width;
+  const canvasH = canvasHeight;
+  fs.writeFileSync(
+    measureSvg,
+    `<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="${canvasW}" height="${canvasH}" viewBox="0 0 ${canvasW} ${canvasH}" overflow="visible">
+<g fill="black" transform="${transformAttr}">${pathsHtml}</g>
+</svg>`,
+  );
+  execSync(`convert -background none "${measureSvg}" "${measurePng}"`, { stdio: "pipe" });
+  const trimLine = execSync(`convert "${measurePng}" -fuzz 2% -trim -format "%w %h %X %Y" info:`, {
+    encoding: "utf8",
+  }).trim();
+  const [w, h, x, y] = trimLine.split(/\s+/).map((part) => Number(part.replace(/^\+/, "")));
+  if (!w || !h) {
+    throw new Error(`Could not measure ink bounds from ${measurePng}`);
+  }
+  return { x, y, width: w, height: h };
 }

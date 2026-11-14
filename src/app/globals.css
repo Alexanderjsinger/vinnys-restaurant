@@ -1219,6 +1219,7 @@ input[type="checkbox"] { width: 1.15rem; height: 1.15rem; min-height: 0; accent-
 .vinny-wordmark {
   display: block;
   max-width: 100%;
+  overflow: visible;
 }
 .vinny-wordmark--light {
   color: var(--black);

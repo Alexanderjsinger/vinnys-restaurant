@@ -1,5 +1,5 @@
 /** Auto-generated from vinnys-menu-logomark.png — do not hand-edit; re-run scripts/trace-menu-wordmark.mjs */
-export const VINNY_MENU_TRACE_VIEWBOX = "0 0 682 110" as const;
+export const VINNY_MENU_TRACE_VIEWBOX = "273 5 410 106" as const;
 export const VINNY_MENU_TRACE_TRANSFORM = "translate(0, 110) scale(0.1, -0.1)" as const;
 export const VINNY_MENU_TRACE_PATHS: readonly string[] = [
   "M4405 1023 c-48 -7 -204 -87 -280 -144 -178 -133 -344 -310 -469 -499 -70 -106 -175 -279 -206 -340 l-20 -40 103 0 103 0 27 53 c14 28 33 63 41 77 9 14 46 77 83 140 220 378 461 615 706 694 9 3 20 13 24 22 l6 17 -18 13 c-18 14 -40 15 -100 7z",

@@ -40,6 +40,7 @@ export function VinnyWordmark({
       width="auto"
       height={height}
       viewBox={VINNY_MENU_TRACE_VIEWBOX}
+      overflow="visible"
       role={decorative ? undefined : "img"}
       aria-hidden={decorative ? true : undefined}
       aria-label={decorative ? undefined : "Vinny's"}

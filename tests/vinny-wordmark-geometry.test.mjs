@@ -8,7 +8,7 @@ const root = path.resolve(import.meta.dirname, "..");
 
 test("menu trace viewBox and path count", async () => {
   const mod = await import(pathToFileURL(path.join(root, "src/lib/vinny-wordmark-menu-paths.ts")).href);
-  assert.match(mod.VINNY_MENU_TRACE_VIEWBOX, /^0 0 \d+ \d+$/);
+  assert.match(mod.VINNY_MENU_TRACE_VIEWBOX, /^-?\d+(\.\d+)? -?\d+(\.\d+)? \d+(\.\d+)? \d+(\.\d+)?$/);
   assert.ok(mod.VINNY_MENU_TRACE_PATHS.length >= 8, "potrace grouped letter paths");
   assert.match(mod.VINNY_MENU_TRACE_TRANSFORM, /translate\(0,/);
 });
