@@ -20,6 +20,8 @@ test("header chrome matches Stitch light composition (Call + Order)", () => {
   assert.match(header, /Call/, "header keeps call CTA");
   assert.match(header, /OrderLink/, "header keeps order CTA");
   assert.match(header, /brand-mark/, "wordmark present");
+  assert.match(header, /brand-tagline/, "Meet me tagline lives in white header near brand");
+  assert.match(header, /HERO_LINE/, "header tagline uses locked Meet me line");
   assert.match(header, /splitPlaceWordmark|site\.name/, "nav brand comes from CMS place name");
   assert.match(header, /Ypsilanti, MI/, "location subtitle without invented EST year");
   assert.doesNotMatch(header, /EST\.\s*1964|Happy Hour|Weekend Brunch/i);
@@ -31,6 +33,7 @@ test("header chrome matches Stitch light composition (Call + Order)", () => {
   assert.match(hero[0], /stitch-wordmark-rest/, "hero shows Bar & Grill from CMS place name");
   assert.match(hero[0], /framed-hero-actions/, "primary CTAs stay in stitch hero (outside video)");
   assert.match(hero[0], /sizzle-below/, "CTAs sit below ambient reel, not over footage");
+  assert.doesNotMatch(hero[0], /sizzle-lockup/, "Meet me removed from cream/sizzle sub-header");
   assert.doesNotMatch(hero[0], /overlay=\{/, "no copy/CTA overlay on moving video");
   assert.doesNotMatch(hero[0], /Reserve a Table|Happy Hour|EST\.\s*1964/i);
 });
@@ -38,11 +41,11 @@ test("header chrome matches Stitch light composition (Call + Order)", () => {
 test("lunch plate frames use cover framing instead of letterboxed tall voids", () => {
   const css = read(cssPath);
 
-  // Portrait lunch assets use 3/4 (image-sizing #17). Do not rely on a later
-  // hero aspect-ratio coincidentally matching this assertion.
+  // Mobile-first plates are 4/5 (#26 widen); desktop two-up keeps 3/4.
+  // Match only the base rule — do not rely on a later hero aspect-ratio.
   const plateShot = css.match(/\.plate \.shot(?:\s*,\s*[^,{]+)*\s*\{[^}]*\}/);
   assert.ok(plateShot, "plate .shot rule exists");
-  assert.match(plateShot[0], /aspect-ratio:\s*3\s*\/\s*4/, "plate figure locks a 3/4 frame");
+  assert.match(plateShot[0], /aspect-ratio:\s*4\s*\/\s*5/, "mobile plate figure locks a 4/5 frame");
   assert.match(
     css,
     /\.plate \.shot img[\s\S]*?object-fit:\s*cover/,
@@ -59,6 +62,11 @@ test("lunch plate frames use cover framing instead of letterboxed tall voids", (
   );
   const plateDesktop = desktopBlocks.find((block) => block.includes(".plate-list"));
   assert.ok(plateDesktop, "desktop plate-list media query present");
+  assert.match(
+    plateDesktop,
+    /\.plate \.shot[\s\S]*?aspect-ratio:\s*3\s*\/\s*4/,
+    "desktop two-up plates keep 3/4 panels",
+  );
   assert.doesNotMatch(
     plateDesktop,
     /\.shot img\s*\{[^}]*width:\s*100%/,
@@ -147,7 +155,8 @@ test("stitch homepage keeps authenticity constraints in markup", () => {
   );
   assert.doesNotMatch(page, /testimonial|inquiry form|name="event_type"/i);
   assert.doesNotMatch(page, /private part(?:y|ies)|\/parties|Party details/i);
-  assert.match(page, /Meet me at Vinny/);
+  assert.match(page, /isMeetMeLine/, "cream hero omits Meet me when CMS hero_text is only that line");
+  assert.match(page, /Meet me at Vinny/, "ritual strip keeps Meet me caption");
   assert.match(page, /listMenu\("public"\)/);
   assert.match(page, /Listing photo of the exterior/);
 });

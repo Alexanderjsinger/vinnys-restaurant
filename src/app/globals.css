@@ -175,8 +175,22 @@ address { font-style: normal; }
   color: var(--muted);
   line-height: 1.35;
 }
+.brand-tagline {
+  display: block;
+  max-width: 16rem;
+  margin-top: 0.2rem;
+  font-family: var(--font-display), Georgia, serif;
+  font-size: 0.92rem;
+  font-weight: 500;
+  font-style: italic;
+  letter-spacing: 0.01em;
+  text-transform: none;
+  color: var(--ink-soft);
+  line-height: 1.25;
+}
 .brand:hover { color: var(--black); }
 .brand:hover .brand-sub { color: var(--gold-deep); }
+.brand:hover .brand-tagline { color: var(--gold-deep); }
 .header-actions { display: flex; flex-wrap: wrap; gap: 0.5rem; }
 
 .btn, button.btn {
@@ -299,15 +313,18 @@ address { font-style: normal; }
 
 /* ——— Stitch hero (cream first viewport) ——— */
 .stitch-hero {
-  padding: 2.4rem 0 1.4rem;
+  padding: 1.7rem 0 1.2rem;
   animation: rise-in 700ms ease both;
 }
 .stitch-hero-copy {
   text-align: center;
   max-width: 46rem;
-  margin-bottom: 1.8rem;
+  margin-bottom: 1.25rem;
 }
-.stitch-hero-label { margin-bottom: 0.85rem; }
+.stitch-hero-copy-tight {
+  margin-bottom: 1rem;
+}
+.stitch-hero-label { margin-bottom: 0.55rem; }
 .stitch-wordmark {
   margin: 0;
   display: flex;
@@ -336,8 +353,11 @@ address { font-style: normal; }
 .gold-rule {
   width: 3.2rem;
   height: 2px;
-  margin: 1rem auto 1.1rem;
+  margin: 0.85rem auto 1rem;
   background: var(--gold-hot);
+}
+.stitch-hero-copy-tight .gold-rule {
+  margin: 0.7rem auto 0;
 }
 .stitch-hero-support {
   margin: 0 auto;
@@ -478,26 +498,20 @@ button.framed-ambient-control:focus-visible {
   max-width: 34rem;
 }
 .sizzle-below {
-  margin: 1rem 0 0;
+  /* CTAs sit in .wrap under full-bleed reel (#27); no max-width needed here */
+  margin: 0.85rem 0 0;
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  justify-content: space-between;
+  justify-content: center;
   gap: 0.85rem 1.25rem;
-}
-.sizzle-lockup {
-  margin: 0;
-  font-family: inherit;
-  font-size: clamp(1.15rem, 2.4vw, 1.45rem);
-  font-weight: 600;
-  letter-spacing: -0.02em;
-  color: var(--black);
 }
 .framed-hero-actions {
   display: flex;
   flex-wrap: wrap;
   gap: 0.55rem;
   margin: 0;
+  justify-content: center;
 }
 .framed-hero-credit {
   width: min(1120px, calc(100% - 2rem));
@@ -1238,9 +1252,8 @@ input[type="checkbox"] { width: 1.15rem; height: 1.15rem; min-height: 0; accent-
   .sizzle-below {
     flex-direction: column;
     align-items: stretch;
-    margin-top: 0.9rem;
+    margin-top: 0.75rem;
   }
-  .sizzle-lockup { font-size: 1.2rem; }
   .framed-hero-actions .btn { flex: 1; text-align: center; }
   .story-frame {
     max-width: none;
@@ -1294,7 +1307,8 @@ input[type="checkbox"] { width: 1.15rem; height: 1.15rem; min-height: 0; accent-
 }
 
 @media (max-width: 640px) {
-  .stitch-hero { padding-top: 1.5rem; }
+  .stitch-hero { padding-top: 1.15rem; }
+  .brand-tagline { font-size: 0.86rem; max-width: 12.5rem; }
   .brand-row { gap: 0.55rem; padding: 0.65rem 0 0.35rem; }
   .header-actions { flex: 1 1 100%; width: 100%; order: 2; }
   .label-long { display: none; }

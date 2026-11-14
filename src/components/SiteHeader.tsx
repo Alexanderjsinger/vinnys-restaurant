@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { DEFAULT_PLACE_NAME, splitPlaceWordmark } from "@/lib/brand";
 import { LUNCH_SERVICE } from "@/lib/lunch-menu";
-import { PHONE_DISPLAY, RESERVE_TEL, STREET_ADDRESS } from "@/lib/public";
+import { HERO_LINE, PHONE_DISPLAY, RESERVE_TEL, STREET_ADDRESS } from "@/lib/public";
 import type { PublicSite } from "@/lib/types";
 import { OrderLink } from "./OrderLink";
 import { PrimaryNav } from "./PrimaryNav";
@@ -33,6 +33,7 @@ export function SiteHeader({ site }: { site: PublicSite }) {
           <Link className="brand" href="/" aria-label={placeName}>
             <span className="brand-mark">{mark}</span>
             <span className="brand-sub">{brandSub}</span>
+            <span className="brand-tagline">{HERO_LINE}</span>
           </Link>
           <PrimaryNav />
           <div className="header-actions">

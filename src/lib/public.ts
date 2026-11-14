@@ -18,5 +18,10 @@ export const POSITIONING =
 
 export const HERO_LINE = "Meet me at Vinny’s.";
 
+/** True when CMS/copy is only the Meet me slogan (any apostrophe / trailing period). */
+export function isMeetMeLine(text: string): boolean {
+  return /^meet\s+me\s+at\s+vinny['’]s\.?$/iu.test(text.trim());
+}
+
 /** Guest footer tagline. Prefer typographic apostrophe. */
 export const FOOTER_TAGLINE = "Meet me at Vinny’s";
