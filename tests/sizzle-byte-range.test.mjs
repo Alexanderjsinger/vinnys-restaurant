@@ -17,11 +17,17 @@ test("sizzle guest src uses Range-aware API; asset stays under public/hero", () 
   );
   assert.ok(fs.existsSync(reelPath), "1080p reel file present");
   assert.ok(fs.existsSync(routePath), "Range route exists");
+  const route = fs.readFileSync(routePath, "utf8");
+  assert.match(route, /applyByteRange/, "sizzle route applies byte-range responses");
   assert.match(
-    fs.readFileSync(routePath, "utf8"),
-    /applyByteRange/,
-    "sizzle route applies byte-range responses",
+    route,
+    /fetchSizzleAssetResponse/,
+    "non-Range GETs stream from ASSETS without buffering",
   );
+  assert.match(route, /wantsRange/, "Range vs full-body paths are split");
+
+  const assetLib = fs.readFileSync(path.join(root, "src/lib/sizzle-asset.ts"), "utf8");
+  assert.match(assetLib, /loadInflight/, "15MB ASSETS reads are single-flight");
 });
 
 test("HeroMedia ambient playback: IO, muted playsInline, manual pause, no loop", () => {
