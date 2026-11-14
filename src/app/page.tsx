@@ -5,7 +5,6 @@ import { SIZZLE_REEL } from "@/lib/hero";
 import { HoursList } from "@/components/HoursList";
 import { listEvents, listMenu } from "@/lib/content";
 import { detroitNowLocal, formatPrice } from "@/lib/format";
-import { firstQuery } from "@/lib/messages";
 import { LUNCH_SERVICE } from "@/lib/lunch-menu";
 import { DEFAULT_PLACE_NAME, splitPlaceWordmark } from "@/lib/brand";
 import { DIRECTIONS_URL, isMeetMeLine, MAP_QUERY, PHONE_DISPLAY, RESERVE_TEL } from "@/lib/public";
@@ -49,13 +48,7 @@ function lunchHighlights(menu: Awaited<ReturnType<typeof listMenu>>): MenuItem[]
   });
 }
 
-export default async function HomePage({
-  searchParams,
-}: {
-  searchParams: Promise<Record<string, string | string[] | undefined>>;
-}) {
-  const query = await searchParams;
-  const joinCode = firstQuery(query.join);
+export default async function HomePage() {
   const site = await getSite();
   const menu = await listMenu("public");
   const plates = lunchPlates(menu);
@@ -89,8 +82,9 @@ export default async function HomePage({
           {heroSupport ? <p className="stitch-hero-support">{heroSupport}</p> : null}
         </div>
 
+        <HeroMedia videoSrc={SIZZLE_REEL.src} durationLabel={SIZZLE_REEL.durationLabel} />
+
         <div className="wrap">
-          <HeroMedia videoSrc={SIZZLE_REEL.src} durationLabel={SIZZLE_REEL.durationLabel} />
           <div className="sizzle-below">
             <p className="framed-hero-actions">
               <a className="btn btn-gold" href={phoneHref} data-track="phone_click">
@@ -303,18 +297,6 @@ export default async function HomePage({
             loading="lazy"
             referrerPolicy="no-referrer-when-downgrade"
           />
-        </div>
-      </section>
-
-      <section className="signup-band" id="list" aria-labelledby="list-heading">
-        <div className="wrap">
-          <h2 id="list-heading">Birthday list</h2>
-          <p>The birthday list is closed until the offer, a birth date, and a way to opt out are ready.</p>
-          {joinCode === "closed" ? (
-            <p className="banner banner-bad" role="status">
-              That signup was not saved. The list is not open.
-            </p>
-          ) : null}
         </div>
       </section>
     </>

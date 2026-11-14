@@ -41,7 +41,11 @@ test("header chrome matches Stitch light composition (Call + Order)", () => {
 test("lunch plate frames use cover framing instead of letterboxed tall voids", () => {
   const css = read(cssPath);
 
-  assert.match(css, /\.plate \.shot[\s\S]*?aspect-ratio:\s*4\s*\/\s*3/, "plate figure locks a 4/3 frame");
+  // Portrait lunch assets use 3/4 (image-sizing #17). Do not rely on a later
+  // hero aspect-ratio coincidentally matching this assertion.
+  const plateShot = css.match(/\.plate \.shot(?:\s*,\s*[^,{]+)*\s*\{[^}]*\}/);
+  assert.ok(plateShot, "plate .shot rule exists");
+  assert.match(plateShot[0], /aspect-ratio:\s*3\s*\/\s*4/, "plate figure locks a 3/4 frame");
   assert.match(
     css,
     /\.plate \.shot img[\s\S]*?object-fit:\s*cover/,
@@ -70,13 +74,30 @@ test("lunch plate frames use cover framing instead of letterboxed tall voids", (
   );
 });
 
-test("framed hero keeps rounded media + honest poster structure", () => {
+test("framed hero is full-bleed ambient media + honest poster structure", () => {
   const css = read(cssPath);
   const hero = read(path.join(root, "src/components/HeroMedia.tsx"));
   const page = read(pagePath);
   const reelPath = path.join(root, "public/hero/vinnys-sizzle-reel-1080p.mp4");
 
-  assert.match(css, /\.framed-hero-frame\s*\{[\s\S]*?border-radius:/, "hero media is rounded/framed");
+  const framedHeroRule = css.match(/\.framed-hero\s*\{[^}]*\}/);
+  assert.ok(framedHeroRule, "framed-hero rule exists");
+  assert.match(framedHeroRule[0], /width:\s*100%/, "sizzle container spans full width");
+  assert.match(framedHeroRule[0], /max-width:\s*none/, "sizzle is not capped to content column");
+  const frameRule = css.match(/\.framed-hero-frame\s*\{[^}]*\}/);
+  assert.ok(frameRule, "framed-hero-frame rule exists");
+  assert.match(frameRule[0], /border-radius:\s*0/, "edge-to-edge frame (no inset rounded card)");
+  assert.match(frameRule[0], /width:\s*100%/, "frame width forced full-bleed (aspect-ratio must not shrink it)");
+  assert.match(
+    frameRule[0],
+    /height:\s*clamp\(|max-height:/,
+    "height stays capped so reel doesn’t dominate the page",
+  );
+  assert.doesNotMatch(
+    frameRule[0],
+    /aspect-ratio:/,
+    "no aspect-ratio on frame — it was shrinking width under max-height",
+  );
   assert.match(css, /\.framed-hero-media img[\s\S]*?object-fit:\s*cover/, "hero image covers the frame");
   assert.match(hero, /framed-hero/, "hero wraps in framed band");
   assert.match(hero, /framed-hero-credit/, "stock-photo honesty caption remains available");
@@ -85,6 +106,11 @@ test("framed hero keeps rounded media + honest poster structure", () => {
   assert.match(heroLib, /durationLabel:\s*"0:30"/, "duration matches measured ~30s file");
   assert.match(page, /SIZZLE_REEL\.src/, "homepage wires the approved sizzle reel");
   assert.match(page, /durationLabel=\{SIZZLE_REEL\.durationLabel\}/, "homepage passes measured duration only");
+  assert.match(
+    page,
+    /<\/div>\s*<HeroMedia[\s\S]*?<div className="wrap">\s*<div className="sizzle-below">/,
+    "HeroMedia sits outside wrap for full-bleed; CTAs stay in wrap below",
+  );
   assert.ok(fs.existsSync(reelPath), "sizzle reel mp4 is present under public/hero");
   assert.match(hero, /prefers-reduced-motion/, "hero respects reduced motion");
   assert.match(hero, /IntersectionObserver/, "ambient play uses viewport visibility");
@@ -120,7 +146,7 @@ test("stitch homepage keeps authenticity constraints in markup", () => {
   assert.match(page, /social-rituals/, "dark social rituals band");
   assert.doesNotMatch(
     page,
-    /18 Cold Craft Taps|dry-aged|stone-fired|truffle fries|Happy Hour|Campus Nights|Pease Auditorium|Good Food, Great Times|SCRATCH TAVERN|EST\.\s*1964|Reserve a Table|Weekend Brunch/i,
+    /18 Cold Craft Taps|dry-aged|stone-fired|truffle fries|Happy Hour|Campus Nights|Pease Auditorium|Good Food, Great Times|SCRATCH TAVERN|EST\.\s*1964|Reserve a Table|Weekend Brunch|Birthday list|Lunch, dinner and everything after/i,
   );
   assert.doesNotMatch(page, /testimonial|inquiry form|name="event_type"/i);
   assert.match(page, /Call to plan a private party/);

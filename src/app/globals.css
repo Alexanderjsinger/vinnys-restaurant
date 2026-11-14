@@ -367,17 +367,21 @@ address { font-style: normal; }
   line-height: 1.55;
 }
 
-.framed-hero { margin: 0 auto; max-width: 60rem; }
+/* Full-bleed sizzle band — edge-to-edge width; height still capped */
+.framed-hero {
+  margin: 0;
+  max-width: none;
+  width: 100%;
+}
 .framed-hero-frame {
   position: relative;
   overflow: hidden;
-  border-radius: 1.15rem;
+  border-radius: 0;
   background: #140f0c;
-  box-shadow: 0 24px 60px rgba(20, 16, 10, 0.18);
-  /* Ambient reel panel — room for footage without claiming the whole viewport */
-  aspect-ratio: 16 / 10;
-  max-height: min(32rem, 58vh);
-  min-height: 14rem;
+  box-shadow: none;
+  /* Force full width; do not use aspect-ratio here — under max-height it shrinks width */
+  width: 100%;
+  height: clamp(14rem, 58vh, 32rem);
   animation: frame-in 900ms ease both;
 }
 .framed-hero-media {
@@ -494,8 +498,8 @@ button.framed-ambient-control:focus-visible {
   max-width: 34rem;
 }
 .sizzle-below {
-  margin: 0.85rem auto 0;
-  max-width: 60rem;
+  /* CTAs sit in .wrap under full-bleed reel (#27); no max-width needed here */
+  margin: 0.85rem 0 0;
   display: flex;
   flex-wrap: wrap;
   align-items: center;
@@ -510,7 +514,8 @@ button.framed-ambient-control:focus-visible {
   justify-content: center;
 }
 .framed-hero-credit {
-  margin: 0.55rem 0 0;
+  width: min(1120px, calc(100% - 2rem));
+  margin: 0.55rem auto 0;
   color: var(--paper-muted);
   font-size: 0.85rem;
 }
@@ -1207,12 +1212,11 @@ input[type="checkbox"] { width: 1.15rem; height: 1.15rem; min-height: 0; accent-
 }
 
 @media (max-width: 799px) {
-  .framed-hero { max-width: none; }
+  .framed-hero { max-width: none; width: 100%; }
   .framed-hero-frame {
-    aspect-ratio: 4 / 3;
-    max-height: min(26rem, 58vh);
-    min-height: 13rem;
-    border-radius: 0.9rem;
+    width: 100%;
+    height: clamp(13rem, 52vh, 26rem);
+    border-radius: 0;
   }
   .framed-hero-overlay {
     padding: 1rem;

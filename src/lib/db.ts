@@ -4,7 +4,7 @@ import path from "path";
 import { createRequire } from "node:module";
 import type Database from "better-sqlite3";
 import { LUNCH_MENU, LUNCH_PROMO_BODY, PREVIOUS_PROMO_BODY } from "./lunch-menu";
-import { ORDER_URL, PHONE_DISPLAY } from "./public";
+import { FOOTER_TAGLINE, ORDER_URL, PHONE_DISPLAY } from "./public";
 import {
   SETTING_KEYS,
   type EventRow,
@@ -132,7 +132,7 @@ function migrate(db: Database.Database) {
   );
   const settings: [SettingKey, string][] = [
     ["restaurant_name", "Vinny’s Bar & Grill"],
-    ["tagline", "Good Food, Great Times"],
+    ["tagline", FOOTER_TAGLINE],
     ["address", "705 W. Cross St., Ypsilanti, MI 48197"],
     ["phone", PHONE_DISPLAY],
     ["email", ""],
@@ -185,6 +185,8 @@ function migrate(db: Database.Database) {
   confirmKnownFacts(db);
 }
 
+const STALE_TAGLINES = new Set(["Good Food, Great Times", "Lunch, dinner and everything after."]);
+
 function confirmKnownFacts(db: Database.Database) {
   const phone = db.prepare("SELECT value FROM settings WHERE key = 'phone'").get() as
     | { value: string }
@@ -192,6 +194,12 @@ function confirmKnownFacts(db: Database.Database) {
   const digits = (phone?.value ?? "").replace(/\D/g, "");
   if (!digits || digits === "7349057051" || digits === "17349057051") {
     db.prepare("UPDATE settings SET value = ?, confirmed = 1 WHERE key = 'phone'").run(PHONE_DISPLAY);
+  }
+  const tagline = db.prepare("SELECT value FROM settings WHERE key = 'tagline'").get() as
+    | { value: string }
+    | undefined;
+  if (!tagline?.value || STALE_TAGLINES.has(tagline.value.trim())) {
+    db.prepare("UPDATE settings SET value = ? WHERE key = 'tagline'").run(FOOTER_TAGLINE);
   }
 }
 

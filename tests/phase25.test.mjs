@@ -208,14 +208,17 @@ test("security headers helper includes nosniff and frame options", async () => {
   assert.match(middleware, /applySecurityHeaders/);
 });
 
-test("birthday signup route stays closed and homepage has no signup inputs", () => {
+test("birthday signup route stays closed and homepage has no birthday list", () => {
   const signup = fs.readFileSync(path.join(root, "src/app/api/signup/route.ts"), "utf8");
   assert.match(signup, /join=closed/);
   assert.doesNotMatch(signup, /addSignup|INSERT INTO signups/);
   const home = fs.readFileSync(path.join(root, "src/app/page.tsx"), "utf8");
-  assert.match(home, /birthday list is closed/i);
+  assert.doesNotMatch(home, /Birthday list|signup-band|birthday list is closed/i);
   assert.doesNotMatch(home, /action="\/api\/signup"/);
   assert.doesNotMatch(home, /name="email"/);
+  const pub = fs.readFileSync(path.join(root, "src/lib/public.ts"), "utf8");
+  assert.match(pub, /FOOTER_TAGLINE\s*=\s*"Meet me at Vinny[\u2019']s"/);
+  assert.doesNotMatch(pub, /BIRTHDAY_HEADING|Free appetizer on your birthday/i);
 });
 
 test("homepage hero uses table photo and story uses storefront exterior", () => {
