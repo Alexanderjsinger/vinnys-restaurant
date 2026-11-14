@@ -4,6 +4,7 @@ import { formatPrice } from "@/lib/format";
 import { listMenu } from "@/lib/content";
 import { LUNCH_FOOTNOTE, LUNCH_SERVICE } from "@/lib/lunch-menu";
 import { OrderLink } from "@/components/OrderLink";
+import { DEFAULT_PLACE_NAME } from "@/lib/brand";
 import { pageMeta } from "@/lib/seo";
 import { getSite } from "@/lib/site";
 import type { MenuItem, MenuSection } from "@/lib/types";
@@ -13,18 +14,19 @@ export const runtime = "nodejs";
 export const metadata = pageMeta(
   "/menu",
   "Food & Drinks",
-  "Food and drinks from the printed lunch menu at Vinny's Bar & Grill. Lunch daily, 11–3pm. Order on Toast.",
+  `Food and drinks from the printed lunch menu at ${DEFAULT_PLACE_NAME}. Lunch daily, 11–3pm. Order on Toast.`,
 );
 
 export default async function MenuPage() {
   const site = await getSite();
+  const placeName = site.name.trim() || DEFAULT_PLACE_NAME;
   const sections = await listMenu("public");
   const showFootnote = sections.some((section) => section.items.some((item) => item.marked));
   return (
     <div className="page wrap">
       <TrackView name="menu_view" />
       <p className="eyebrow">Lunch menu</p>
-      <h1>Food &amp; Drinks at Vinny&apos;s</h1>
+      <h1>Food &amp; Drinks at {placeName}</h1>
       <p className="lunch-line">{LUNCH_SERVICE}</p>
       <p>
         <OrderLink className="btn btn-solid" url={site.toastUrl} />

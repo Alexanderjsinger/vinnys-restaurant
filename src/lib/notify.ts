@@ -1,3 +1,4 @@
+import { DEFAULT_PLACE_NAME } from "./brand";
 import {
   enqueueNotify,
   getInquiryNotifyStatus,
@@ -31,6 +32,7 @@ async function sendResend(input: {
   to: string;
   from: string;
   key: string;
+  placeName: string;
   inquiry: { id: number; name: string; email: string; eventDate: string; partySize: number; message: string };
 }): Promise<{ ok: true } | { ok: false; reason: string }> {
   try {
@@ -43,7 +45,7 @@ async function sendResend(input: {
       body: JSON.stringify({
         from: input.from,
         to: [input.to],
-        subject: "New party note for Vinny's",
+        subject: `New party note for ${input.placeName}`,
         text: [
           `Name: ${input.inquiry.name}`,
           `Email: ${input.inquiry.email}`,
@@ -76,6 +78,7 @@ export async function notifyOwner(inquiry: {
   }
 
   const settings = await getSettings();
+  const placeName = settings.restaurant_name.value.trim() || DEFAULT_PLACE_NAME;
   const to = ownerRecipient(settings);
   const key = await readSecret("RESEND_API_KEY");
   const from = await readSecret("RESEND_FROM");
@@ -86,7 +89,7 @@ export async function notifyOwner(inquiry: {
     return;
   }
 
-  const result = await sendResend({ to, from, key, inquiry });
+  const result = await sendResend({ to, from, key, placeName, inquiry });
   if (result.ok) {
     await markNotifySent(inquiry.id, "accepted-by-resend");
     console.log(JSON.stringify({ partyNotify: "accepted", inquiryId: inquiry.id }));
@@ -114,6 +117,7 @@ export async function retryPendingNotifications(limit = 10): Promise<{
   skipped: number;
 }> {
   const settings = await getSettings();
+  const placeName = settings.restaurant_name.value.trim() || DEFAULT_PLACE_NAME;
   const to = ownerRecipient(settings);
   const key = await readSecret("RESEND_API_KEY");
   const from = await readSecret("RESEND_FROM");
@@ -139,6 +143,7 @@ export async function retryPendingNotifications(limit = 10): Promise<{
       to,
       from,
       key,
+      placeName,
       inquiry: {
         id: row.inquiry_id,
         name: row.name,

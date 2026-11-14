@@ -20,12 +20,15 @@ test("header chrome matches Stitch light composition (Call + Order)", () => {
   assert.match(header, /Call/, "header keeps call CTA");
   assert.match(header, /OrderLink/, "header keeps order CTA");
   assert.match(header, /brand-mark/, "wordmark present");
+  assert.match(header, /splitPlaceWordmark|site\.name/, "nav brand comes from CMS place name");
   assert.match(header, /Ypsilanti, MI/, "location subtitle without invented EST year");
   assert.doesNotMatch(header, /EST\.\s*1964|Happy Hour|Weekend Brunch/i);
   assert.doesNotMatch(header, /positioning/, "old brass positioning strip removed");
 
   const hero = page.match(/className="stitch-hero"[\s\S]*?<\/section>/);
   assert.ok(hero, "stitch-hero section exists");
+  assert.match(hero[0], /stitch-wordmark-mark/, "hero keeps short wordmark art direction");
+  assert.match(hero[0], /stitch-wordmark-rest/, "hero shows Bar & Grill from CMS place name");
   assert.match(hero[0], /framed-hero-actions/, "primary CTAs stay in stitch hero (outside video)");
   assert.match(hero[0], /sizzle-below/, "CTAs sit below ambient reel, not over footage");
   assert.doesNotMatch(hero[0], /overlay=\{/, "no copy/CTA overlay on moving video");

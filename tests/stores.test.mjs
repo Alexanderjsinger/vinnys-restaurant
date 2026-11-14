@@ -57,7 +57,7 @@ test("sqlite edits stay in sqlite and the snapshot keeps the published menu", ()
 
     const published = runFixture("snapshot-read", fixtureDir);
     assert.equal(published.publicPrice, "16");
-    assert.equal(published.publicName, "Vinny's Bar & Grill");
+    assert.equal(published.publicName, "Vinny’s Bar & Grill");
     assert.equal(published.sqlitePrice, "99");
     assert.equal(published.sqliteName, "Fixture Grill");
 

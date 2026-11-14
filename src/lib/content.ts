@@ -55,7 +55,7 @@ function snapshotSettings(): SettingsMap {
   if (!map.notify_email.value) {
     map.notify_email = { value: "alexander.jeffrey.singer@gmail.com", confirmed: false };
   }
-  if (!map.hero_heading.value) map.hero_heading = { value: "Vinny's Bar & Grill", confirmed: true };
+  if (!map.hero_heading.value) map.hero_heading = { value: "Vinny’s Bar & Grill", confirmed: true };
   return map;
 }
 

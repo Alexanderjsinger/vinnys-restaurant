@@ -5,6 +5,7 @@ import { LocalBusinessJsonLd } from "@/components/LocalBusinessJsonLd";
 import { SiteFooter } from "@/components/SiteFooter";
 import { SiteHeader } from "@/components/SiteHeader";
 import { TrackClicks } from "@/components/TrackClicks";
+import { DEFAULT_PLACE_NAME } from "@/lib/brand";
 import { PRODUCTION_ORIGIN } from "@/lib/public";
 import { getSite } from "@/lib/site";
 import "./globals.css";
@@ -53,7 +54,7 @@ export async function generateMetadata(): Promise<Metadata> {
           url: "/photos/storefront.webp",
           width: 1110,
           height: 886,
-          alt: "Exterior of Vinny's Bar & Grill at 705 W. Cross St.",
+          alt: `Exterior of ${DEFAULT_PLACE_NAME} at 705 W. Cross St.`,
         },
       ],
     },

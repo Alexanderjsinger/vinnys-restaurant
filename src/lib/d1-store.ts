@@ -226,7 +226,7 @@ async function ensure() {
   if (seeded?.value === "1") return;
   const now = new Date().toISOString();
   const settings: [string, string, number][] = [
-    ["restaurant_name", "Vinny's Bar & Grill", 0],
+    ["restaurant_name", "Vinny’s Bar & Grill", 0],
     ["tagline", "Good Food, Great Times", 0],
     ["address", "705 W. Cross St., Ypsilanti, MI 48197", 0],
     ["phone", PHONE_DISPLAY, 1],
@@ -243,7 +243,7 @@ async function ensure() {
     ["toast_ordering_url", ORDER_URL, 0],
     ["reservation_provider", "none", 0],
     ["reservation_url", "", 0],
-    ["hero_heading", "Vinny's Bar & Grill", 1],
+    ["hero_heading", "Vinny’s Bar & Grill", 1],
     ["hero_text", HERO_TEXT, 1],
     ["hero_image", "", 0],
   ];

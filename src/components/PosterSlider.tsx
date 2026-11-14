@@ -1,13 +1,14 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { DEFAULT_PLACE_NAME } from "@/lib/brand";
 import { HERO_LINE } from "@/lib/public";
 
 type Poster = { src: string; alt: string };
 
 const HERO_PLACEHOLDER: Poster = {
   src: "/photos/storefront.webp",
-  alt: "Exterior of Vinny's Bar & Grill at 705 W. Cross St.",
+  alt: `Exterior of ${DEFAULT_PLACE_NAME} at 705 W. Cross St.`,
 };
 
 export function PosterSlider({ posters }: { posters: Poster[] }) {

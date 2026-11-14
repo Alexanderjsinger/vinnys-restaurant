@@ -1,7 +1,9 @@
+import { DEFAULT_PLACE_NAME } from "@/lib/brand";
+
 const DATA = {
   "@context": "https://schema.org",
   "@type": "Restaurant",
-  name: "Vinny's Bar & Grill",
+  name: DEFAULT_PLACE_NAME,
   url: "https://vinnysbargrill.com/",
   telephone: "+1-734-905-7051",
   image: "https://vinnysbargrill.com/photos/storefront.webp",

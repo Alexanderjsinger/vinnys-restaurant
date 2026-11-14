@@ -131,7 +131,7 @@ function migrate(db: Database.Database) {
     "INSERT INTO settings (key, value, confirmed) VALUES (?, ?, 0)",
   );
   const settings: [SettingKey, string][] = [
-    ["restaurant_name", "Vinny's Bar & Grill"],
+    ["restaurant_name", "Vinny’s Bar & Grill"],
     ["tagline", "Good Food, Great Times"],
     ["address", "705 W. Cross St., Ypsilanti, MI 48197"],
     ["phone", PHONE_DISPLAY],
@@ -165,17 +165,17 @@ function migrate(db: Database.Database) {
     insertEvent.run(
       "Sample: Thursday night",
       "2026-11-21T19:00",
-      "Placeholder event so this page is not empty. Not a real booking at Vinny’s.",
+      "Placeholder event so this page is not empty. Not a real booking at Vinny’s Bar & Grill.",
     );
     insertEvent.run(
       "Sample: weekend gathering",
       "2026-11-28T16:00",
-      "Placeholder event so this page is not empty. Not a real booking at Vinny’s.",
+      "Placeholder event so this page is not empty. Not a real booking at Vinny’s Bar & Grill.",
     );
     insertEvent.run(
       "Sample: private hold",
       "2026-12-05T18:00",
-      "Placeholder event so this page is not empty. Not a real booking at Vinny’s.",
+      "Placeholder event so this page is not empty. Not a real booking at Vinny’s Bar & Grill.",
     );
 
     db.prepare("INSERT INTO meta (key, value) VALUES ('seeded', '1')").run();
@@ -264,7 +264,7 @@ function ensureExtraSettings(db: Database.Database) {
   const insert = db.prepare("INSERT OR IGNORE INTO settings (key, value, confirmed) VALUES (?, ?, ?)");
   const rows: [string, string, number][] = [
     ["notify_email", "alexander.jeffrey.singer@gmail.com", 0],
-    ["hero_heading", "Vinny's Bar & Grill", 1],
+    ["hero_heading", "Vinny’s Bar & Grill", 1],
     ["hero_text", "A bar and grill across from EMU in Ypsilanti. Lunch is served daily, 11–3pm, from the printed menu.", 1],
     ["hero_image", "", 0],
   ];

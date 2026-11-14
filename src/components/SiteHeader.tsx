@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { DEFAULT_PLACE_NAME, splitPlaceWordmark } from "@/lib/brand";
 import { LUNCH_SERVICE } from "@/lib/lunch-menu";
 import { PHONE_DISPLAY, RESERVE_TEL, STREET_ADDRESS } from "@/lib/public";
 import type { PublicSite } from "@/lib/types";
@@ -9,6 +10,9 @@ export function SiteHeader({ site }: { site: PublicSite }) {
   const phoneHref = site.phoneHref || RESERVE_TEL;
   const phoneLabel = site.phone || PHONE_DISPLAY;
   const address = site.address || STREET_ADDRESS;
+  const placeName = site.name.trim() || DEFAULT_PLACE_NAME;
+  const { mark, rest } = splitPlaceWordmark(placeName);
+  const brandSub = rest ? `${rest} · Ypsilanti, MI` : "Ypsilanti, MI";
   return (
     <header className="site-header">
       <div className="sticky-bar">
@@ -26,9 +30,9 @@ export function SiteHeader({ site }: { site: PublicSite }) {
           </div>
         </div>
         <div className="wrap brand-row">
-          <Link className="brand" href="/">
-            <span className="brand-mark">Vinny&apos;s</span>
-            <span className="brand-sub">Ypsilanti, MI</span>
+          <Link className="brand" href="/" aria-label={placeName}>
+            <span className="brand-mark">{mark}</span>
+            <span className="brand-sub">{brandSub}</span>
           </Link>
           <PrimaryNav />
           <div className="header-actions">

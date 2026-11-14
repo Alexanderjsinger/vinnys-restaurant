@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { HoursList } from "@/components/HoursList";
 import { PHONE_DISPLAY, RESERVE_TEL, STREET_ADDRESS } from "@/lib/public";
+import { DEFAULT_PLACE_NAME } from "@/lib/brand";
 import { pageMeta } from "@/lib/seo";
 import { getSite } from "@/lib/site";
 
@@ -9,7 +10,7 @@ export const runtime = "nodejs";
 export const metadata = pageMeta(
   "/contact",
   "Contact",
-  "Call Vinny's Bar & Grill at 734-905-7051. 705 W. Cross St., Ypsilanti, MI 48197.",
+  `Call ${DEFAULT_PLACE_NAME} at 734-905-7051. 705 W. Cross St., Ypsilanti, MI 48197.`,
 );
 
 export default async function ContactPage() {

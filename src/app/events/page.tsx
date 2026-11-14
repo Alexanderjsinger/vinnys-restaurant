@@ -3,6 +3,7 @@ import { TrackView } from "@/components/TrackView";
 import { listEvents } from "@/lib/content";
 import { splitPublicEvents } from "@/lib/events-public";
 import { detroitNowLocal } from "@/lib/format";
+import { DEFAULT_PLACE_NAME } from "@/lib/brand";
 import { pageMeta } from "@/lib/seo";
 import { getSite } from "@/lib/site";
 
@@ -11,7 +12,7 @@ export const runtime = "nodejs";
 export const metadata = pageMeta(
   "/events",
   "Events",
-  "Confirmed events at Vinny's Bar & Grill in Ypsilanti. The list stays empty until a real event is posted.",
+  `Confirmed events at ${DEFAULT_PLACE_NAME} in Ypsilanti. The list stays empty until a real event is posted.`,
 );
 
 export default async function EventsPage() {

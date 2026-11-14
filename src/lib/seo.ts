@@ -1,11 +1,12 @@
 import type { Metadata } from "next";
+import { DEFAULT_PLACE_NAME } from "@/lib/brand";
 import { PRODUCTION_ORIGIN } from "@/lib/public";
 
 const shareImage = {
   url: "/photos/storefront.webp",
   width: 1110,
   height: 886,
-  alt: "Exterior of Vinny's Bar & Grill at 705 W. Cross St.",
+  alt: `Exterior of ${DEFAULT_PLACE_NAME} at 705 W. Cross St.`,
 };
 
 export function pageMeta(path: string, title: string | { absolute: string }, description: string): Metadata {
