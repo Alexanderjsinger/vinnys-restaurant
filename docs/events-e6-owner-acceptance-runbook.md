@@ -37,26 +37,32 @@ There is **no separate production D1** — this id is live business data (menu, 
 
 ## 2. Establish recovery safeguards
 
-Time Travel is **always on**; capture a bookmark before CMS writes.
+Time Travel is **always on**. Before any CMS writes on D1:
+
+| Requirement | Level |
+| --- | --- |
+| Pre-session **Time Travel bookmark** (`wrangler d1 time-travel info`) | **Required** — record UTC time + bookmark string in your evidence log |
+| **SQL export** to a path **outside** this git repository | **Recommended, optional** |
+| **Recovery drill** (e.g. test restore to a throwaway database) | **Not required** for E6 — capturing a bookmark does **not** prove restore was tested |
 
 ```bash
 npx wrangler login    # if needed
 npx wrangler d1 info vinnys-bar-grill
-npx wrangler d1 time-travel info vinnys-bar-grill
+npx wrangler d1 time-travel info vinnys-bar-grill   # required before writes
 ```
 
-**Record:** UTC start time, bookmark string, optional SQL export:
+**Optional export (recommended, not required):**
 
 ```bash
 npx wrangler d1 export vinnys-bar-grill --remote \
   --output=../vinnys-backups-outside-repo/vinnys-pre-e6-YYYYMMDD.sql
 ```
 
-**Backup storage rules (required):**
+**Backup storage rules:**
 
 - Save exports **outside** the `vinnys-restaurant` git tree (e.g. `~/vinnys-backups/`, encrypted disk, password manager notes for bookmarks only).
 - **Never** commit SQL exports, D1 dumps, or inquiry PII into git.
-- Do **not** run `time-travel restore` during routine E6 — full-database overwrite; emergency only.
+- Do **not** run `time-travel restore` against the live id during routine E6 — full-database overwrite; emergency only.
 
 Reference: [Cloudflare D1 Time Travel](https://developers.cloudflare.com/d1/reference/time-travel/), [`d1-backup-recovery.md`](d1-backup-recovery.md).
 
@@ -99,7 +105,7 @@ Reference: [Cloudflare D1 Time Travel](https://developers.cloudflare.com/d1/refe
 | Step | Action | Expected | Maps to |
 | --- | --- | --- | --- |
 | **1** | Confirm staging + D1 id (§1) | ID matches; login form loads | Pre-flight |
-| **2** | Record bookmark / optional export (§2) | Bookmark captured; export path **outside repo** | Pre-flight |
+| **2** | Record **required** Time Travel bookmark (§2); SQL export if you choose | Bookmark in evidence log; export **outside repo** only if performed | Pre-flight |
 | **3** | Create **upcoming** disposable as **Save draft** | Draft badge; banner for draft save | ADM-06, E6-1 |
 | **4** | **Preview site** shows title; guest `/events` (private window) **does not** | Draft on preview only | E6-1 |
 | **5** | Admin UI: **Save draft / Publish / Archive** buttons only — **no Status `<select>`** | Buttons only | E6-7 |
@@ -148,7 +154,7 @@ Do **not** archive or unpublish **Limp Bizkit** to force empty state for E2.
 
 ## 7. Isolated QA database (only if necessary)
 
-**Default:** Shared staging D1 + `E6-QA*` only + bookmark/export first.
+**Default:** Shared staging D1 + `E6-QA*` only + **required** bookmark first (export optional).
 
 **Separate D1 + preview worker** only if you refuse any write risk to the live id — see [`d1-backup-recovery.md`](d1-backup-recovery.md). Not required for one owner browser pass.
 
@@ -156,16 +162,18 @@ Do **not** archive or unpublish **Limp Bizkit** to force empty state for E2.
 
 ## 8. Clearing HOLD (after you finish)
 
+Completing steps 1–16 and owner self-assessment **does not** clear HOLD by itself.
+
 | Criterion | Evidence needed |
 | --- | --- |
 | **A** Security | Prior staging CSRF PASS; re-smoke only if regressions suspected |
-| **B** Guest copy / recovery | E1 evidence; E2 **NOT TESTED** unless independently proven (§5) |
+| **B** Guest copy / recovery | E1 evidence; E2 requires **independent evidence** (§5) — if E2 remains **NOT TESTED**, **criterion B is unresolved** and HOLD **unchanged** |
 | **C** Photo / `next_step` / archive UX | **Step 6 mandatory** + step 13 + archive path (steps 10–12) |
 | **D** Full matrix | Steps 3–16 **PASS** with evidence log |
 
-Attach evidence to **MMAV-6**. Coordinator lifts HOLD only when **B–D** are satisfied with evidence.
+**After** the live matrix: **independent QA** reviews your evidence; **Coordinator** packages assessment for Product Owner — **Coordinator assessment is required** before Events/CMS HOLD clearance. Criteria **B–D** need documented PASS evidence (including any independent E2 proof if claimed).
 
-**This runbook does not clear HOLD by itself.**
+Attach evidence to **MMAV-6**. This runbook is not a release authorization.
 
 ---
 
@@ -184,14 +192,24 @@ Attach evidence to **MMAV-6**. Coordinator lifts HOLD only when **B–D** are sa
 | E2 empty-state | **PASS** | NOT TESTED unless independent evidence; no Limp Bizkit toggle |
 | Demo content policy | **PASS** | Cross-links registry |
 
-**Recommendation:** **HOLD** remains until owner completes steps 1–16 with PASS evidence. Runbook is **approved for owner execution** (not a ship authorization).
+### HOLD and release (read carefully)
+
+| Statement | Meaning |
+| --- | --- |
+| **Runbook QA PASS** (table above) | **Procedural approval** — this document is fit for owner execution; **not** application acceptance or release authorization |
+| Owner completes steps 1–16 with PASS rows | **Input** to HOLD review — **does not** clear HOLD alone |
+| **Independent QA** on live matrix | **Required** before HOLD may clear |
+| **E2 NOT TESTED** | **Criterion B unresolved** — HOLD **unchanged** until independent E2 evidence exists or product accepts B partial |
+| **Coordinator assessment** | **Required** before HOLD clearance |
+
+**Recommendation:** **HOLD** remains until independent QA validates live matrix evidence and Coordinator completes HOLD assessment with criteria **B–D** satisfied (or explicitly documented exceptions).
 
 ### Remaining risks
 
 | Risk | Mitigation |
 | --- | --- |
 | Shared D1 — accidental edit to menu/inquiries | Stay on Events admin only; disposable titles |
-| No live backup taken before session | Owner must run bookmark + export (§2) |
+| No bookmark before session | **Required** bookmark (§2); SQL export optional |
 | Home vs `/events` confusion | Step 9 — judge publish on `/events` |
 | E2 still open | Accept NOT TESTED or separate approved empty-state plan without demo changes |
 | R2 photo upload | Still BLOCKED — https URL only |
