@@ -131,6 +131,8 @@ Use QA vocabulary: **PASS** / **FAIL** / **BLOCKED** / **NOT TESTED**. Never PAS
 
 ## Staging and blockers
 
+Worker publish is only `npm run deploy:vinext` after `npm run ci`, from an approved SHA. See [`deploy.md`](deploy.md). Cloud agents need `CLOUDFLARE_API_TOKEN` as a Cloud Agent runtime secret on environment `7e682a92` (https://cursor.com/dashboard/cloud-agents/environments/e/7e682a92-dc57-11f1-8120-06b44be262b7), injected at agent start. A published-app secret does not deploy the Worker. Workers Builds stays disconnected. D1 id `5bd8ee69-a229-4156-a6fa-166f55e3abcb` must remain the DB binding via `cloudflare.config.ts`. Record the new Worker version after each publish.
+
 - **Staging worker:** https://vinnys-bar-grill.toastisadog.workers.dev/ — content matches approved `main` `2b77538` (2026-11-14); further deploys need PO approval.
 - **D1:** live business data on the bound database — treat as production-like; do not mutate without approval.
 - **Blocked (owner):** Cloudflare R2 (photo upload); Resend (`RESEND_API_KEY` / `RESEND_FROM`). Details in Phase 2 status and owner-setup.
