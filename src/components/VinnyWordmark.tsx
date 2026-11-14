@@ -1,7 +1,5 @@
 "use client";
 
-import { useId } from "react";
-
 export type VinnyWordmarkSize = "sm" | "md" | "lg";
 export type VinnyWordmarkSurface = "light" | "dark";
 
@@ -20,8 +18,8 @@ type VinnyWordmarkProps = {
 };
 
 /**
- * Vector wordmark echoing the physical bar sign: brushed silver letterforms with a warm halo.
- * Custom V with upward right stroke; lowercase inny's in rounded sans.
+ * Solid logomark derived from the physical Vinny's sign: distinctive swoop V plus lowercase inny's.
+ * No metallic fill or halo — black on light surfaces, warm off-white on dark.
  */
 export function VinnyWordmark({
   size = "md",
@@ -29,63 +27,49 @@ export function VinnyWordmark({
   decorative = false,
   className = "",
 }: VinnyWordmarkProps) {
-  const uid = useId().replace(/:/g, "");
-  const gradId = `vinny-metal-${uid}`;
-  const haloId = `vinny-halo-${uid}`;
   const height = SIZE_HEIGHT[size];
   const classes = ["vinny-wordmark", `vinny-wordmark--${size}`, `vinny-wordmark--${surface}`, className]
     .filter(Boolean)
     .join(" ");
-
-  const ink = `url(#${gradId})`;
 
   return (
     <svg
       className={classes}
       width="auto"
       height={height}
-      viewBox="0 0 286 64"
+      viewBox="0 0 298 68"
       role={decorative ? undefined : "img"}
       aria-hidden={decorative ? true : undefined}
       aria-label={decorative ? undefined : "Vinny's"}
       xmlns="http://www.w3.org/2000/svg"
       preserveAspectRatio="xMinYMid meet"
     >
-      <defs>
-        <linearGradient id={gradId} x1="0%" y1="0%" x2="0%" y2="100%">
-          <stop offset="0%" stopColor={surface === "dark" ? "#f2f4f7" : "#eceef2"} />
-          <stop offset="18%" stopColor={surface === "dark" ? "#bcc3cd" : "#a8b0bb"} />
-          <stop offset="52%" stopColor={surface === "dark" ? "#8e98a4" : "#7a8490"} />
-          <stop offset="82%" stopColor={surface === "dark" ? "#c5ccd6" : "#b5bcc6"} />
-          <stop offset="100%" stopColor={surface === "dark" ? "#e8ebef" : "#d8dde4"} />
-        </linearGradient>
-        <filter id={haloId} x="-14%" y="-45%" width="128%" height="210%" colorInterpolationFilters="sRGB">
-          <feGaussianBlur in="SourceAlpha" stdDeviation={surface === "dark" ? "3" : "1.5"} result="blur" />
-          <feFlood floodColor="#d4a83a" floodOpacity={surface === "dark" ? "0.9" : "0.5"} result="gold" />
-          <feComposite in="gold" in2="blur" operator="in" result="glow" />
-          <feMerge>
-            <feMergeNode in="glow" />
-            <feMergeNode in="SourceGraphic" />
-          </feMerge>
-        </filter>
-      </defs>
-      <g className="vinny-wordmark__letters" fill={ink} filter={`url(#${haloId})`}>
-        <g fill="none" stroke={ink} strokeWidth="5.8" strokeLinecap="round" strokeLinejoin="round">
-          <path d="M 2 10 L 26 52" />
-          <path d="M 26 52 C 32 42 54 14 118 8" />
-        </g>
+      <g className="vinny-wordmark__letters" fill="currentColor">
+        {/* V: left leg + upward-sweeping right stroke (sign checkmark brush) */}
+        <path
+          className="vinny-wordmark__v"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="6.2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          d="M 2 14 L 24 52 M 24 52 C 31 43 50 16 116 6"
+        />
         <text
-          x="124"
-          y="49"
+          x="120"
+          y="51"
           className="vinny-wordmark__rest"
-          fontSize="43"
-          fontWeight="600"
-          letterSpacing="-0.06em"
+          fontSize="44"
+          fontWeight="650"
+          letterSpacing="-0.05em"
         >
           inny
         </text>
-        <path className="vinny-wordmark__apostrophe" d="M 206 14 h 6 v 14 h -6 z" />
-        <text x="218" y="49" className="vinny-wordmark__rest" fontSize="43" fontWeight="600">
+        <path
+          className="vinny-wordmark__apostrophe"
+          d="M 206.5 13 a 3.4 3.4 0 0 1 6.8 0 v 16 a 3.4 3.4 0 0 1 -6.8 0 Z"
+        />
+        <text x="220" y="51" className="vinny-wordmark__rest" fontSize="44" fontWeight="650" letterSpacing="-0.02em">
           s
         </text>
       </g>

@@ -1220,13 +1220,14 @@ input[type="checkbox"] { width: 1.15rem; height: 1.15rem; min-height: 0; accent-
   display: block;
   max-width: 100%;
 }
+.vinny-wordmark--light {
+  color: var(--black);
+}
+.vinny-wordmark--dark {
+  color: #f6f1e7;
+}
 .vinny-wordmark__rest {
   font-family: var(--font-body), "Plus Jakarta Sans", system-ui, sans-serif;
-}
-@media (prefers-reduced-motion: reduce) {
-  .vinny-wordmark {
-    filter: none;
-  }
 }
 .footer-name {
   display: flex;
