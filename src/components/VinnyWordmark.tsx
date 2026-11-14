@@ -1,5 +1,7 @@
 "use client";
 
+import { VINNY_WORDMARK_CROP_SIZE } from "@/lib/vinny-wordmark-geometry";
+
 export type VinnyWordmarkSize = "sm" | "md" | "lg";
 export type VinnyWordmarkSurface = "light" | "dark";
 
@@ -18,7 +20,7 @@ type VinnyWordmarkProps = {
   className?: string;
 };
 
-/** Raster logomark cropped from printed menu (vinnys-menu-logomark.png). Not the potrace SVG. */
+/** Raster logomark from owner reference (vinnys-wordmark-owner-crop.png). Not the potrace SVG. */
 export function VinnyWordmark({
   size = "md",
   surface = "light",
@@ -30,7 +32,8 @@ export function VinnyWordmark({
     .filter(Boolean)
     .join(" ");
 
-  const width = Math.round(height * (682 / 110));
+  const { width: cw, height: ch } = VINNY_WORDMARK_CROP_SIZE;
+  const width = Math.round(height * (cw / ch));
 
   return (
     // eslint-disable-next-line @next/next/no-img-element -- menu-derived raster mark (PR #32)
