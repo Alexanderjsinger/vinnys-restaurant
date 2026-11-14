@@ -24,6 +24,7 @@
 1. **Keep** for visual/UI testing until Coordinator/Product Owner says otherwise.  
 2. **Do not** delete, archive, edit, or republish **without explicit approval**.  
 3. QA agents: **do not** use this row for E6 lifecycle tests — use `E6-QA*` disposables only ([`events-e6-owner-acceptance-runbook.md`](events-e6-owner-acceptance-runbook.md)).  
+4. **Do not** archive or unpublish demo rows to force empty-state (E2) testing — see runbook §5.  
 
 ---
 
