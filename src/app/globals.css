@@ -158,12 +158,12 @@ address { font-style: normal; }
 }
 .brand-mark {
   display: block;
-  font-family: var(--font-body), sans-serif;
-  font-size: clamp(1.35rem, 2.4vw, 1.7rem);
-  font-weight: 700;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
   line-height: 1;
+}
+.brand-mark .vinny-wordmark {
+  display: block;
+  height: clamp(1.15rem, 2.1vw, 1.55rem);
+  width: auto;
 }
 .brand-sub {
   display: block;
@@ -335,10 +335,13 @@ address { font-style: normal; }
 }
 .stitch-wordmark-mark {
   display: block;
-  font-size: clamp(3.4rem, 12vw, 7.2rem);
-  font-weight: 600;
-  letter-spacing: -0.03em;
   line-height: 0.92;
+}
+.stitch-wordmark-mark .vinny-wordmark--lg {
+  display: block;
+  height: clamp(3.2rem, 12vw, 7rem);
+  width: auto;
+  margin-inline: auto;
 }
 .stitch-wordmark-rest {
   display: block;
@@ -1212,7 +1215,39 @@ input[type="checkbox"] { width: 1.15rem; height: 1.15rem; min-height: 0; accent-
 }
 .site-footer a { color: var(--gold-hot); }
 .site-footer a:hover { color: #fff; }
-.footer-name { font-size: 1.7rem; margin: 0; color: #fff; }
+
+.vinny-wordmark {
+  display: block;
+  max-width: 100%;
+  height: auto;
+  width: auto;
+  object-fit: contain;
+}
+.vinny-wordmark--dark {
+  filter: brightness(0) invert(1);
+}
+.footer-name {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.35rem 0.5rem;
+  font-size: 1.7rem;
+  margin: 0;
+  color: #fff;
+}
+.footer-name .vinny-wordmark--md {
+  height: 1.85rem;
+  width: auto;
+}
+.footer-name-rest {
+  font-family: var(--font-body), sans-serif;
+  font-size: clamp(0.95rem, 2.2vw, 1.15rem);
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: #d4af37;
+  line-height: 1.2;
+}
 .footer-tag { color: var(--gold-hot); margin-top: 0.2rem; }
 .site-footer h2 { font-size: 1.1rem; color: #fff; }
 .site-footer .primary-nav a,

@@ -20,6 +20,7 @@ test("header chrome matches Stitch light composition (Call + Order)", () => {
   assert.match(header, /Call/, "header keeps call CTA");
   assert.match(header, /OrderLink/, "header keeps order CTA");
   assert.match(header, /brand-mark/, "wordmark present");
+  assert.match(header, /VinnyWordmark/, "sign wordmark component in header");
   assert.match(header, /brand-tagline/, "Meet me tagline lives in white header near brand");
   assert.match(header, /HERO_LINE/, "header tagline uses locked Meet me line");
   assert.match(header, /splitPlaceWordmark|site\.name/, "nav brand comes from CMS place name");
@@ -30,6 +31,7 @@ test("header chrome matches Stitch light composition (Call + Order)", () => {
   const hero = page.match(/className="stitch-hero"[\s\S]*?<\/section>/);
   assert.ok(hero, "stitch-hero section exists");
   assert.match(hero[0], /stitch-wordmark-mark/, "hero keeps short wordmark art direction");
+  assert.match(hero[0], /VinnyWordmark/, "hero uses sign wordmark");
   assert.match(hero[0], /stitch-wordmark-rest/, "hero shows Bar & Grill from CMS place name");
   assert.match(hero[0], /framed-hero-actions/, "primary CTAs stay in stitch hero (outside video)");
   assert.match(hero[0], /sizzle-below/, "CTAs sit below ambient reel, not over footage");

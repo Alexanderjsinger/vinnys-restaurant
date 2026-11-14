@@ -19,3 +19,4 @@ admin-password*
 *.pem
 *.key
 .DS_Store
+.wordmark-trace/

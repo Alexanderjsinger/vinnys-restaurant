@@ -1,5 +1,7 @@
 import Link from "next/link";
 import { HoursList } from "@/components/HoursList";
+import { isVinnyShortMark, splitPlaceWordmark } from "@/lib/brand";
+import { VinnyWordmark } from "@/components/VinnyWordmark";
 import { PHONE_DISPLAY, RESERVE_TEL, STREET_ADDRESS } from "@/lib/public";
 import type { PublicSite } from "@/lib/types";
 import { OrderLink } from "./OrderLink";
@@ -7,11 +9,22 @@ import { OrderLink } from "./OrderLink";
 export function SiteFooter({ site }: { site: PublicSite }) {
   const phoneHref = site.phoneHref || RESERVE_TEL;
   const phoneLabel = site.phone || PHONE_DISPLAY;
+  const { mark, rest } = splitPlaceWordmark(site.name);
+  const showShortMark = isVinnyShortMark(mark);
   return (
     <footer className="site-footer">
       <div className="wrap footer-grid">
         <div>
-          <p className="footer-name">{site.name}</p>
+          <p className="footer-name">
+            {showShortMark ? (
+              <>
+                <VinnyWordmark size="md" surface="dark" decorative />
+                {rest ? <span className="footer-name-rest"> {rest}</span> : null}
+              </>
+            ) : (
+              site.name
+            )}
+          </p>
           {site.tagline ? <p className="footer-tag">{site.tagline}</p> : null}
           <address>{site.address || STREET_ADDRESS}</address>
           <p>
