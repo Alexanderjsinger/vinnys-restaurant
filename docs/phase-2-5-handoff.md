@@ -6,14 +6,14 @@ Phase 2.5 reliability/security hardening originally landed in PR #2. Follow-up P
 
 **CSRF follow-through (2026-11-11):** PR #9 merged to `main` as `b7bf813` (tip `3c838e6`). PO-authorized staging deploy + independent QA → **staging-verified PASS**. See [`security-closure-csrf.md`](security-closure-csrf.md).
 
-R2 and Resend remain **owner-blocked**. Business facts remain **owner**. Events/CMS product remains **HOLD** until **E6** live QA (#12–#14 merged for E1–E5). Staging content matches `main` `2b77538` (PR #28). No DNS. No secrets committed.
+R2 and Resend remain **owner-blocked**. Business facts remain **owner**. Events/CMS product remains **HOLD** until **E6** live QA (#12–#14 merged for E1–E5). **GitHub `main`:** `731eedc` (includes skills #29). **Verified staging content baseline:** `2b77538` (PR #28) — do not conflate with tip `main` until a PO-approved deploy. No DNS. No secrets committed.
 
 ## Status by layer
 
 | Layer | Status |
 | --- | --- |
-| Completed eng (Phase 2.5 + CSRF + Events + sizzle) | On `main` through `2b77538` (CSRF `b7bf813`; Events #12–#14; sizzle/home #15–#28) |
-| Verified staging | CSRF **PASS**; 2026-11-14 fingerprints match `2b77538` |
+| Completed eng (Phase 2.5 + CSRF + Events + sizzle + skills) | GitHub `main` `731eedc` (app through #28 `2b77538`; skills #29) |
+| Verified staging | CSRF **PASS**; 2026-11-14 fingerprints match content baseline `2b77538` (not yet redeployed for #29) |
 | Outstanding product | Events/CMS **HOLD** — E6 QA matrix open — [`events-cms-backlog.md`](events-cms-backlog.md) |
 | Unresolved defects | E6 live CMS acceptance only |
 | Owner deps | R2, Resend, hours/emails/Toast/address confirmation, further deploy/DNS approval |
@@ -71,7 +71,7 @@ Prioritized eng-vs-owner checklist: [`next-execution-plan.md`](next-execution-pl
 ## Deployment status
 
 - Staging worker content matches approved `main` `2b77538` (PR #28 sizzle OOM fix; read-only verify 2026-11-14)
-- Prior CSRF baseline: merge `b7bf813` / Worker `22ba677c…`; rollback target if needed: `c9db5b34-879e-46ca-a226-4c88d7d3674c``
+- Prior CSRF baseline: merge `b7bf813` / Worker `22ba677c…`; rollback target if needed: `c9db5b34-879e-46ca-a226-4c88d7d3674c`
 - **Do not deploy further or change DNS without Product Owner approval relayed by Coordinator**
 
 ## Rollback

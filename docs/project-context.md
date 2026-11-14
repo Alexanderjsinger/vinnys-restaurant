@@ -3,7 +3,7 @@
 Repo: `Alexanderjsinger/vinnys-restaurant`  
 Public brand: Vinny’s Bar & Grill (Ypsilanti). Intended eventual host for vinnysbargrill.com — **DNS is not changed by this project until the owner approves.**
 
-**Git checkpoint (verified 2026-11-14):** Approved `main` `2b77538` (PR #28 sizzle Worker OOM fix). Prior baseline: CSRF merge `b7bf813` (#9); Events/CMS product PRs **#12–#14** (E1–E5); homepage/sizzle/visual PRs **#15–#28**. PO-approved staging content fingerprints match `2b77538` (see Project store `internal/staging-verification.md`).
+**Git checkpoint (verified 2026-11-14):** GitHub `main` `731eedc` (skills #29 on prior app tip). **Last verified staging content baseline:** `2b77538` (PR #28 sizzle OOM fix) — staging fingerprints matched this SHA; Worker not redeployed since #29 (docs/skills only on `main`). Prior: CSRF `b7bf813` (#9); Events **#12–#14** (E1–E5); homepage/sizzle **#15–#28**. Evidence: Project store `internal/staging-verification.md`.
 
 ## Who decides what
 

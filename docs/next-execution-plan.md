@@ -1,6 +1,6 @@
 # Next execution plan
 
-Prioritized checklist after Phase 2.5 + admin CSRF on `main`. Approved staging content baseline: `main` `2b77538` (PR #28, verified 2026-11-14). Events E1–E5 merged (#12–#14). Split by who can finish the item. Full owner how-to: [`owner-setup.md`](owner-setup.md). Status narrative: [`project-context.md`](project-context.md). Phase 2.5 history: [`phase-2-5-handoff.md`](phase-2-5-handoff.md). CSRF closure: [`security-closure-csrf.md`](security-closure-csrf.md). Events backlog: [`events-cms-backlog.md`](events-cms-backlog.md).
+Prioritized checklist after Phase 2.5 + admin CSRF on `main`. **GitHub `main` tip:** `731eedc` (skills #29). **Verified staging content baseline:** `2b77538` (PR #28, read-only verify 2026-11-14). Events E1–E5 merged (#12–#14). Split by who can finish the item. Full owner how-to: [`owner-setup.md`](owner-setup.md). Status narrative: [`project-context.md`](project-context.md). Phase 2.5 history: [`phase-2-5-handoff.md`](phase-2-5-handoff.md). CSRF closure: [`security-closure-csrf.md`](security-closure-csrf.md). Events backlog: [`events-cms-backlog.md`](events-cms-backlog.md).
 
 **Standing constraints:** no DNS, no live D1 mutation, no deploy/merge without Product Owner approval via Coordinator.
 

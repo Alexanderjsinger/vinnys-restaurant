@@ -1,7 +1,7 @@
 # Events/CMS — coordinated backlog & next cycle
 
 **Source:** Coordinator consolidate 2026-11-11 (Vinny only)  
-**Checkpoint:** Approved `main` `2b77538` (PR #28); staging content fingerprints match (2026-11-14). Events eng **PR #12–#14** (E1–E5) merged; **E6** QA still open. CSRF closure remains on earlier `b7bf813` baseline — [`security-closure-csrf.md`](security-closure-csrf.md).
+**Checkpoint:** GitHub `main` `731eedc`; **verified staging content baseline** `2b77538` (PR #28, fingerprints 2026-11-14). Events eng **PR #12–#14** (E1–E5) merged; **E6** QA still open. CSRF closure on earlier `b7bf813` — [`security-closure-csrf.md`](security-closure-csrf.md).
 **CSRF:** staging-verified PASS — see [`security-closure-csrf.md`](security-closure-csrf.md)  
 **Events/CMS product:** **HOLD** — not production-ready
 
