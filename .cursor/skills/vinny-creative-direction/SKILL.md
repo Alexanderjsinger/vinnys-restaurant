@@ -16,10 +16,18 @@ This skill is **project-specific creative direction**. It does not replace imple
 
 For deep, hypothesis-driven **bugs** (layout broken, video OOM, playback failures), use Cursor’s **`debug`** subagent — do not fold debugging SOP into this skill.
 
+## Reconcile status before acting
+
+Docs such as `docs/project-context.md` and `docs/events-cms-backlog.md` may describe an older HOLD snapshot. Before creative review or recommendations:
+
+1. `git fetch origin main` and note `git rev-parse origin/main`
+2. Check recent merged PRs (especially #12–#14 Events UX, **#25 Private Parties removal**)
+3. Prefer live staging + `src/` over stale doc claims; pair with **`vinny-cms-workflow`** when data flow matters
+
 ## When to use
 
 - Homepage: hero poster, sizzle reel framing, intro hierarchy, CTA rows, lunch plates, storefront band
-- Events: list/card empty states, photo treatment, recovery CTAs (see product HOLD in `docs/events-cms-backlog.md`)
+- Events: list/card empty states, photo treatment, recovery CTAs (E1–E2 shipped PR #12; E6/HOLD still needs independent QA — see CMS skill)
 - Typography and wordmark: `Vinny’s` vs straight apostrophe, H1/H2 scale, gold utility row vs duplicate CTAs
 - Responsive: 390×844, 1280×800, 1920×1080 — no horizontal overflow, touch targets (44px nav is a known gap)
 - Video hero: ambient reel behavior, poster honesty caption, `prefers-reduced-motion`, Save-Data, Range `/api/sizzle`
@@ -61,7 +69,8 @@ For deep, hypothesis-driven **bugs** (layout broken, video OOM, playback failure
 
 - Read Coordinator scope: which pages, viewports, and success criteria.
 - Confirm staging: https://vinnys-bar-grill.toastisadog.workers.dev/ (read-only unless assigned).
-- Note **Events/CMS HOLD** — creative work may ship in PRs but does not clear HOLD without product AC in `docs/events-cms-backlog.md`.
+- **Events/CMS HOLD:** E1–E5 engineering is on `main` (PRs #12–#14); **HOLD clears only after E6 QA PASS**, not from backlog doc text alone.
+- **Private Parties (PR #25):** no guest Private Parties copy or `/parties` links — empty Events recovery uses **Contact / Call / Order** (`src/components/ConfirmedEvents.tsx`), not Parties.
 
 ### 2. Gather visual evidence (required)
 
@@ -94,7 +103,7 @@ Requirements:
 - **Hierarchy:** one primary story in first viewport (brand → lede → hero); no twin gold CTA rows under H1.
 - **Imagery:** `object-fit: cover` on food/venue frames; no letterboxed “void” plates (regression called out in homepage visual QA).
 - **Honesty:** stock or atmosphere-only assets labeled clearly; never imply a photo is Vinny’s dining room when it is not.
-- **Events:** guest copy must not show admin placeholders (E1); empty lists need recovery paths (E2) when in scope.
+- **Events:** guest copy must not show admin placeholders (E1, PR #12); empty lists use Contact/Call/Order recovery (E2; no Parties CTA post–PR #25).
 - **Motion:** respect `prefers-reduced-motion` and Save-Data; hero stays usable as still poster.
 
 Prefer evolving existing tokens in `globals.css` over importing unrelated design systems.

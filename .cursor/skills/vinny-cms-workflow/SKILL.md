@@ -16,13 +16,23 @@ This skill is **project-specific CMS + data flow**. It does not duplicate Cursor
 
 For visual/UX outcomes of CMS fields, pair with **`vinny-creative-direction`** and **`ux-design-reviewer`**.
 
+## Reconcile status before acting
+
+Historical `docs/*` checkpoints (e.g. 2026-11-11 HOLD language) can lag **`main`**. Before relying on any status doc:
+
+1. `git fetch origin main` and note `git rev-parse origin/main`
+2. Scan recent merges: `git log origin/main --oneline -25` and/or merged GitHub PRs for Vinny’s
+3. On conflict, **`origin/main` + merged PR bodies** override stale doc claims; trace `src/` for guest vs admin behavior
+4. Do **not** treat `docs/events-cms-backlog.md` HOLD/E6 wording as current ship state without re-checking `main` and QA evidence
+
 ## When to use
 
 - Admin panels: place, homepage, menu, events, ordering, inquiries, media
 - `POST /api/admin/save`, `POST /api/admin/media`, `POST /api/admin/login|logout`
-- Public reads: menu, events, hours, homepage settings, inquiries/parties
+- Public reads: menu, events, hours, homepage, contact (no guest `/parties` page — see PR #25)
+- Admin inquiries panel (historical party-note data in D1; not a public form surface)
 - Local dev: SQLite via `src/lib/content.ts` vs live D1 (`src/lib/d1-write.ts`, `cloudflare.config.ts`)
-- Events/CMS HOLD items E1–E6 (`docs/events-cms-backlog.md`)
+- Events/CMS backlog items E1–E6 (`docs/events-cms-backlog.md` as index — confirm merge state on `main`)
 - Emergency read rollback: `VINNYS_SNAPSHOT=1` (public snapshot only — do not delete inquiries)
 
 ## When not to use
@@ -71,13 +81,36 @@ Admin UI (AdminForm + hidden intent)
 
 Public **must not** read `site.promo`, `site.story`, or `site.reservation` (locked by tests). Order links = CMS Toast URL only.
 
+### Private Parties removed (merged PR #25)
+
+| Layer | Behavior |
+| --- | --- |
+| Guest site | No Private Parties / Private Events nav, footer, homepage, or events CTAs |
+| `/parties` | Permanent redirect to `/contact` (`src/app/parties/page.tsx`) |
+| Sitemap | No `/parties` entry (`src/app/sitemap.ts`) |
+| Public POST | `/api/inquiries` success/error redirects land on `/contact` (legacy path only) |
+| Admin CMS | **`/admin` inquiries panel unchanged** — `inquiry-delete`, `notify-retry`, list/history on D1 `inquiries` |
+
+Do not resurrect guest party-booking flows unless Coordinator + Product Owner explicitly rescope.
+
+### Events backlog engineering vs HOLD (PRs #12–#14)
+
+| ID | Shipped on `main` (engineering) | PR |
+| --- | --- | --- |
+| E1 + E2 | Guest empty copy + recovery CTAs | #12 |
+| E3 + E4 | Photo validation + buttons-only status model | #13 |
+| E5 | Editable `next_step` end-to-end | #14 |
+| **E6** | **Not cleared by merges alone** | — |
+
+**E6** (intentional disposable CMS publish/update/past matrix) requires **independent QA verification** with PASS/FAIL/BLOCKED/NOT TESTED and evidence — assign **`/qa-reviewer`**. Coordinator clears Events/CMS **HOLD** only after E6 PASS (and any remaining product gates), not because E1–E5 merged or because backlog docs still say HOLD.
+
 ## Workflow
 
 ### 1. Scope and approvals
 
 1. Confirm assignment from Coordinator (branch name, no-deploy flag, HOLD scope).
 2. If the task touches **live staging D1** or requires **Workers deploy** to verify: stop until Product Owner approval is relayed — document **BLOCKED** if missing.
-3. For Events HOLD release, map work to E1–E6 acceptance in `docs/events-cms-backlog.md`; CSRF PASS does **not** clear HOLD.
+3. For Events HOLD release: confirm E1–E5 already on `main` (PRs #12–#14) vs net-new work; **E6 must be QA-verified** — never assume PASS from docs or eng self-test alone. CSRF PASS does **not** clear HOLD.
 
 ### 2. Trace before edit
 
@@ -134,7 +167,7 @@ When CMS behavior changes, extend or run targeted coverage:
 
 - Menu price validation: two decimal places; gluten/dietary fields persist.
 - Events: America/Detroit local times; past events drop from upcoming list.
-- Parties: `/api/inquiries` — honeypot, rate limit, no admin CSRF (by design).
+- Legacy inquiries POST: `/api/inquiries` — honeypot, rate limit, redirects to `/contact`; no guest `/parties` UI (PR #25). Admin inquiry tooling separate.
 - Snapshot mode: `VINNYS_SNAPSHOT=1` blocks public SQLite reads in tests/live rollback — understand before toggling.
 
 ### 7. Handoff
@@ -145,7 +178,7 @@ Include:
 - Security checklist ack
 - Test command output summary
 - Staging matrix status (PASS/FAIL/BLOCKED/NOT TESTED)
-- Whether Events/CMS HOLD criteria moved (yes/no, which IDs)
+- Whether Events/CMS HOLD criteria moved (yes/no — only claim E6 PASS with QA evidence; cite `main` SHA)
 
 ## Constraints
 
