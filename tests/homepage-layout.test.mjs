@@ -146,7 +146,7 @@ test("stitch homepage keeps authenticity constraints in markup", () => {
     /18 Cold Craft Taps|dry-aged|stone-fired|truffle fries|Happy Hour|Campus Nights|Pease Auditorium|Good Food, Great Times|SCRATCH TAVERN|EST\.\s*1964|Reserve a Table|Weekend Brunch|Birthday list|Lunch, dinner and everything after/i,
   );
   assert.doesNotMatch(page, /testimonial|inquiry form|name="event_type"/i);
-  assert.match(page, /Call to plan a private party/);
+  assert.doesNotMatch(page, /private part(?:y|ies)|\/parties|Party details/i);
   assert.match(page, /Meet me at Vinny/);
   assert.match(page, /listMenu\("public"\)/);
   assert.match(page, /Listing photo of the exterior/);

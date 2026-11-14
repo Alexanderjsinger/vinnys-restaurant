@@ -40,9 +40,9 @@ export function EventsEmptyState({
 } & EmptyContact) {
   const detail =
     surface === "page" && !hasEarlier
-      ? "Check back later, plan a private party, or get in touch."
+      ? "Check back later, or get in touch."
       : surface === "home" && !hasEarlier
-        ? "Nothing is listed yet. Plan a private party or get in touch."
+        ? "Nothing is listed yet. Get in touch."
         : null;
   const callHref = sitePhoneHref || RESERVE_TEL;
   const callLabel = sitePhone || PHONE_DISPLAY;
@@ -53,9 +53,6 @@ export function EventsEmptyState({
       {detail ? <p className="hint">{detail}</p> : null}
       {!hasEarlier ? (
         <div className="cta-row" aria-label="Next steps when no events are posted">
-          <Link className="btn" href="/parties">
-            Private parties
-          </Link>
           <Link className="btn" href="/contact">
             Contact
           </Link>
@@ -69,8 +66,8 @@ export function EventsEmptyState({
           <Link className="btn" href="/events">
             All events
           </Link>
-          <Link className="btn" href="/parties">
-            Private parties
+          <Link className="btn" href="/contact">
+            Contact
           </Link>
         </div>
       ) : null}

@@ -44,9 +44,6 @@ export function SiteFooter({ site }: { site: PublicSite }) {
               </li>
             ) : null}
             <li>
-              <Link href="/parties">Private parties</Link>
-            </li>
-            <li>
               <Link href="/contact">Contact</Link>
             </li>
             <li>

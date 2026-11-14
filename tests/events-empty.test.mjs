@@ -53,10 +53,10 @@ test("public guest Events surfaces never say Placeholder", () => {
   }
 });
 
-test("empty-state recovery CTAs reach Parties, Contact, and Call", () => {
+test("empty-state recovery CTAs reach Contact, Call, and Order (no Private Parties)", () => {
   const empty = read("src/components/ConfirmedEvents.tsx");
   assert.match(empty, /GUEST_EVENTS_EMPTY_LINE|No upcoming events are posted right now/);
-  assert.match(empty, /href="\/parties"/);
+  assert.doesNotMatch(empty, /href="\/parties"|Private parties|private party/i);
   assert.match(empty, /href="\/contact"/);
   assert.match(empty, /RESERVE_TEL|tel:7349057051/);
   assert.match(empty, /role="status"/);
