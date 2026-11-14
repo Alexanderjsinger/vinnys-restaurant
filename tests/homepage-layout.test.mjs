@@ -31,7 +31,7 @@ test("header chrome matches Stitch light composition (Call + Order)", () => {
   const hero = page.match(/className="stitch-hero"[\s\S]*?<\/section>/);
   assert.ok(hero, "stitch-hero section exists");
   assert.match(hero[0], /stitch-wordmark-mark/, "hero keeps short wordmark art direction");
-  assert.match(hero[0], /VinnyWordmark/, "hero uses sign wordmark SVG");
+  assert.match(hero[0], /VinnyWordmark/, "hero uses sign wordmark");
   assert.match(hero[0], /stitch-wordmark-rest/, "hero shows Bar & Grill from CMS place name");
   assert.match(hero[0], /framed-hero-actions/, "primary CTAs stay in stitch hero (outside video)");
   assert.match(hero[0], /sizzle-below/, "CTAs sit below ambient reel, not over footage");

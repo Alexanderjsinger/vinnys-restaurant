@@ -1219,13 +1219,12 @@ input[type="checkbox"] { width: 1.15rem; height: 1.15rem; min-height: 0; accent-
 .vinny-wordmark {
   display: block;
   max-width: 100%;
-  overflow: visible;
-}
-.vinny-wordmark--light {
-  color: var(--black);
+  height: auto;
+  width: auto;
+  object-fit: contain;
 }
 .vinny-wordmark--dark {
-  color: #f6f1e7;
+  filter: brightness(0) invert(1);
 }
 .footer-name {
   display: flex;
