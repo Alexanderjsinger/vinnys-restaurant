@@ -18,6 +18,11 @@ export const POSITIONING =
 
 export const HERO_LINE = "Meet me at Vinny's.";
 
+/** True when CMS/copy is only the Meet me slogan (any apostrophe / trailing period). */
+export function isMeetMeLine(text: string): boolean {
+  return /^meet\s+me\s+at\s+vinny['’]s\.?$/iu.test(text.trim());
+}
+
 export const BIRTHDAY_HEADING = "Free appetizer on your birthday with an entree.";
 
 export const BIRTHDAY_ACTION = "Join the list.";

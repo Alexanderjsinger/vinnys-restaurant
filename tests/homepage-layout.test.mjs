@@ -20,6 +20,8 @@ test("header chrome matches Stitch light composition (Call + Order)", () => {
   assert.match(header, /Call/, "header keeps call CTA");
   assert.match(header, /OrderLink/, "header keeps order CTA");
   assert.match(header, /brand-mark/, "wordmark present");
+  assert.match(header, /brand-tagline/, "Meet me tagline lives in white header near brand");
+  assert.match(header, /HERO_LINE/, "header tagline uses locked Meet me line");
   assert.match(header, /splitPlaceWordmark|site\.name/, "nav brand comes from CMS place name");
   assert.match(header, /Ypsilanti, MI/, "location subtitle without invented EST year");
   assert.doesNotMatch(header, /EST\.\s*1964|Happy Hour|Weekend Brunch/i);
@@ -31,6 +33,7 @@ test("header chrome matches Stitch light composition (Call + Order)", () => {
   assert.match(hero[0], /stitch-wordmark-rest/, "hero shows Bar & Grill from CMS place name");
   assert.match(hero[0], /framed-hero-actions/, "primary CTAs stay in stitch hero (outside video)");
   assert.match(hero[0], /sizzle-below/, "CTAs sit below ambient reel, not over footage");
+  assert.doesNotMatch(hero[0], /sizzle-lockup/, "Meet me removed from cream/sizzle sub-header");
   assert.doesNotMatch(hero[0], /overlay=\{/, "no copy/CTA overlay on moving video");
   assert.doesNotMatch(hero[0], /Reserve a Table|Happy Hour|EST\.\s*1964/i);
 });
@@ -121,7 +124,8 @@ test("stitch homepage keeps authenticity constraints in markup", () => {
   );
   assert.doesNotMatch(page, /testimonial|inquiry form|name="event_type"/i);
   assert.match(page, /Call to plan a private party/);
-  assert.match(page, /Meet me at Vinny/);
+  assert.match(page, /isMeetMeLine/, "cream hero omits Meet me when CMS hero_text is only that line");
+  assert.match(page, /Meet me at Vinny/, "ritual strip keeps Meet me caption");
   assert.match(page, /listMenu\("public"\)/);
   assert.match(page, /Listing photo of the exterior/);
 });

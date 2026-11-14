@@ -8,7 +8,7 @@ import { detroitNowLocal, formatPrice } from "@/lib/format";
 import { firstQuery } from "@/lib/messages";
 import { LUNCH_SERVICE } from "@/lib/lunch-menu";
 import { DEFAULT_PLACE_NAME, splitPlaceWordmark } from "@/lib/brand";
-import { DIRECTIONS_URL, HERO_LINE, MAP_QUERY, PHONE_DISPLAY, RESERVE_TEL } from "@/lib/public";
+import { DIRECTIONS_URL, isMeetMeLine, MAP_QUERY, PHONE_DISPLAY, RESERVE_TEL } from "@/lib/public";
 import { OrderLink } from "@/components/OrderLink";
 import { LUNCH_PLATES } from "@/lib/lunch-photos";
 import { pageMeta } from "@/lib/seo";
@@ -68,29 +68,30 @@ export default async function HomePage({
   const addressLine = site.address || MAP_QUERY;
   const phoneHref = site.phoneHref || RESERVE_TEL;
   const phoneLabel = site.phone || PHONE_DISPLAY;
-  const heroSupport =
-    site.heroText?.trim() ||
-    "A bar and grill across from EMU on Cross Street. Lunch daily, 11–3pm.";
+  const rawHeroSupport = site.heroText?.trim() || "";
+  // Meet me lives in the white header tagline; omit it from cream sub-header to condense.
+  const heroSupport = isMeetMeLine(rawHeroSupport)
+    ? ""
+    : rawHeroSupport || "A bar and grill across from EMU on Cross Street. Lunch daily, 11–3pm.";
   const placeName = (site.heroHeading || site.name).trim() || DEFAULT_PLACE_NAME;
   const { mark: heroMark, rest: heroRest } = splitPlaceWordmark(placeName);
 
   return (
     <>
       <section className="stitch-hero" aria-labelledby="home-heading">
-        <div className="wrap stitch-hero-copy">
+        <div className={`wrap stitch-hero-copy${heroSupport ? "" : " stitch-hero-copy-tight"}`}>
           <p className="micro-label stitch-hero-label">Historic Cross Street / Ypsilanti, Michigan</p>
           <h1 id="home-heading" className="stitch-wordmark">
             <span className="stitch-wordmark-mark">{heroMark}</span>
             {heroRest ? <span className="stitch-wordmark-rest">{heroRest}</span> : null}
           </h1>
           <div className="gold-rule" aria-hidden="true" />
-          <p className="stitch-hero-support">{heroSupport}</p>
+          {heroSupport ? <p className="stitch-hero-support">{heroSupport}</p> : null}
         </div>
 
         <div className="wrap">
           <HeroMedia videoSrc={SIZZLE_REEL.src} durationLabel={SIZZLE_REEL.durationLabel} />
           <div className="sizzle-below">
-            <p className="sizzle-lockup">{HERO_LINE}</p>
             <p className="framed-hero-actions">
               <a className="btn btn-gold" href={phoneHref} data-track="phone_click">
                 Call {phoneLabel}
