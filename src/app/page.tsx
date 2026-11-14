@@ -144,7 +144,7 @@ export default async function HomePage() {
           <p className="micro-label">Social rituals & gatherings</p>
           <h2 id="rituals-heading">Curated for every Cross Street night</h2>
           <p className="band-lede social-lede">
-            Published events when we have them, private parties by phone, and lunch from the menu.
+            Published events when we have them, and lunch from the menu.
           </p>
           <ul className="ritual-strip">
             <li>
@@ -185,7 +185,7 @@ export default async function HomePage() {
               Events
             </Link>
             <a className="btn btn-outline-light" href={phoneHref} data-track="phone_click">
-              Call about private parties
+              Call {phoneLabel}
             </a>
           </p>
         </div>
@@ -235,7 +235,7 @@ export default async function HomePage() {
         </div>
       </section>
 
-      <section className="page wrap home-cards" aria-label="Events and private parties">
+      <section className="page wrap home-cards" aria-label="Events">
         <article className="home-card">
           <h2>Events</h2>
           {upcoming.length ? (
@@ -253,17 +253,6 @@ export default async function HomePage() {
               toastUrl={site.toastUrl}
             />
           )}
-        </article>
-
-        <article className="home-card">
-          <h2>Private parties</h2>
-          <p>Call to plan a private party. Room capacity and party prices are not published.</p>
-          <a className="btn btn-ink" href={phoneHref} data-track="phone_click">
-            {phoneLabel}
-          </a>
-          <Link className="btn" href="/parties">
-            Party details
-          </Link>
         </article>
       </section>
 

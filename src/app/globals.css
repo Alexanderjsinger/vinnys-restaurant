@@ -677,6 +677,23 @@ button.framed-ambient-control:focus-visible {
   border-color: var(--paper-ink);
 }
 .band-cream .btn:hover { background: rgba(26, 24, 22, 0.06); color: var(--paper-ink); }
+/* Primary solid black CTAs need light text; .band-cream .btn alone overrides .btn-ink color. */
+.band-cream .btn-ink,
+.band-cream a.btn-ink,
+.band-cream .btn-solid,
+.band-cream a.btn-solid {
+  background: var(--black);
+  color: #fff;
+  border-color: var(--black);
+}
+.band-cream .btn-ink:hover,
+.band-cream a.btn-ink:hover,
+.band-cream .btn-solid:hover,
+.band-cream a.btn-solid:hover {
+  background: #24211e;
+  border-color: #24211e;
+  color: #fff;
+}
 .band-obsidian {
   background: linear-gradient(180deg, #151311, #0e0d0c);
   color: #f6f1e7;
@@ -821,12 +838,14 @@ button.framed-ambient-control:focus-visible {
 .photo-row .shot {
   display: block;
   width: 100%;
-  /* Size via max-width only so 3:4 stays honest (max-height was flattening to landscape) */
-  max-width: min(14rem, 72vw);
-  aspect-ratio: 3 / 4;
+  /* Mobile-first: full column width — no tiny inset portrait block */
+  max-width: none;
+  /* 4:5 reads wider than native 3:4 assets; cover crop stays on plate edges */
+  aspect-ratio: 4 / 5;
+  max-height: min(20rem, 48vh);
   overflow: hidden;
   background: #161310;
-  margin-inline: auto;
+  margin-inline: 0;
 }
 .plate .shot img,
 .photo-row .shot img {
@@ -1079,7 +1098,10 @@ button.framed-ambient-control:focus-visible {
   .shot img { max-height: 34rem; }
   .plate .shot,
   .photo-row .shot {
-    max-width: 13.5rem;
+    /* Two-up desk: honest 3:4 panels, slightly wider than prior inset */
+    max-width: 16rem;
+    aspect-ratio: 3 / 4;
+    max-height: none;
     margin-inline: 0;
   }
   .plate .shot img,
@@ -1245,7 +1267,12 @@ input[type="checkbox"] { width: 1.15rem; height: 1.15rem; min-height: 0; accent-
   }
   .plate .shot,
   .photo-row .shot {
-    max-width: min(12.5rem, 68vw);
+    /* Keep plates edge-to-edge with the copy column on phones */
+    max-width: none;
+    width: 100%;
+    aspect-ratio: 4 / 5;
+    max-height: min(20rem, 48vh);
+    margin-inline: 0;
   }
   .poster {
     height: min(52vh, 28rem);

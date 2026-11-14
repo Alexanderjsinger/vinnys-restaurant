@@ -41,11 +41,11 @@ test("header chrome matches Stitch light composition (Call + Order)", () => {
 test("lunch plate frames use cover framing instead of letterboxed tall voids", () => {
   const css = read(cssPath);
 
-  // Portrait lunch assets use 3/4 (image-sizing #17). Do not rely on a later
-  // hero aspect-ratio coincidentally matching this assertion.
+  // Mobile-first plates are 4/5 (#26 widen); desktop two-up keeps 3/4.
+  // Match only the base rule — do not rely on a later hero aspect-ratio.
   const plateShot = css.match(/\.plate \.shot(?:\s*,\s*[^,{]+)*\s*\{[^}]*\}/);
   assert.ok(plateShot, "plate .shot rule exists");
-  assert.match(plateShot[0], /aspect-ratio:\s*3\s*\/\s*4/, "plate figure locks a 3/4 frame");
+  assert.match(plateShot[0], /aspect-ratio:\s*4\s*\/\s*5/, "mobile plate figure locks a 4/5 frame");
   assert.match(
     css,
     /\.plate \.shot img[\s\S]*?object-fit:\s*cover/,
@@ -62,6 +62,11 @@ test("lunch plate frames use cover framing instead of letterboxed tall voids", (
   );
   const plateDesktop = desktopBlocks.find((block) => block.includes(".plate-list"));
   assert.ok(plateDesktop, "desktop plate-list media query present");
+  assert.match(
+    plateDesktop,
+    /\.plate \.shot[\s\S]*?aspect-ratio:\s*3\s*\/\s*4/,
+    "desktop two-up plates keep 3/4 panels",
+  );
   assert.doesNotMatch(
     plateDesktop,
     /\.shot img\s*\{[^}]*width:\s*100%/,
@@ -149,7 +154,7 @@ test("stitch homepage keeps authenticity constraints in markup", () => {
     /18 Cold Craft Taps|dry-aged|stone-fired|truffle fries|Happy Hour|Campus Nights|Pease Auditorium|Good Food, Great Times|SCRATCH TAVERN|EST\.\s*1964|Reserve a Table|Weekend Brunch|Birthday list|Lunch, dinner and everything after/i,
   );
   assert.doesNotMatch(page, /testimonial|inquiry form|name="event_type"/i);
-  assert.match(page, /Call to plan a private party/);
+  assert.doesNotMatch(page, /private part(?:y|ies)|\/parties|Party details/i);
   assert.match(page, /isMeetMeLine/, "cream hero omits Meet me when CMS hero_text is only that line");
   assert.match(page, /Meet me at Vinny/, "ritual strip keeps Meet me caption");
   assert.match(page, /listMenu\("public"\)/);

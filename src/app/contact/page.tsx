@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { HoursList } from "@/components/HoursList";
 import { PHONE_DISPLAY, RESERVE_TEL, STREET_ADDRESS } from "@/lib/public";
 import { DEFAULT_PLACE_NAME } from "@/lib/brand";
@@ -50,8 +49,6 @@ export default async function ContactPage() {
             <a href={site.phoneHref || RESERVE_TEL} data-track="phone_click">
               Call to reserve
             </a>
-            {" · "}
-            <Link href="/parties">Private parties</Link>
           </p>
         </section>
         <section className="paper" aria-labelledby="hours-heading">

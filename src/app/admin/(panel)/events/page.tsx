@@ -1,6 +1,7 @@
 import { AdminForm } from "@/components/AdminForm";
 import { SaveBanner } from "@/components/SaveBanner";
 import { listEvents } from "@/lib/content";
+import { EventPhoto } from "@/components/EventPhoto";
 import { cleanEventPhoto, formatEventStart } from "@/lib/format";
 import { firstQuery } from "@/lib/messages";
 import Link from "next/link";
@@ -111,10 +112,16 @@ function EventForm({
         <label htmlFor={`photo${id}`}>Photo URL, optional</label>
         <input id={`photo${id}`} name="photo" defaultValue={event?.photo} placeholder="https://" />
         <p className="hint">
-          Full web address starting with https://. Leave blank for no photo. Uploaded /media/… paths are not
-          available for events until photo upload is turned on.
+          Direct https:// image link only (not a Google Drive or share/view page). Leave blank for no photo.
+          Uploaded /media/… paths are not available for events until photo upload is turned on.
         </p>
-        {previewPhoto ? <img src={previewPhoto} alt={event?.title || "Event photo"} style={{ maxWidth: "12rem", height: "auto" }} /> : null}
+        {previewPhoto ? (
+          <EventPhoto
+            src={previewPhoto}
+            alt={event?.title || "Event photo"}
+            style={{ maxWidth: "12rem", height: "auto" }}
+          />
+        ) : null}
       </div>
       <div className="field">
         <label htmlFor={`next${id}`}>Next step, optional</label>

@@ -73,7 +73,7 @@ test("admin mutation routes require CSRF verification in source", () => {
   }
 });
 
-test("admin panel forms use AdminForm CSRF wrapper; public parties form does not", () => {
+test("admin panel forms use AdminForm CSRF wrapper; inquiries API stays origin-check only", () => {
   const adminPages = [
     "events/page.tsx",
     "homepage/page.tsx",
@@ -89,8 +89,8 @@ test("admin panel forms use AdminForm CSRF wrapper; public parties form does not
     assert.doesNotMatch(source, /<form[\s>]/, rel);
   }
   const parties = fs.readFileSync(path.join(root, "src/app/parties/page.tsx"), "utf8");
-  assert.match(parties, /action="\/api\/inquiries"/);
-  assert.doesNotMatch(parties, /AdminForm|name=\{?CSRF_FIELD|name="csrf"/);
+  assert.match(parties, /permanentRedirect\("\/contact"\)/);
+  assert.doesNotMatch(parties, /action="\/api\/inquiries"|Private parties/);
   const inquiries = fs.readFileSync(path.join(root, "src/app/api/inquiries/route.ts"), "utf8");
   assert.match(inquiries, /sameOriginPost/);
   assert.doesNotMatch(inquiries, /verifyCsrfForm/);

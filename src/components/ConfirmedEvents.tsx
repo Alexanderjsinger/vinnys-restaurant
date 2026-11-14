@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { EventPhoto } from "@/components/EventPhoto";
 import { OrderLink } from "@/components/OrderLink";
 import { GUEST_EVENTS_EMPTY_LINE } from "@/lib/events-public";
 import { cleanEventPhoto, eventNextStepHref, formatLongDate, formatPrice, formatTime } from "@/lib/format";
@@ -39,9 +40,9 @@ export function EventsEmptyState({
 } & EmptyContact) {
   const detail =
     surface === "page" && !hasEarlier
-      ? "Check back later, plan a private party, or get in touch."
+      ? "Check back later, or get in touch."
       : surface === "home" && !hasEarlier
-        ? "Nothing is listed yet. Plan a private party or get in touch."
+        ? "Nothing is listed yet. Get in touch."
         : null;
   const callHref = sitePhoneHref || RESERVE_TEL;
   const callLabel = sitePhone || PHONE_DISPLAY;
@@ -52,9 +53,6 @@ export function EventsEmptyState({
       {detail ? <p className="hint">{detail}</p> : null}
       {!hasEarlier ? (
         <div className="cta-row" aria-label="Next steps when no events are posted">
-          <Link className="btn" href="/parties">
-            Private parties
-          </Link>
           <Link className="btn" href="/contact">
             Contact
           </Link>
@@ -68,8 +66,8 @@ export function EventsEmptyState({
           <Link className="btn" href="/events">
             All events
           </Link>
-          <Link className="btn" href="/parties">
-            Private parties
+          <Link className="btn" href="/contact">
+            Contact
           </Link>
         </div>
       ) : null}
@@ -120,7 +118,7 @@ export function ConfirmedEvents({
                 America/Detroit
               </p>
             ) : null}
-            {photo ? <img src={photo} alt={event.title} /> : null}
+            {photo ? <EventPhoto src={photo} alt={event.title} /> : null}
             {event.blurb ? <p>{event.blurb}</p> : null}
             {event.price ? <p className="price">{formatPrice(event.price)}</p> : null}
             {event.next_step ? (
