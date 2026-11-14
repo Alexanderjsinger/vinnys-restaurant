@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-/** Menu-reference overlay + compare (v5). Usage: node scripts/wordmark-overlay-shot.mjs */
+/** Menu-reference overlay + compare (v5 legacy). Prefer: node scripts/wordmark-v6-proof.mjs */
 import { execSync } from "node:child_process";
 import fs from "node:fs";
 import path from "node:path";

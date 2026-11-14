@@ -7,6 +7,7 @@ import { execSync } from "node:child_process";
 import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import { viewBoxFromBounds } from "./lib/path-viewbox.mjs";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const root = path.resolve(__dirname, "..");
@@ -47,17 +48,22 @@ if (paths.length < 5) {
 }
 
 const transform = `translate(0, ${traceHeight}) scale(0.1, -0.1)`;
-const bbox = measurePathBBox(paths, transform, traceHeight, work);
-const pad = 1.5;
-const viewX = Math.floor(bbox.x - pad);
-const viewY = Math.floor(bbox.y - pad);
-const viewW = Math.ceil(bbox.width + pad * 2);
-const viewH = Math.ceil(bbox.height + pad * 2);
-const viewBox = `${viewX} ${viewY} ${viewW} ${viewH}`;
+const bbox = measureInkBBox(paths, transform, work);
+const { viewBox, width: viewW, height: viewH } = viewBoxFromBounds(
+  {
+    minX: bbox.x,
+    minY: bbox.y,
+    width: bbox.width,
+    height: bbox.height,
+  },
+  4,
+);
 
 const outTs = path.join(root, "src/lib/vinny-wordmark-menu-paths.ts");
 const body = `/** Auto-generated from vinnys-menu-logomark.png — do not hand-edit; re-run scripts/trace-menu-wordmark.mjs */
 export const VINNY_MENU_TRACE_VIEWBOX = "${viewBox}" as const;
+/** Potrace bitmap coords — use for pixel-aligned overlay on menu-vinnys-trim (${raster.width}×${raster.height}). */
+export const VINNY_MENU_TRACE_REGISTER_VIEWBOX = "0 0 ${raster.width} ${raster.height}" as const;
 export const VINNY_MENU_TRACE_TRANSFORM = ${JSON.stringify(transform)} as const;
 export const VINNY_MENU_TRACE_PATHS: readonly string[] = [
 ${paths.map((p) => `  ${JSON.stringify(p)},`).join("\n")}
@@ -85,21 +91,22 @@ function parseIdentify(file) {
   return { width, height };
 }
 
-function measurePathBBox(pathList, transformAttr, canvasHeight, workDir) {
+/** Rasterize on a generous canvas so cubic overshoot is not clipped before trim. */
+function measureInkBBox(pathList, transformAttr, workDir) {
   const pathsHtml = pathList.map((d) => `<path d="${d}"/>`).join("");
   const measureSvg = path.join(workDir, "measure-bbox.svg");
   const measurePng = path.join(workDir, "measure-bbox.png");
-  const canvasW = raster.width;
-  const canvasH = canvasHeight;
+  const canvasW = 720;
+  const canvasH = 150;
   fs.writeFileSync(
     measureSvg,
     `<?xml version="1.0" encoding="UTF-8"?>
-<svg xmlns="http://www.w3.org/2000/svg" width="${canvasW}" height="${canvasH}" viewBox="0 0 ${canvasW} ${canvasH}" overflow="visible">
+<svg xmlns="http://www.w3.org/2000/svg" width="${canvasW}" height="${canvasH}" viewBox="-20 -20 ${canvasW} ${canvasH}" overflow="visible">
 <g fill="black" transform="${transformAttr}">${pathsHtml}</g>
 </svg>`,
   );
-  execSync(`convert -background none "${measureSvg}" "${measurePng}"`, { stdio: "pipe" });
-  const trimLine = execSync(`convert "${measurePng}" -fuzz 2% -trim -format "%w %h %X %Y" info:`, {
+  execSync(`convert -background white "${measureSvg}" "${measurePng}"`, { stdio: "pipe" });
+  const trimLine = execSync(`convert "${measurePng}" -fuzz 1% -trim -format "%w %h %X %Y" info:`, {
     encoding: "utf8",
   }).trim();
   const [w, h, x, y] = trimLine.split(/\s+/).map((part) => Number(part.replace(/^\+/, "")));
