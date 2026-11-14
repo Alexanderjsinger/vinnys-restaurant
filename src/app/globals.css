@@ -162,7 +162,7 @@ address { font-style: normal; }
 }
 .brand-mark .vinny-wordmark {
   display: block;
-  height: clamp(1.35rem, 2.4vw, 1.85rem);
+  height: clamp(1.15rem, 2.1vw, 1.55rem);
   width: auto;
 }
 .brand-sub {

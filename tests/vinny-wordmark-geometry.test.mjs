@@ -6,18 +6,19 @@ import { test } from "node:test";
 
 const root = path.resolve(import.meta.dirname, "..");
 
-test("VinnyWordmark geometry constants match sign-traced viewBox", async () => {
-  const mod = await import(pathToFileURL(path.join(root, "src/lib/vinny-wordmark-geometry.ts")).href);
-  assert.equal(mod.VINNY_WORDMARK_VIEWBOX, "0 0 162 56");
-  assert.equal(mod.VINNY_WORDMARK_LETTER_STROKE, 3.35);
+test("menu trace viewBox and path count", async () => {
+  const mod = await import(pathToFileURL(path.join(root, "src/lib/vinny-wordmark-menu-paths.ts")).href);
+  assert.match(mod.VINNY_MENU_TRACE_VIEWBOX, /^0 0 \d+ \d+$/);
+  assert.ok(mod.VINNY_MENU_TRACE_PATHS.length >= 8, "potrace grouped letter paths");
+  assert.match(mod.VINNY_MENU_TRACE_TRANSFORM, /translate\(0,/);
 });
 
-test("VinnyWordmark is path-only flat SVG (no font text, no effects)", () => {
+test("VinnyWordmark uses menu potrace paths only", () => {
   const src = fs.readFileSync(path.join(root, "src/components/VinnyWordmark.tsx"), "utf8");
-  assert.match(src, /L_STROKE = 3\.35/);
-  assert.match(src, /M 13 41\.2 L 36 50\.6/);
-  assert.match(src, /M 36 50\.6 C 37\.8 48\.6 41 36 60 9/);
-  assert.match(src, /cx=\{49\.2\} cy=\{25\.2\}/);
-  assert.doesNotMatch(src, /<text|<tspan|fontSize|font-family/i);
-  assert.doesNotMatch(src, /linearGradient|feGaussianBlur|<filter|filter:\s*url/i);
+  assert.match(src, /VINNY_MENU_TRACE_PATHS/);
+  assert.doesNotMatch(src, /<text|<tspan|fontSize|linearGradient|feGaussianBlur|<filter/i);
+  assert.match(
+    fs.readFileSync(path.join(root, "scripts/trace-menu-wordmark.mjs"), "utf8"),
+    /vinnys-menu-logomark\.png/,
+  );
 });
