@@ -25,4 +25,8 @@ test("VinnyWordmark uses menu potrace paths only", () => {
     fs.readFileSync(path.join(root, "scripts/trace-menu-wordmark.mjs"), "utf8"),
     /vinnys-menu-logomark\.png/,
   );
+  assert.match(
+    fs.readFileSync(path.join(root, "scripts/trace-menu-wordmark.mjs"), "utf8"),
+    /patchYandSPaths/,
+  );
 });

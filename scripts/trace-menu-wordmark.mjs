@@ -8,6 +8,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { boundsAfterPotraceTransform } from "./lib/path-viewbox.mjs";
+import { patchYandSPaths } from "./lib/glyph-retrace.mjs";
 
 const DISPLAY_VIEWBOX_PAD = 16;
 
@@ -49,9 +50,12 @@ if (paths.length < 5) {
   process.exit(1);
 }
 
+const trimPng = path.join(work, "menu-vinnys-trim.png");
+const pathsPatched = patchYandSPaths(work, trimPng, paths);
+
 const transform = `translate(0, ${traceHeight}) scale(0.1, -0.1)`;
-const inkBBox = measureInkBBox(paths, transform, work);
-const pathBBox = boundsAfterPotraceTransform(paths, traceHeight, 0.1);
+const inkBBox = measureInkBBox(pathsPatched, transform, work);
+const pathBBox = boundsAfterPotraceTransform(pathsPatched, traceHeight, 0.1);
 const pad = DISPLAY_VIEWBOX_PAD;
 const minX = Math.floor(Math.min(pathBBox.minX, inkBBox.x) - pad);
 const minY = Math.floor(Math.min(pathBBox.minY, inkBBox.y) - pad);
@@ -68,7 +72,7 @@ export const VINNY_MENU_TRACE_VIEWBOX = "${viewBox}" as const;
 export const VINNY_MENU_TRACE_REGISTER_VIEWBOX = "0 0 ${raster.width} ${raster.height}" as const;
 export const VINNY_MENU_TRACE_TRANSFORM = ${JSON.stringify(transform)} as const;
 export const VINNY_MENU_TRACE_PATHS: readonly string[] = [
-${paths.map((p) => `  ${JSON.stringify(p)},`).join("\n")}
+${pathsPatched.map((p) => `  ${JSON.stringify(p)},`).join("\n")}
 ] as const;
 `;
 
@@ -78,13 +82,13 @@ fs.writeFileSync(outTs, body);
 const flatSvg = `<?xml version="1.0" encoding="UTF-8"?>
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="${viewBox}" width="${viewW}" height="${viewH}">
 <g fill="#000" transform="${transform}">
-${paths.map((d) => `<path d="${d}"/>`).join("\n")}
+${pathsPatched.map((d) => `<path d="${d}"/>`).join("\n")}
 </g>
 </svg>`;
 fs.writeFileSync(path.join(root, "public/brand/vinny-menu-wordmark-trace.svg"), flatSvg);
 
 console.log(
-  `Wrote ${paths.length} paths → ${outTs} (raster ${raster.width}×${raster.height}, viewBox ${viewBox})`,
+  `Wrote ${pathsPatched.length} paths (${paths.length} raw + y/s retrace) → ${outTs} (raster ${raster.width}×${raster.height}, viewBox ${viewBox})`,
 );
 
 function parseIdentify(file) {
