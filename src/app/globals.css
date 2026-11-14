@@ -1226,9 +1226,6 @@ input[type="checkbox"] { width: 1.15rem; height: 1.15rem; min-height: 0; accent-
 .vinny-wordmark--dark {
   color: #f6f1e7;
 }
-.vinny-wordmark__rest {
-  font-family: var(--font-body), "Plus Jakarta Sans", system-ui, sans-serif;
-}
 .footer-name {
   display: flex;
   flex-wrap: wrap;

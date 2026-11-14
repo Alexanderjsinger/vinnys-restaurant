@@ -1,27 +1,34 @@
 /**
- * Sign-traced metrics for VinnyWordmark (flat 2D). Normalized viewBox 0–236 × 0–56.
- * Verify against Project store refs: vinnys-bar-logo-reference-v2.png
+ * Sign-traced metrics for VinnyWordmark (flat 2D). v4 pass — tight lockup under V right arm.
+ * Verify with `node scripts/wordmark-compare-shot.mjs` and `wordmark-overlay-shot.mjs`.
  *
  * | Metric | Value |
  * | --- | ---: |
- * | viewBox width × height | 236 × 56 |
- * | baseline (i,n,n,s) | y = 47 |
- * | x-height | 22 |
- * | V left top (blunt) | (5, 38) |
- * | V vertex (below baseline) | (33, 51.5) |
- * | V right tip (tallest) | (111, 3.5) |
- * | V stroke width | 5.4 |
- * | left leg length | ~17.5 |
- * | right leg length | ~52 (~3× left) |
- * | i-dot center | (90, 26.5) — ~midpoint of V right arm |
- * | i stem | x 87.7–92.8, top 30.8 |
- * | lowercase body size | 26.4 |
- * | n / n / y / s x | 97 / 110.8 / 124.5 / 154.5 |
- * | apostrophe center | (~147, 22) |
+ * | viewBox | 162 × 56 |
+ * | V left top | (13, 41.2) |
+ * | V vertex | (36, 50.6) |
+ * | V right tip | (60, 9) |
+ * | V stroke | 4.35 |
+ * | i-dot | (49.2, 25.2) |
+ * | n stems ~ | 61.2 / 75 / 88.8, s opens ~102 |
+ * | L_STROKE | 3.35 |
+ *
+ * Overlay tune (reference v2 crop): scripts/wordmark-overlay-shot.mjs OVERLAY_* constants.
  */
 
-export const VINNY_WORDMARK_VIEWBOX = "0 0 236 56" as const;
+export const VINNY_WORDMARK_VIEWBOX = "0 0 162 56" as const;
 
 export const VINNY_WORDMARK_BASELINE = 47;
 export const VINNY_WORDMARK_X_HEIGHT = 22;
-export const VINNY_WORDMARK_BODY_SIZE = 26.4;
+export const VINNY_WORDMARK_LETTER_STROKE = 3.35;
+
+/** Dev overlay alignment against vinnys-bar-logo-reference-v2.png (fractions of image box). */
+export const VINNY_WORDMARK_OVERLAY = {
+  clipTop: 0.31,
+  clipRight: 0.11,
+  clipBottom: 0.36,
+  clipLeft: 0.1,
+  svgPadLeft: 0.07,
+  svgPadTop: 0.035,
+  svgWidth: 0.8,
+} as const;

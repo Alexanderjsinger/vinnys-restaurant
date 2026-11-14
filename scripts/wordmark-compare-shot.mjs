@@ -13,17 +13,15 @@ const root = path.resolve(__dirname, "..");
 const refPath = path.resolve("/cursor/stores/self/media/vinnys-bar-logo-reference-v2.png");
 const outPath = process.argv[2]
   ? path.resolve(process.argv[2])
-  : path.resolve("/cursor/stores/self/media/vinnys-wordmark-v3-compare.png");
+  : path.resolve("/cursor/stores/self/media/vinnys-wordmark-v4-compare.png");
 
 const tsx = fs.readFileSync(path.join(root, "src/components/VinnyWordmark.tsx"), "utf8");
 const body = tsx
   .replace(/className=/g, "class=")
   .replace(/\{\/\*[\s\S]*?\*\/\}/g, "")
-  .replace(/strokeWidth=\{V_STROKE\}/g, 'stroke-width="5.4"')
-  .replace(/strokeWidth=\{V_STROKE\}/g, 'stroke-width="5.4"')
+  .replace(/strokeWidth=\{V_STROKE\}/g, 'stroke-width="4.35"')
+  .replace(/strokeWidth=\{L_STROKE\}/g, 'stroke-width="3.35"')
   .replace(/strokeWidth=\{(\d+(?:\.\d+)?)\}/g, 'stroke-width="$1"')
-  .replace(/fontSize=\{BODY_SIZE\}/g, 'font-size="26.4"')
-  .replace(/fontWeight=\{640\}/g, 'font-weight="640"')
   .replace(/r=\{V_STROKE \/ 2\}/g, 'r="2.7"')
   .replace(/r=\{3\.1\}/g, 'r="3.1"')
   .replace(/([a-zA-Z]+)=\{(\d+(?:\.\d+)?)\}/g, '$1="$2"')
@@ -54,7 +52,7 @@ const html = `<!DOCTYPE html>
 </style></head><body>
 <div class="row">
   <div class="panel"><p>Reference (v2)</p><img class="mark" alt="reference" src="data:image/png;base64,${refData}"/></div>
-  <div class="panel"><p>SVG (flat)</p><svg class="mark" viewBox="0 0 236 56" xmlns="http://www.w3.org/2000/svg">${lettersInner}</svg></div>
+  <div class="panel"><p>SVG (flat)</p><svg class="mark" viewBox="0 0 162 56" xmlns="http://www.w3.org/2000/svg">${lettersInner}</svg></div>
 </div>
 </body></html>`;
 
