@@ -64,11 +64,40 @@ export function normalizeDateTime(value: string): string | null {
   return `${match[1]}T${time}`;
 }
 
+/**
+ * Guest/admin event photo: blank, static `/events/…`, or a direct http(s) image URL.
+ * Rejects `/media/…` (R2 off for events), path traversal, and HTML share/viewer pages
+ * (e.g. Google Drive `/file/…/view`) that browsers cannot render as `<img>` — prefer
+ * an honest empty state over a broken image icon.
+ */
 export function cleanEventPhoto(value: string): string | null {
   const trimmed = value.trim();
   if (!trimmed) return "";
   if (trimmed.startsWith("/events/") && !trimmed.includes("..") && !trimmed.includes("\\")) return trimmed;
-  return safeHttpUrl(trimmed);
+  const url = safeHttpUrl(trimmed);
+  if (!url) return null;
+  return isDirectEventImageUrl(url) ? url : null;
+}
+
+/** True when the URL is likely image bytes, not an HTML viewer/share page. */
+function isDirectEventImageUrl(value: string): boolean {
+  try {
+    const parsed = new URL(value);
+    const host = parsed.hostname.toLowerCase();
+    const path = parsed.pathname.toLowerCase();
+
+    // Google Drive/Docs file pages are HTML viewers, not hotlinkable image bytes.
+    if (host === "drive.google.com" || host === "docs.google.com") return false;
+    if (host.endsWith(".drive.google.com")) return false;
+
+    // Generic document viewers / share landing pages embedded as "photos".
+    if (/\/view\/?$/.test(path) || /\/edit\/?$/.test(path)) return false;
+    if (path.includes("/file/d/")) return false;
+
+    return true;
+  } catch {
+    return false;
+  }
 }
 
 /** Optional per-event guest action: blank, http(s) URL, or dialable phone. */

@@ -659,6 +659,23 @@ button.framed-ambient-control:focus-visible {
   border-color: var(--paper-ink);
 }
 .band-cream .btn:hover { background: rgba(26, 24, 22, 0.06); color: var(--paper-ink); }
+/* Primary solid black CTAs need light text; .band-cream .btn alone overrides .btn-ink color. */
+.band-cream .btn-ink,
+.band-cream a.btn-ink,
+.band-cream .btn-solid,
+.band-cream a.btn-solid {
+  background: var(--black);
+  color: #fff;
+  border-color: var(--black);
+}
+.band-cream .btn-ink:hover,
+.band-cream a.btn-ink:hover,
+.band-cream .btn-solid:hover,
+.band-cream a.btn-solid:hover {
+  background: #24211e;
+  border-color: #24211e;
+  color: #fff;
+}
 .band-obsidian {
   background: linear-gradient(180deg, #151311, #0e0d0c);
   color: #f6f1e7;

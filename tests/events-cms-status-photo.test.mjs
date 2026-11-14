@@ -26,7 +26,7 @@ async function loadMessages() {
   return import(`${pathToFileURL(path.join(root, "src/lib/messages.ts")).href}?t=${Date.now()}`);
 }
 
-test("cleanEventPhoto accepts blank, https, /events paths; rejects /media and junk", async () => {
+test("cleanEventPhoto accepts blank, https, /events paths; rejects /media, Drive viewers, junk", async () => {
   const { cleanEventPhoto } = await loadFormat();
   assert.equal(cleanEventPhoto(""), "");
   assert.equal(cleanEventPhoto("   "), "");
@@ -39,13 +39,19 @@ test("cleanEventPhoto accepts blank, https, /events paths; rejects /media and ju
   assert.equal(cleanEventPhoto("/events/../secret"), null);
   assert.equal(cleanEventPhoto("javascript:alert(1)"), null);
   assert.equal(cleanEventPhoto("not-a-url"), null);
+  assert.equal(
+    cleanEventPhoto("https://drive.google.com/file/d/1qFgAIXdnzvuZCfsgleoLUid9PdMonmsS/view?usp=drivesdk"),
+    null,
+  );
+  assert.equal(cleanEventPhoto("https://docs.google.com/file/d/abc/view"), null);
+  assert.equal(cleanEventPhoto("https://cdn.example.com/poster/view"), null);
 });
 
 test("photo error copy is specific; url error stays for generic links", async () => {
   const { adminError } = await loadMessages();
   assert.equal(
     adminError("photo"),
-    "That photo did not save. Use a full https:// link, or leave the photo blank. Paths like /media/1 are not accepted for events yet.",
+    "That photo did not save. Use a direct https:// image link (not a Google Drive or share page), or leave the photo blank. Paths like /media/1 are not accepted for events yet.",
   );
   assert.equal(adminError("url"), "Links must start with http:// or https://.");
   assert.notEqual(adminError("photo"), adminError("url"));
@@ -57,9 +63,10 @@ test("Events admin UI uses button-only status model and truthful photo field", (
   assert.doesNotMatch(page, /\/media\/1/);
   assert.match(page, /Photo URL, optional/);
   assert.match(page, /placeholder="https:\/\/"/);
+  assert.match(page, /Direct https:\/\/ image link only/);
   assert.match(
     page,
-    /Uploaded \/media\/… paths are not\s+available for events until photo upload is turned on/,
+    /Uploaded \/media\/… paths are not available for events until photo upload is turned on/,
   );
   assert.match(page, /value="draft"[\s\S]*Save draft|Save draft[\s\S]*value="draft"/);
   assert.match(page, /value="publish"[\s\S]*Publish|Publish[\s\S]*value="publish"/);
@@ -97,7 +104,8 @@ test("owner-setup no longer tells owners to paste /media id onto Events while R2
   const docs = read("docs/owner-setup.md");
   assert.doesNotMatch(docs, /use `\/media\/<id>` on Homepage or Events/);
   assert.match(docs, /Events photo fields do \*\*not\*\* accept `\/media\/<id>`/);
-  assert.match(docs, /optional photo = full https URL/);
+  assert.match(docs, /optional photo = direct https image URL/);
+  assert.match(docs, /not a Google Drive or share\/view page/);
 });
 
 test("content keep excludes archived from public and preview", () => {
