@@ -83,7 +83,7 @@ test("framed hero is full-bleed ambient media + honest poster structure", () => 
   const css = read(cssPath);
   const hero = read(path.join(root, "src/components/HeroMedia.tsx"));
   const page = read(pagePath);
-  const reelPath = path.join(root, "public/hero/vinnys-sizzle-reel-1080p.mp4");
+  const reelPath = path.join(root, "public/hero/vinnys-sizzle-reel.mp4");
 
   const framedHeroRule = css.match(/\.framed-hero\s*\{[^}]*\}/);
   assert.ok(framedHeroRule, "framed-hero rule exists");

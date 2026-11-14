@@ -6,22 +6,33 @@ const root = path.resolve(import.meta.dirname, "..");
 
 test("sizzle guest src uses Range-aware API; asset stays under public/hero", () => {
   const heroLib = fs.readFileSync(path.join(root, "src/lib/hero.ts"), "utf8");
-  const reelPath = path.join(root, "public/hero/vinnys-sizzle-reel-1080p.mp4");
+  const reelPath = path.join(root, "public/hero/vinnys-sizzle-reel.mp4");
   const routePath = path.join(root, "src/app/api/sizzle/route.ts");
 
   assert.match(heroLib, /src:\s*"\/api\/sizzle"/, "guest video URL is /api/sizzle");
   assert.match(
     heroLib,
-    /assetPath:\s*"\/hero\/vinnys-sizzle-reel-1080p\.mp4"/,
+    /assetPath:\s*"\/hero\/vinnys-sizzle-reel\.mp4"/,
     "underlying asset path preserved",
   );
-  assert.ok(fs.existsSync(reelPath), "1080p reel file present");
-  assert.ok(fs.existsSync(routePath), "Range route exists");
-  assert.match(
-    fs.readFileSync(routePath, "utf8"),
-    /applyByteRange/,
-    "sizzle route applies byte-range responses",
+  assert.ok(fs.existsSync(reelPath), "sizzle reel file present");
+  const reelBytes = fs.statSync(reelPath).size;
+  assert.ok(
+    reelBytes > 100_000 && reelBytes < 4_000_000,
+    `reel stays under Worker-safe size budget (got ${reelBytes} bytes)`,
   );
+  assert.ok(fs.existsSync(routePath), "Range route exists");
+  const route = fs.readFileSync(routePath, "utf8");
+  assert.match(route, /applyByteRange/, "sizzle route applies byte-range responses");
+  assert.match(
+    route,
+    /fetchSizzleAssetResponse/,
+    "non-Range GETs stream from ASSETS without buffering",
+  );
+  assert.match(route, /wantsRange/, "Range vs full-body paths are split");
+
+  const assetLib = fs.readFileSync(path.join(root, "src/lib/sizzle-asset.ts"), "utf8");
+  assert.match(assetLib, /loadInflight/, "ASSETS reads are single-flight");
 });
 
 test("HeroMedia ambient playback: IO, muted playsInline, manual pause, no loop", () => {
