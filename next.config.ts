@@ -4,6 +4,15 @@ import { SECURITY_HEADERS } from "./src/lib/security-headers";
 const nextConfig: NextConfig = {
   serverExternalPackages: ["better-sqlite3"],
   poweredByHeader: false,
+  async redirects() {
+    return [
+      {
+        source: "/parties",
+        destination: "/contact",
+        permanent: true,
+      },
+    ];
+  },
   async headers() {
     return [
       {

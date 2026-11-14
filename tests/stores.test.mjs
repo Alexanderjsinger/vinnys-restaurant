@@ -125,7 +125,13 @@ test("staging host is noindex and production host is indexable", () => {
   assert.match(robots, /sitemap: `\$\{PRODUCTION_ORIGIN\}\/sitemap\.xml`/);
 });
 
-test("live workers.dev pages advertise noindex, the production canonical, and five sitemap URLs", async () => {
+test("source sitemap omits /parties; live workers.dev keeps noindex and core URLs", async () => {
+  const sitemapSource = fs.readFileSync(path.join(src, "app/sitemap.ts"), "utf8");
+  assert.match(sitemapSource, /"\/menu"/);
+  assert.match(sitemapSource, /"\/events"/);
+  assert.match(sitemapSource, /"\/contact"/);
+  assert.doesNotMatch(sitemapSource, /\/parties/);
+
   const headers = { "user-agent": "Mozilla/5.0", accept: "text/html" };
   const home = await fetch("https://vinnys-bar-grill.toastisadog.workers.dev/", { headers });
   assert.equal(home.status, 200);
@@ -139,7 +145,7 @@ test("live workers.dev pages advertise noindex, the production canonical, and fi
   const sitemap = await fetch("https://vinnys-bar-grill.toastisadog.workers.dev/sitemap.xml", { headers });
   assert.equal(sitemap.status, 200);
   const xml = await sitemap.text();
-  for (const page of ["/", "/menu", "/events", "/parties", "/contact"]) {
+  for (const page of ["/", "/menu", "/events", "/contact"]) {
     const url = page === "/" ? "https://vinnysbargrill.com/" : `https://vinnysbargrill.com${page}`;
     assert.equal(xml.includes(url), true, url);
   }
