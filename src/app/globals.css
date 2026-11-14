@@ -328,16 +328,16 @@ address { font-style: normal; }
   line-height: 1.55;
 }
 
-.framed-hero { margin: 0 auto; max-width: 56rem; }
+.framed-hero { margin: 0 auto; max-width: 60rem; }
 .framed-hero-frame {
   position: relative;
   overflow: hidden;
   border-radius: 1.15rem;
   background: #140f0c;
   box-shadow: 0 24px 60px rgba(20, 16, 10, 0.18);
-  /* Cap framed media so it reads as a panel, not a near-full-viewport poster */
+  /* Ambient reel panel — room for footage without claiming the whole viewport */
   aspect-ratio: 16 / 10;
-  max-height: min(28rem, 52vh);
+  max-height: min(32rem, 58vh);
   min-height: 14rem;
   animation: frame-in 900ms ease both;
 }
@@ -358,64 +358,64 @@ address { font-style: normal; }
   content: "";
   position: absolute;
   inset: 0;
-  background:
-    linear-gradient(180deg, rgba(8, 6, 4, 0.28) 0%, transparent 34%),
-    linear-gradient(0deg, rgba(8, 6, 4, 0.78) 0%, rgba(8, 6, 4, 0.2) 42%, transparent 62%);
+  /* Subtle corner scrim only — control legibility, not a copy overlay */
+  background: linear-gradient(
+    225deg,
+    transparent 55%,
+    rgba(8, 6, 4, 0.28) 100%
+  );
   pointer-events: none;
+  z-index: 2;
 }
 .framed-hero-chrome {
-  /* Above overlay so the play control stays tappable on short mobile frames */
   position: absolute;
   z-index: 4;
   inset: 0;
   pointer-events: none;
 }
-.framed-hero-watch {
+.framed-ambient-control {
   position: absolute;
-  top: 1rem;
-  left: 1.1rem;
-  margin: 0;
-  color: rgba(255, 255, 255, 0.88);
-  font-size: 0.72rem;
-  font-weight: 650;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-}
-.framed-play {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: 4.4rem;
-  height: 4.4rem;
-  border: 0;
-  border-radius: 0.55rem;
-  background: rgba(212, 175, 55, 0.88);
+  right: 0.85rem;
+  bottom: 0.85rem;
+  width: 2.35rem;
+  height: 2.35rem;
+  border: 1px solid rgba(255, 255, 255, 0.28);
+  border-radius: 999px;
+  background: rgba(20, 16, 12, 0.42);
+  backdrop-filter: blur(6px);
   display: grid;
   place-items: center;
   pointer-events: auto;
   cursor: pointer;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.28);
-  transition: transform 180ms ease, background 180ms ease;
+  transition: background 180ms ease, border-color 180ms ease, transform 180ms ease;
 }
-button.framed-play:hover { background: var(--gold-hot); transform: translate(-50%, -50%) scale(1.04); }
+button.framed-ambient-control:hover {
+  background: rgba(20, 16, 12, 0.62);
+  border-color: rgba(255, 255, 255, 0.45);
+  transform: scale(1.04);
+}
+button.framed-ambient-control:focus-visible {
+  outline: 2px solid var(--gold-hot);
+  outline-offset: 2px;
+}
 .framed-play-icon {
   width: 0;
   height: 0;
   border-style: solid;
-  border-width: 0.55rem 0 0.55rem 0.9rem;
-  border-color: transparent transparent transparent #111;
-  margin-left: 0.2rem;
+  border-width: 0.38rem 0 0.38rem 0.62rem;
+  border-color: transparent transparent transparent #fff;
+  margin-left: 0.12rem;
 }
 .framed-play-icon[data-paused="false"] {
-  width: 0.7rem;
-  height: 0.9rem;
+  width: 0.55rem;
+  height: 0.72rem;
   border: 0;
   margin: 0;
   background:
-    linear-gradient(#111, #111) 0 0 / 0.22rem 100% no-repeat,
-    linear-gradient(#111, #111) 100% 0 / 0.22rem 100% no-repeat;
+    linear-gradient(#fff, #fff) 0 0 / 0.18rem 100% no-repeat,
+    linear-gradient(#fff, #fff) 100% 0 / 0.18rem 100% no-repeat;
 }
+/* Optional overlay (unused on ambient homepage) */
 .framed-hero-overlay {
   position: absolute;
   z-index: 3;
@@ -429,7 +429,6 @@ button.framed-play:hover { background: var(--gold-hot); transform: translate(-50
   gap: 1rem 1.4rem;
   padding: 1.2rem 1.25rem 1.35rem;
   color: #fff;
-  /* Let taps reach the video / play control; re-enable only on CTAs */
   pointer-events: none;
 }
 .framed-hero-overlay a,
@@ -439,7 +438,7 @@ button.framed-play:hover { background: var(--gold-hot); transform: translate(-50
   pointer-events: auto;
 }
 .hero-video {
-  cursor: pointer;
+  cursor: default;
 }
 .framed-hero-copy { max-width: 32rem; }
 .framed-hero-kicker { color: var(--gold-hot); margin-bottom: 0.4rem; }
@@ -455,6 +454,23 @@ button.framed-play:hover { background: var(--gold-hot); transform: translate(-50
   font-size: 0.95rem;
   max-width: 34rem;
 }
+.sizzle-below {
+  margin: 1rem auto 0;
+  max-width: 60rem;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.85rem 1.25rem;
+}
+.sizzle-lockup {
+  margin: 0;
+  font-family: inherit;
+  font-size: clamp(1.15rem, 2.4vw, 1.45rem);
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  color: var(--black);
+}
 .framed-hero-actions {
   display: flex;
   flex-wrap: wrap;
@@ -462,7 +478,7 @@ button.framed-play:hover { background: var(--gold-hot); transform: translate(-50
   margin: 0;
 }
 .framed-hero-credit {
-  margin: 0.65rem 0 0;
+  margin: 0.55rem 0 0;
   color: var(--paper-muted);
   font-size: 0.85rem;
 }
@@ -1162,18 +1178,26 @@ input[type="checkbox"] { width: 1.15rem; height: 1.15rem; min-height: 0; accent-
   .framed-hero { max-width: none; }
   .framed-hero-frame {
     aspect-ratio: 4 / 3;
-    max-height: min(22rem, 48vh);
-    min-height: 12rem;
+    max-height: min(26rem, 58vh);
+    min-height: 13rem;
     border-radius: 0.9rem;
   }
   .framed-hero-overlay {
     padding: 1rem;
   }
-  .framed-play {
-    width: 3.6rem;
-    height: 3.6rem;
-    top: 42%;
+  .framed-ambient-control {
+    width: 2.55rem;
+    height: 2.55rem;
+    right: 0.7rem;
+    bottom: 0.7rem;
   }
+  .sizzle-below {
+    flex-direction: column;
+    align-items: stretch;
+    margin-top: 0.9rem;
+  }
+  .sizzle-lockup { font-size: 1.2rem; }
+  .framed-hero-actions .btn { flex: 1; text-align: center; }
   .story-frame {
     max-width: none;
     justify-self: stretch;
