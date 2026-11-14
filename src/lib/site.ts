@@ -1,5 +1,6 @@
 import "server-only";
 import { connection } from "next/server";
+import { DEFAULT_PLACE_NAME } from "./brand";
 import { getSettings, listHours } from "./content";
 import { formatLongDate, mapUrl, parseProvider, phoneHref, safeHttpUrl } from "./format";
 import type { PublicSite, StoryFact } from "./types";
@@ -25,7 +26,7 @@ export async function getSite(): Promise<PublicSite> {
   }
 
   return {
-    name: settings.restaurant_name.value.trim() || "Vinny's Bar & Grill",
+    name: settings.restaurant_name.value.trim() || DEFAULT_PLACE_NAME,
     tagline: settings.tagline.value.trim(),
     address: settings.address.value.trim(),
     phone: settings.phone.value.trim(),
@@ -40,7 +41,8 @@ export async function getSite(): Promise<PublicSite> {
       linkUrl: safeHttpUrl(settings.promo_link_url.value),
     },
     toastUrl: safeHttpUrl(settings.toast_ordering_url.value),
-    heroHeading: settings.hero_heading.value.trim() || settings.restaurant_name.value.trim() || "Vinny's Bar & Grill",
+    heroHeading:
+      settings.hero_heading.value.trim() || settings.restaurant_name.value.trim() || DEFAULT_PLACE_NAME,
     heroText:
       settings.hero_text.value.trim() ||
       "A bar and grill across from EMU in Ypsilanti. Lunch is served daily, 11–3pm, from the printed menu.",

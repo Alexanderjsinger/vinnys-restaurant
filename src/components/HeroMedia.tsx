@@ -19,7 +19,7 @@ const DEFAULT_POSTER = {
   width: 1800,
   height: 1203,
   credit:
-    "Atmosphere reel from Vinny’s. Poster still is a stock table photo — Not a photo of Vinny’s dining room.",
+    "Atmosphere reel from Vinny’s Bar & Grill. Poster still is a stock table photo — Not a photo of Vinny’s dining room.",
 } as const;
 
 function prepareVideoEl(el: HTMLVideoElement) {
@@ -210,7 +210,7 @@ export function HeroMedia({
       <section
         ref={frameRef}
         className="framed-hero-frame"
-        aria-label="Vinny's atmosphere"
+        aria-label="Vinny’s Bar & Grill atmosphere"
       >
         <figure className="framed-hero-media">
           {canPlayVideo && videoSrc ? (

@@ -1,6 +1,7 @@
 import { cookies } from "next/headers";
 import { DRAFT_COOKIE } from "@/lib/auth";
 import { firstQuery, partyError } from "@/lib/messages";
+import { DEFAULT_PLACE_NAME } from "@/lib/brand";
 import { PHONE_DISPLAY, RESERVE_TEL } from "@/lib/public";
 import { pageMeta } from "@/lib/seo";
 import { getSite } from "@/lib/site";
@@ -11,7 +12,7 @@ export const runtime = "nodejs";
 export const metadata = pageMeta(
   "/parties",
   "Private parties",
-  "Ask Vinny's Bar & Grill about a private party. Room capacity and party prices are not published.",
+  `Ask ${DEFAULT_PLACE_NAME} about a private party. Room capacity and party prices are not published.`,
 );
 
 function readDraft(raw: string | undefined): PartyDraft {

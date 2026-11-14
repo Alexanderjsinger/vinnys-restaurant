@@ -7,6 +7,7 @@ import { listEvents, listMenu } from "@/lib/content";
 import { detroitNowLocal, formatPrice } from "@/lib/format";
 import { firstQuery } from "@/lib/messages";
 import { LUNCH_SERVICE } from "@/lib/lunch-menu";
+import { DEFAULT_PLACE_NAME, splitPlaceWordmark } from "@/lib/brand";
 import { DIRECTIONS_URL, HERO_LINE, MAP_QUERY, PHONE_DISPLAY, RESERVE_TEL } from "@/lib/public";
 import { OrderLink } from "@/components/OrderLink";
 import { LUNCH_PLATES } from "@/lib/lunch-photos";
@@ -16,8 +17,8 @@ import type { MenuItem } from "@/lib/types";
 
 export const metadata = pageMeta(
   "/",
-  { absolute: "Vinny's Bar & Grill" },
-  "Vinny's Bar & Grill is a bar and grill across from EMU at 705 W. Cross St., Ypsilanti. Lunch is served daily, 11–3pm.",
+  { absolute: DEFAULT_PLACE_NAME },
+  `${DEFAULT_PLACE_NAME} is a bar and grill across from EMU at 705 W. Cross St., Ypsilanti. Lunch is served daily, 11–3pm.`,
 );
 
 export const dynamic = "force-dynamic";
@@ -70,6 +71,8 @@ export default async function HomePage({
   const heroSupport =
     site.heroText?.trim() ||
     "A bar and grill across from EMU on Cross Street. Lunch daily, 11–3pm.";
+  const placeName = (site.heroHeading || site.name).trim() || DEFAULT_PLACE_NAME;
+  const { mark: heroMark, rest: heroRest } = splitPlaceWordmark(placeName);
 
   return (
     <>
@@ -77,7 +80,8 @@ export default async function HomePage({
         <div className="wrap stitch-hero-copy">
           <p className="micro-label stitch-hero-label">Historic Cross Street / Ypsilanti, Michigan</p>
           <h1 id="home-heading" className="stitch-wordmark">
-            Vinny&apos;s
+            <span className="stitch-wordmark-mark">{heroMark}</span>
+            {heroRest ? <span className="stitch-wordmark-rest">{heroRest}</span> : null}
           </h1>
           <div className="gold-rule" aria-hidden="true" />
           <p className="stitch-hero-support">{heroSupport}</p>
@@ -108,7 +112,7 @@ export default async function HomePage({
             </h2>
             <p>
               {site.heroText?.trim() ||
-                "Vinny’s is a bar and grill on historic Cross Street in Ypsilanti, directly across from Eastern Michigan University."}
+                `${DEFAULT_PLACE_NAME} is a bar and grill on historic Cross Street in Ypsilanti, directly across from Eastern Michigan University.`}
             </p>
             <p>
               Lunch is served daily, 11–3pm, from the published menu. Call for the room, or order
@@ -126,7 +130,7 @@ export default async function HomePage({
           <figure className="story-frame">
             <img
               src="/photos/storefront.webp"
-              alt="Exterior of Vinny's Bar & Grill at 705 W. Cross St."
+              alt={`Exterior of ${DEFAULT_PLACE_NAME} at 705 W. Cross St.`}
               width={1110}
               height={886}
             />
@@ -173,7 +177,7 @@ export default async function HomePage({
               <figure>
                 <img
                   src="/photos/storefront.webp"
-                  alt="Vinny's Bar & Grill storefront exterior"
+                  alt={`${DEFAULT_PLACE_NAME} storefront exterior`}
                   width={555}
                   height={443}
                 />
@@ -293,7 +297,7 @@ export default async function HomePage({
           </div>
           <iframe
             className="visit-map"
-            title="Map of Vinny's Bar & Grill at 705 W. Cross St., Ypsilanti"
+            title={`Map of ${DEFAULT_PLACE_NAME} at 705 W. Cross St., Ypsilanti`}
             src={mapSrc}
             loading="lazy"
             referrerPolicy="no-referrer-when-downgrade"
