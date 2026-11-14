@@ -1,5 +1,5 @@
 import { LUNCH_MENU } from "./lunch-menu";
-import { ORDER_URL, PHONE_DISPLAY } from "./public";
+import { FOOTER_TAGLINE, ORDER_URL, PHONE_DISPLAY } from "./public";
 import {
   SETTING_KEYS,
   type EventRow,
@@ -28,7 +28,22 @@ type D1Database = {
 const HERO_TEXT =
   "A bar and grill across from EMU in Ypsilanti. Lunch is served daily, 11–3pm, from the printed menu.";
 
+const STALE_TAGLINES = new Set(["Good Food, Great Times", "Lunch, dinner and everything after."]);
+
 let ready: Promise<void> | null = null;
+
+async function applyFooterTagline(db: D1Database) {
+  const row = await db.prepare("SELECT value FROM settings WHERE key = 'tagline'").first<{ value: string }>();
+  if (!row?.value || STALE_TAGLINES.has(row.value.trim())) {
+    await db
+      .prepare(
+        `INSERT INTO settings (key, value, confirmed) VALUES ('tagline', ?, 0)
+         ON CONFLICT(key) DO UPDATE SET value = excluded.value`,
+      )
+      .bind(FOOTER_TAGLINE)
+      .run();
+  }
+}
 
 function asStatus(value: string | undefined): PublishStatus {
   if (value === "draft" || value === "archived") return value;
@@ -222,12 +237,13 @@ async function ensure() {
   ]) {
     await addColumn(db, sql);
   }
+  await applyFooterTagline(db);
   const seeded = await db.prepare("SELECT value FROM meta WHERE key = 'content_seed'").bind().first<{ value: string }>();
   if (seeded?.value === "1") return;
   const now = new Date().toISOString();
   const settings: [string, string, number][] = [
     ["restaurant_name", "Vinny’s Bar & Grill", 0],
-    ["tagline", "Good Food, Great Times", 0],
+    ["tagline", FOOTER_TAGLINE, 0],
     ["address", "705 W. Cross St., Ypsilanti, MI 48197", 0],
     ["phone", PHONE_DISPLAY, 1],
     ["email", "", 0],

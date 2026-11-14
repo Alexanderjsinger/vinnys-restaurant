@@ -3,6 +3,7 @@ import { connection } from "next/server";
 import { DEFAULT_PLACE_NAME } from "./brand";
 import { getSettings, listHours } from "./content";
 import { formatLongDate, mapUrl, parseProvider, phoneHref, safeHttpUrl } from "./format";
+import { FOOTER_TAGLINE } from "./public";
 import type { PublicSite, StoryFact } from "./types";
 
 export async function getSite(): Promise<PublicSite> {
@@ -27,7 +28,7 @@ export async function getSite(): Promise<PublicSite> {
 
   return {
     name: settings.restaurant_name.value.trim() || DEFAULT_PLACE_NAME,
-    tagline: settings.tagline.value.trim(),
+    tagline: settings.tagline.value.trim() || FOOTER_TAGLINE,
     address: settings.address.value.trim(),
     phone: settings.phone.value.trim(),
     phoneHref: phoneHref(settings.phone.value),
