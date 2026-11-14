@@ -6,16 +6,16 @@ Phase 2.5 reliability/security hardening originally landed in PR #2. Follow-up P
 
 **CSRF follow-through (2026-11-11):** PR #9 merged to `main` as `b7bf813` (tip `3c838e6`). PO-authorized staging deploy + independent QA → **staging-verified PASS**. See [`security-closure-csrf.md`](security-closure-csrf.md).
 
-R2 and Resend remain **owner-blocked**. Business facts remain **owner**. Events/CMS product remains **HOLD**. No DNS. No secrets committed.
+R2 and Resend remain **owner-blocked**. Business facts remain **owner**. Events/CMS product remains **HOLD** until **E6** live QA (#12–#14 merged for E1–E5). **GitHub `main`:** `731eedc` (includes skills #29). **Verified staging content baseline:** `2b77538` (PR #28) — do not conflate with tip `main` until a PO-approved deploy. No DNS. No secrets committed.
 
 ## Status by layer
 
 | Layer | Status |
 | --- | --- |
-| Completed eng (Phase 2.5 + CSRF) | On `main` through `b7bf813` (PRs #2, #7, #9; docs #8) |
-| Verified staging | CSRF + security headers on Worker `22ba677c-9192-40da-8dfe-6666d0a5b039` — **PASS** |
-| Outstanding product | Events/CMS **HOLD** — [`events-cms-backlog.md`](events-cms-backlog.md) (E1–E6) |
-| Unresolved defects | Consolidated P1 in Events backlog; not cleared by CSRF |
+| Completed eng (Phase 2.5 + CSRF + Events + sizzle + skills) | GitHub `main` `731eedc` (app through #28 `2b77538`; skills #29) |
+| Verified staging | CSRF **PASS**; 2026-11-14 fingerprints match content baseline `2b77538` (not yet redeployed for #29) |
+| Outstanding product | Events/CMS **HOLD** — E6 QA matrix open — [`events-cms-backlog.md`](events-cms-backlog.md) |
+| Unresolved defects | E6 live CMS acceptance only |
 | Owner deps | R2, Resend, hours/emails/Toast/address confirmation, further deploy/DNS approval |
 | Prod requirements | Separate owner approval; HOLD cleared; facts + infra evidence |
 
@@ -57,7 +57,7 @@ R2 and Resend remain **owner-blocked**. Business facts remain **owner**. Events/
 ## Outstanding / BLOCKED
 
 1. ~~GitHub → Cloudflare staging sync for CSRF SHA~~ — **done** for `b7bf813` (staging-verified). Further deploys still need PO approval.
-2. **Events/CMS product HOLD** — empty-state UX, photo placeholder, status model, `next_step` (P1 E1–E6). Durable backlog: [`events-cms-backlog.md`](events-cms-backlog.md); checklist: [`next-execution-plan.md`](next-execution-plan.md) §1. Specialist assessments in Project Context `docs/`.
+2. **Events/CMS product HOLD** — E1–E5 merged (#12–#14); **E6** independent QA on staging still required. Backlog: [`events-cms-backlog.md`](events-cms-backlog.md); checklist: [`next-execution-plan.md`](next-execution-plan.md) §1.
 3. **Cloudflare R2** enablement + bucket + `MEDIA` binding + redeploy + upload smoke
 4. **Resend** verified sender + `RESEND_API_KEY` / `RESEND_FROM` + notify email + Retry queue
 5. Owner confirms hours and business email (and related facts in `owner-setup.md`)
@@ -70,8 +70,8 @@ Prioritized eng-vs-owner checklist: [`next-execution-plan.md`](next-execution-pl
 
 ## Deployment status
 
-- Staging worker serves CSRF merge `b7bf813` / Worker Version `22ba677c…` with live security headers (QA PASS)
-- Rollback target if needed: Worker Version `c9db5b34-879e-46ca-a226-4c88d7d3674c`
+- Staging worker content matches approved `main` `2b77538` (PR #28 sizzle OOM fix; read-only verify 2026-11-14)
+- Prior CSRF baseline: merge `b7bf813` / Worker `22ba677c…`; rollback target if needed: `c9db5b34-879e-46ca-a226-4c88d7d3674c`
 - **Do not deploy further or change DNS without Product Owner approval relayed by Coordinator**
 
 ## Rollback
@@ -82,7 +82,7 @@ Prioritized eng-vs-owner checklist: [`next-execution-plan.md`](next-execution-pl
 
 ## Recommended next steps
 
-1. PO approves Events PR-A→B→C sequence in [`events-cms-backlog.md`](events-cms-backlog.md) / [`next-execution-plan.md`](next-execution-plan.md) §1 — **HOLD** until product B–D met; CSRF already closed ([`security-closure-csrf.md`](security-closure-csrf.md))
+1. PO authorizes **E6** live CMS QA on staging (disposable data) — **HOLD** until matrix PASS + Coordinator sign-off; CSRF already closed ([`security-closure-csrf.md`](security-closure-csrf.md))
 2. Owner completes R2 + Resend per `owner-setup.md`; Eng binds/smokes when enabled
 3. Owner content / business-info checklist
 4. Independent QA + lab perf refresh on current staging (beyond CSRF); Events E6 matrix after eng PRs
