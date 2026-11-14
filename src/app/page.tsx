@@ -87,8 +87,9 @@ export default async function HomePage({
           <p className="stitch-hero-support">{heroSupport}</p>
         </div>
 
+        <HeroMedia videoSrc={SIZZLE_REEL.src} durationLabel={SIZZLE_REEL.durationLabel} />
+
         <div className="wrap">
-          <HeroMedia videoSrc={SIZZLE_REEL.src} durationLabel={SIZZLE_REEL.durationLabel} />
           <div className="sizzle-below">
             <p className="sizzle-lockup">{HERO_LINE}</p>
             <p className="framed-hero-actions">
