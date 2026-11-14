@@ -12,8 +12,9 @@ test("menu trace viewBox and path count", async () => {
   assert.ok(mod.VINNY_MENU_TRACE_PATHS.length >= 8, "potrace grouped letter paths");
   assert.match(mod.VINNY_MENU_TRACE_TRANSFORM, /translate\(0,/);
   assert.match(mod.VINNY_MENU_TRACE_REGISTER_VIEWBOX, /^0 0 \d+ \d+$/);
-  const [, , w, h] = mod.VINNY_MENU_TRACE_VIEWBOX.split(/\s+/).map(Number);
-  assert.ok(w >= 400 && h >= 100, "display viewBox should frame full traced word");
+  const [vx, vy, vw, vh] = mod.VINNY_MENU_TRACE_VIEWBOX.split(/\s+/).map(Number);
+  assert.ok(vw >= 400 && vh >= 100, "display viewBox should frame full traced word");
+  assert.ok(vx <= 270 && vy <= 10, "display viewBox must include V left/top ink with padding");
 });
 
 test("VinnyWordmark uses menu potrace paths only", () => {

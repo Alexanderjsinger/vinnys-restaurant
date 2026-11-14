@@ -91,3 +91,17 @@ export function viewBoxFromBounds(bounds, pad = 3) {
   const h = Math.ceil(bounds.height + pad * 2);
   return { viewBox: `${x} ${y} ${w} ${h}`, width: w, height: h };
 }
+
+/** Union potrace path extrema (control points) with raster ink trim, then pad all sides. */
+export function displayViewBoxUnion(paths, inkBBox, canvasHeight = 110, scale = 0.1, pad = 12) {
+  const path = boundsAfterPotraceTransform(paths, canvasHeight, scale);
+  const minX = Math.min(path.minX, inkBBox.x);
+  const minY = Math.min(path.minY, inkBBox.y);
+  const maxX = Math.max(path.maxX, inkBBox.x + inkBBox.width);
+  const maxY = Math.max(path.maxY, inkBBox.y + inkBBox.height);
+  const x = Math.floor(minX - pad);
+  const y = Math.floor(minY - pad);
+  const w = Math.ceil(maxX - minX + pad * 2);
+  const h = Math.ceil(maxY - minY + pad * 2);
+  return { viewBox: `${x} ${y} ${w} ${h}`, width: w, height: h, minX: x, minY: y, maxX: x + w, maxY: y + h };
+}

@@ -7,7 +7,9 @@ import { execSync } from "node:child_process";
 import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
-import { viewBoxFromBounds } from "./lib/path-viewbox.mjs";
+import { boundsAfterPotraceTransform } from "./lib/path-viewbox.mjs";
+
+const DISPLAY_VIEWBOX_PAD = 16;
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const root = path.resolve(__dirname, "..");
@@ -48,16 +50,16 @@ if (paths.length < 5) {
 }
 
 const transform = `translate(0, ${traceHeight}) scale(0.1, -0.1)`;
-const bbox = measureInkBBox(paths, transform, work);
-const { viewBox, width: viewW, height: viewH } = viewBoxFromBounds(
-  {
-    minX: bbox.x,
-    minY: bbox.y,
-    width: bbox.width,
-    height: bbox.height,
-  },
-  4,
-);
+const inkBBox = measureInkBBox(paths, transform, work);
+const pathBBox = boundsAfterPotraceTransform(paths, traceHeight, 0.1);
+const pad = DISPLAY_VIEWBOX_PAD;
+const minX = Math.floor(Math.min(pathBBox.minX, inkBBox.x) - pad);
+const minY = Math.floor(Math.min(pathBBox.minY, inkBBox.y) - pad);
+const maxX = Math.ceil(Math.max(pathBBox.maxX, inkBBox.x + inkBBox.width) + pad);
+const maxY = Math.ceil(Math.max(pathBBox.maxY, inkBBox.y + inkBBox.height) + pad);
+const viewW = maxX - minX;
+const viewH = maxY - minY;
+const viewBox = `${minX} ${minY} ${viewW} ${viewH}`;
 
 const outTs = path.join(root, "src/lib/vinny-wordmark-menu-paths.ts");
 const body = `/** Auto-generated from vinnys-menu-logomark.png — do not hand-edit; re-run scripts/trace-menu-wordmark.mjs */

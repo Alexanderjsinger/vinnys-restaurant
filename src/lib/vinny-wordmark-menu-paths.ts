@@ -1,5 +1,5 @@
 /** Auto-generated from vinnys-menu-logomark.png — do not hand-edit; re-run scripts/trace-menu-wordmark.mjs */
-export const VINNY_MENU_TRACE_VIEWBOX = "291 23 416 112" as const;
+export const VINNY_MENU_TRACE_VIEWBOX = "259 -10 460 157" as const;
 /** Potrace bitmap coords — use for pixel-aligned overlay on menu-vinnys-trim (682×110). */
 export const VINNY_MENU_TRACE_REGISTER_VIEWBOX = "0 0 682 110" as const;
 export const VINNY_MENU_TRACE_TRANSFORM = "translate(0, 110) scale(0.1, -0.1)" as const;
