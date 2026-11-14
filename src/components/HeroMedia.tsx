@@ -7,6 +7,12 @@ import { useEffect, useRef, useState } from "react";
  * Framed homepage hero media (Stitch composition).
  * Approved sizzle reel lives under public/hero; poster remains meet-me.jpg.
  * Duration labels must come from a measured file — never invent timecodes.
+ *
+ * Mobile / iOS notes:
+ * - Call play() inside the tap handler (user gesture), not only in an effect.
+ * - Keep muted + playsInline (and webkit-playsinline) before play().
+ * - Sync chrome to real playing/pause events so a stuck poster never shows a pause icon.
+ * - prefers-reduced-motion → still poster only.
  */
 const DEFAULT_POSTER = {
   src: "/hero/meet-me.jpg",
@@ -16,6 +22,15 @@ const DEFAULT_POSTER = {
   credit:
     "Atmosphere reel from Vinny’s. Poster still is a stock table photo — Not a photo of Vinny’s dining room.",
 } as const;
+
+function prepareVideoEl(el: HTMLVideoElement) {
+  el.muted = true;
+  el.defaultMuted = true;
+  el.playsInline = true;
+  el.setAttribute("playsinline", "");
+  el.setAttribute("webkit-playsinline", "");
+  el.setAttribute("muted", "");
+}
 
 export function HeroMedia({
   videoSrc = null,
@@ -36,7 +51,7 @@ export function HeroMedia({
   overlay?: ReactNode;
 }) {
   const videoRef = useRef<HTMLVideoElement | null>(null);
-  const [paused, setPaused] = useState(false);
+  const [playing, setPlaying] = useState(false);
   const [reduceMotion, setReduceMotion] = useState(false);
   const canPlayVideo = Boolean(videoSrc) && !reduceMotion;
   const watchLabel = canPlayVideo
@@ -56,15 +71,49 @@ export function HeroMedia({
   useEffect(() => {
     const el = videoRef.current;
     if (!el || !canPlayVideo) return;
-    if (paused) {
-      el.pause();
+
+    prepareVideoEl(el);
+
+    const syncPlaying = () => setPlaying(!el.paused);
+    const onError = () => setPlaying(false);
+
+    el.addEventListener("play", syncPlaying);
+    el.addEventListener("playing", syncPlaying);
+    el.addEventListener("pause", syncPlaying);
+    el.addEventListener("ended", syncPlaying);
+    el.addEventListener("error", onError);
+
+    // Muted autoplay where allowed (desktop / some Android). iOS often blocks —
+    // chrome stays on the play affordance until a tap calls play() in-gesture.
+    void el
+      .play()
+      .then(() => setPlaying(!el.paused))
+      .catch(() => setPlaying(false));
+
+    return () => {
+      el.removeEventListener("play", syncPlaying);
+      el.removeEventListener("playing", syncPlaying);
+      el.removeEventListener("pause", syncPlaying);
+      el.removeEventListener("ended", syncPlaying);
+      el.removeEventListener("error", onError);
+    };
+  }, [canPlayVideo, videoSrc]);
+
+  function togglePlayback() {
+    const el = videoRef.current;
+    if (!el || !canPlayVideo) return;
+    prepareVideoEl(el);
+    if (el.paused) {
+      // Must stay inside the tap/click stack for iOS; update chrome immediately.
+      setPlaying(true);
+      void el.play().catch(() => {
+        setPlaying(false);
+      });
       return;
     }
-    void el.play().catch(() => {
-      /* Autoplay can fail; keep poster/chrome honest. */
-      setPaused(true);
-    });
-  }, [canPlayVideo, paused]);
+    el.pause();
+    setPlaying(false);
+  }
 
   return (
     <div className="framed-hero">
@@ -77,9 +126,10 @@ export function HeroMedia({
               muted
               playsInline
               loop
-              autoPlay
+              preload="metadata"
               poster={poster.src}
               aria-label={poster.alt}
+              onClick={togglePlayback}
             >
               <source src={videoSrc} type="video/mp4" />
             </video>
@@ -99,15 +149,15 @@ export function HeroMedia({
             <button
               type="button"
               className="framed-play"
-              onClick={() => setPaused((value) => !value)}
-              aria-pressed={!paused}
-              aria-label={paused ? "Play video" : "Pause video"}
+              onClick={togglePlayback}
+              aria-pressed={playing}
+              aria-label={playing ? "Pause video" : "Play video"}
             >
-              <span className="framed-play-icon" data-paused={paused ? "true" : "false"} />
+              <span className="framed-play-icon" data-paused={playing ? "false" : "true"} />
             </button>
           ) : (
             <span className="framed-play" aria-hidden="true">
-              <span className="framed-play-icon" data-paused="" />
+              <span className="framed-play-icon" data-paused="true" />
             </span>
           )}
         </div>
