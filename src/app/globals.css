@@ -364,8 +364,9 @@ address { font-style: normal; }
   pointer-events: none;
 }
 .framed-hero-chrome {
+  /* Above overlay so the play control stays tappable on short mobile frames */
   position: absolute;
-  z-index: 2;
+  z-index: 4;
   inset: 0;
   pointer-events: none;
 }
@@ -428,6 +429,17 @@ button.framed-play:hover { background: var(--gold-hot); transform: translate(-50
   gap: 1rem 1.4rem;
   padding: 1.2rem 1.25rem 1.35rem;
   color: #fff;
+  /* Let taps reach the video / play control; re-enable only on CTAs */
+  pointer-events: none;
+}
+.framed-hero-overlay a,
+.framed-hero-overlay .btn,
+.framed-hero-actions a,
+.framed-hero-actions .btn {
+  pointer-events: auto;
+}
+.hero-video {
+  cursor: pointer;
 }
 .framed-hero-copy { max-width: 32rem; }
 .framed-hero-kicker { color: var(--gold-hot); margin-bottom: 0.4rem; }
