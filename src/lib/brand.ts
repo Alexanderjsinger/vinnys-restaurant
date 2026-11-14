@@ -5,6 +5,11 @@ export const DEFAULT_PLACE_NAME = "Vinny’s Bar & Grill";
  * Split a CMS place name for short wordmark + rest.
  * Keeps art-direction "Vinny’s" mark when the full name is "Vinny’s Bar & Grill".
  */
+/** True when the short mark is the canonical Vinny's sign wordmark. */
+export function isVinnyShortMark(mark: string): boolean {
+  return /^Vinny['’]s$/iu.test(mark.trim());
+}
+
 export function splitPlaceWordmark(name: string): { mark: string; rest: string | null } {
   const trimmed = name.trim();
   const match = /^(Vinny['’]s)\s+(.+)$/iu.exec(trimmed);

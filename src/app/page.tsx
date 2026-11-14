@@ -6,7 +6,8 @@ import { HoursList } from "@/components/HoursList";
 import { listEvents, listMenu } from "@/lib/content";
 import { detroitNowLocal, formatPrice } from "@/lib/format";
 import { LUNCH_SERVICE } from "@/lib/lunch-menu";
-import { DEFAULT_PLACE_NAME, splitPlaceWordmark } from "@/lib/brand";
+import { DEFAULT_PLACE_NAME, isVinnyShortMark, splitPlaceWordmark } from "@/lib/brand";
+import { VinnyWordmark } from "@/components/VinnyWordmark";
 import { DIRECTIONS_URL, isMeetMeLine, MAP_QUERY, PHONE_DISPLAY, RESERVE_TEL } from "@/lib/public";
 import { OrderLink } from "@/components/OrderLink";
 import { LUNCH_PLATES } from "@/lib/lunch-photos";
@@ -75,7 +76,13 @@ export default async function HomePage() {
         <div className={`wrap stitch-hero-copy${heroSupport ? "" : " stitch-hero-copy-tight"}`}>
           <p className="micro-label stitch-hero-label">Historic Cross Street / Ypsilanti, Michigan</p>
           <h1 id="home-heading" className="stitch-wordmark">
-            <span className="stitch-wordmark-mark">{heroMark}</span>
+            <span className="stitch-wordmark-mark">
+              {isVinnyShortMark(heroMark) ? (
+                <VinnyWordmark size="lg" surface="light" decorative />
+              ) : (
+                heroMark
+              )}
+            </span>
             {heroRest ? <span className="stitch-wordmark-rest">{heroRest}</span> : null}
           </h1>
           <div className="gold-rule" aria-hidden="true" />

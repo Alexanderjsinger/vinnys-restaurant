@@ -9,6 +9,9 @@ const root = path.resolve(import.meta.dirname, "..");
 test("splitPlaceWordmark keeps short mark + Bar & Grill from CMS name", async () => {
   const mod = await import(pathToFileURL(path.join(root, "src/lib/brand.ts")).href);
   assert.equal(mod.DEFAULT_PLACE_NAME, "Vinny’s Bar & Grill");
+  assert.ok(mod.isVinnyShortMark("Vinny’s"), "typographic apostrophe short mark");
+  assert.ok(mod.isVinnyShortMark("Vinny's"), "straight apostrophe short mark");
+  assert.ok(!mod.isVinnyShortMark("Fixture"), "non-Vinny marks fall back to text");
   assert.deepEqual(mod.splitPlaceWordmark("Vinny’s Bar & Grill"), {
     mark: "Vinny’s",
     rest: "Bar & Grill",

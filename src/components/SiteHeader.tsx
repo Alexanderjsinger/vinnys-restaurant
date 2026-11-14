@@ -1,5 +1,6 @@
 import Link from "next/link";
-import { DEFAULT_PLACE_NAME, splitPlaceWordmark } from "@/lib/brand";
+import { DEFAULT_PLACE_NAME, isVinnyShortMark, splitPlaceWordmark } from "@/lib/brand";
+import { VinnyWordmark } from "@/components/VinnyWordmark";
 import { LUNCH_SERVICE } from "@/lib/lunch-menu";
 import { HERO_LINE, PHONE_DISPLAY, RESERVE_TEL, STREET_ADDRESS } from "@/lib/public";
 import type { PublicSite } from "@/lib/types";
@@ -12,6 +13,7 @@ export function SiteHeader({ site }: { site: PublicSite }) {
   const address = site.address || STREET_ADDRESS;
   const placeName = site.name.trim() || DEFAULT_PLACE_NAME;
   const { mark, rest } = splitPlaceWordmark(placeName);
+  const showShortMark = isVinnyShortMark(mark);
   const brandSub = rest ? `${rest} · Ypsilanti, MI` : "Ypsilanti, MI";
   return (
     <header className="site-header">
@@ -31,7 +33,13 @@ export function SiteHeader({ site }: { site: PublicSite }) {
         </div>
         <div className="wrap brand-row">
           <Link className="brand" href="/" aria-label={placeName}>
-            <span className="brand-mark">{mark}</span>
+            <span className="brand-mark">
+              {showShortMark ? (
+                <VinnyWordmark size="sm" surface="light" decorative />
+              ) : (
+                mark
+              )}
+            </span>
             <span className="brand-sub">{brandSub}</span>
             <span className="brand-tagline">{HERO_LINE}</span>
           </Link>
