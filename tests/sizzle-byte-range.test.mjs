@@ -24,24 +24,38 @@ test("sizzle guest src uses Range-aware API; asset stays under public/hero", () 
   );
 });
 
-test("HeroMedia calls play inside tap handler and sets playsInline/muted", () => {
+test("HeroMedia ambient playback: IO, muted playsInline, manual pause, no loop", () => {
   const hero = fs.readFileSync(path.join(root, "src/components/HeroMedia.tsx"), "utf8");
-  assert.match(hero, /function togglePlayback/, "dedicated tap-to-play handler");
-  assert.match(hero, /el\.play\(\)/, "play() invoked from handler stack");
+  assert.match(hero, /function togglePlayback/, "dedicated control handler");
+  assert.match(hero, /el\.play\(\)/, "play() invoked from handler / ambient path");
   assert.match(hero, /playsInline/, "playsInline present");
   assert.match(hero, /webkit-playsinline/, "legacy iOS playsinline attribute");
   assert.match(hero, /prepareVideoEl/, "muted + playsInline prepared before play");
   assert.match(hero, /prefers-reduced-motion/, "reduced-motion still respected");
+  assert.match(hero, /saveData|connectionWantsDataSave/, "Save-Data preference respected");
+  assert.match(hero, /IntersectionObserver/, "starts when ~50% visible");
+  assert.match(hero, /intersectionRatio\s*>=\s*0\.5/, "50% visibility threshold");
+  assert.match(hero, /visibilitychange/, "pauses when tab hidden");
+  assert.match(hero, /manualPauseRef/, "manual pause blocks ambient resume");
+  assert.match(hero, /el\.loop\s*=\s*false/, "reel does not endlessly loop");
   assert.match(hero, /addEventListener\("playing"/, "chrome syncs to real playing event");
+  assert.match(hero, /addEventListener\("ended"/, "ended holds frame for replay control");
   assert.doesNotMatch(hero, /\bautoPlay\b/, "avoid autoPlay attribute desync with blocked autoplay");
+  assert.doesNotMatch(hero, /<video[\s\S]*?\bloop\b/, "no loop attribute on video element");
 });
 
-test("overlay does not permanently capture taps over the play control", () => {
+test("ambient chrome is corner-only; overlay cannot steal control taps", () => {
   const css = fs.readFileSync(path.join(root, "src/app/globals.css"), "utf8");
+  assert.match(css, /\.framed-ambient-control\s*\{/, "discreet ambient control styled");
+  assert.match(
+    css,
+    /\.framed-ambient-control\s*\{[\s\S]*?right:\s*[\d.]+rem/,
+    "control anchored lower-right",
+  );
   assert.match(
     css,
     /\.framed-hero-overlay\s*\{[\s\S]*?pointer-events:\s*none/,
-    "overlay is pointer-events none",
+    "optional overlay is pointer-events none",
   );
   assert.match(
     css,
@@ -49,6 +63,8 @@ test("overlay does not permanently capture taps over the play control", () => {
     "chrome stacks above overlay",
   );
   assert.match(css, /framed-hero-actions[\s\S]*?pointer-events:\s*auto/, "CTAs remain clickable");
+  assert.doesNotMatch(css, /\.framed-play\s*\{/, "oversized center play button removed");
+  assert.doesNotMatch(css, /\.framed-hero-watch\s*\{/, "watch-label chrome removed");
 });
 
 test("parseByteRange covers Safari single-range forms", async () => {

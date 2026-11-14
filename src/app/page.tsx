@@ -84,29 +84,18 @@ export default async function HomePage({
         </div>
 
         <div className="wrap">
-          <HeroMedia
-            videoSrc={SIZZLE_REEL.src}
-            durationLabel={SIZZLE_REEL.durationLabel}
-            overlay={
-              <>
-                <div className="framed-hero-copy">
-                  <p className="micro-label framed-hero-kicker">Across from EMU</p>
-                  <p className="framed-hero-title">{HERO_LINE}</p>
-                  <p className="framed-hero-text">
-                    {addressLine}. Warm neighborhood energy on historic Cross Street.
-                  </p>
-                </div>
-                <p className="framed-hero-actions">
-                  <a className="btn btn-gold" href={phoneHref} data-track="phone_click">
-                    Call {phoneLabel}
-                  </a>
-                  <Link className="btn btn-light" href="/menu">
-                    View menus
-                  </Link>
-                </p>
-              </>
-            }
-          />
+          <HeroMedia videoSrc={SIZZLE_REEL.src} durationLabel={SIZZLE_REEL.durationLabel} />
+          <div className="sizzle-below">
+            <p className="sizzle-lockup">{HERO_LINE}</p>
+            <p className="framed-hero-actions">
+              <a className="btn btn-gold" href={phoneHref} data-track="phone_click">
+                Call {phoneLabel}
+              </a>
+              <Link className="btn btn-ink" href="/menu">
+                View menus
+              </Link>
+            </p>
+          </div>
         </div>
       </section>
 

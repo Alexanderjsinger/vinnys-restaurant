@@ -26,7 +26,9 @@ test("header chrome matches Stitch light composition (Call + Order)", () => {
 
   const hero = page.match(/className="stitch-hero"[\s\S]*?<\/section>/);
   assert.ok(hero, "stitch-hero section exists");
-  assert.match(hero[0], /framed-hero-actions/, "media dual CTAs live on framed hero");
+  assert.match(hero[0], /framed-hero-actions/, "primary CTAs stay in stitch hero (outside video)");
+  assert.match(hero[0], /sizzle-below/, "CTAs sit below ambient reel, not over footage");
+  assert.doesNotMatch(hero[0], /overlay=\{/, "no copy/CTA overlay on moving video");
   assert.doesNotMatch(hero[0], /Reserve a Table|Happy Hour|EST\.\s*1964/i);
 });
 
@@ -79,7 +81,12 @@ test("framed hero keeps rounded media + honest poster structure", () => {
   assert.match(page, /durationLabel=\{SIZZLE_REEL\.durationLabel\}/, "homepage passes measured duration only");
   assert.ok(fs.existsSync(reelPath), "sizzle reel mp4 is present under public/hero");
   assert.match(hero, /prefers-reduced-motion/, "hero respects reduced motion");
-  assert.match(hero, /still frame|Atmosphere/, "honest atmosphere copy (no invented dazzle branding)");
+  assert.match(hero, /IntersectionObserver/, "ambient play uses viewport visibility");
+  assert.match(hero, /manualPauseRef/, "manual pause is never overridden by ambient resume");
+  assert.match(hero, /framed-ambient-control/, "discreet corner control only");
+  assert.doesNotMatch(hero, /framed-play(?!-icon)/, "no oversized center play button");
+  assert.doesNotMatch(hero, /Watch atmosphere reel/, "no persistent watch-label chrome");
+  assert.match(hero, /Atmosphere reel|atmosphere reel/, "honest atmosphere copy (no invented dazzle branding)");
   assert.doesNotMatch(hero, /1:13|1:20|DAZZLE REEL/i);
   assert.doesNotMatch(
     hero,
