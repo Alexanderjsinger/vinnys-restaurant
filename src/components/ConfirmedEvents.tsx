@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { EventPhoto } from "@/components/EventPhoto";
 import { OrderLink } from "@/components/OrderLink";
 import { GUEST_EVENTS_EMPTY_LINE } from "@/lib/events-public";
 import { cleanEventPhoto, eventNextStepHref, formatLongDate, formatPrice, formatTime } from "@/lib/format";
@@ -120,7 +121,7 @@ export function ConfirmedEvents({
                 America/Detroit
               </p>
             ) : null}
-            {photo ? <img src={photo} alt={event.title} /> : null}
+            {photo ? <EventPhoto src={photo} alt={event.title} /> : null}
             {event.blurb ? <p>{event.blurb}</p> : null}
             {event.price ? <p className="price">{formatPrice(event.price)}</p> : null}
             {event.next_step ? (
