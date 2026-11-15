@@ -178,7 +178,8 @@ test("framed hero is full-bleed ambient media + honest poster structure", () => 
   assert.match(css, /\.reserve-bar \.reserve-bar-submit[\s\S]*?background:\s*var\(--gold-hot\)/);
   assert.doesNotMatch(css, /#e72225|#e62527/, "reservation bar does not copy the reference red");
   assert.ok(fs.existsSync(reelPath), "sizzle reel mp4 is present under public/hero");
-  assert.match(hero, /\/hero\/sizzle-bartender\.jpg/, "hero poster is the bartender still from the reel");
+  assert.match(hero, /\/hero\/sizzle-poster\.jpg/, "hero poster is the opening frame of the restored reel");
+  assert.doesNotMatch(hero, /sizzle-bartender\.jpg/, "hero poster is not the bartender still");
   assert.doesNotMatch(hero, /meet-me\.jpg/, "hero poster is not the stock table photo");
   assert.match(hero, /prefers-reduced-motion/, "hero respects reduced motion");
   assert.match(hero, /saveData|connectionWantsDataSave/, "Save-Data still shows the poster");
