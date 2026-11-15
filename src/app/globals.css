@@ -2103,3 +2103,5 @@ a:focus-visible, button:focus-visible { outline: 3px solid var(--gold-hot); outl
  .select-feature-panel { padding: 1.5rem; min-height: 20rem; }
  .select-preview-rail { grid-template-columns: repeat(6, minmax(6.5rem, 1fr)); overflow-x: auto; padding: .3rem; scrollbar-width: thin; }
 }
+
+@media (max-width: 799px) { .select-feature-price { font-size: .8rem; } .select-preview:not(.select-preview--text) .select-preview-name { font-size: .65rem; } }
