@@ -35,10 +35,9 @@ test("sizzle guest src uses Range-aware API; asset stays under public/hero", () 
   assert.match(assetLib, /loadInflight/, "ASSETS reads are single-flight");
 });
 
-test("HeroMedia ambient playback: IO, muted playsInline, manual pause, no loop", () => {
+test("HeroMedia ambient playback: IO, muted playsInline, loops, no controls", () => {
   const hero = fs.readFileSync(path.join(root, "src/components/HeroMedia.tsx"), "utf8");
-  assert.match(hero, /function togglePlayback/, "dedicated control handler");
-  assert.match(hero, /el\.play\(\)/, "play() invoked from handler / ambient path");
+  assert.match(hero, /el\.play\(\)/, "play() invoked from the ambient path");
   assert.match(hero, /playsInline/, "playsInline present");
   assert.match(hero, /webkit-playsinline/, "legacy iOS playsinline attribute");
   assert.match(hero, /prepareVideoEl/, "muted + playsInline prepared before play");
@@ -47,31 +46,22 @@ test("HeroMedia ambient playback: IO, muted playsInline, manual pause, no loop",
   assert.match(hero, /IntersectionObserver/, "starts when ~50% visible");
   assert.match(hero, /intersectionRatio\s*>=\s*0\.5/, "50% visibility threshold");
   assert.match(hero, /visibilitychange/, "pauses when tab hidden");
-  assert.match(hero, /manualPauseRef/, "manual pause blocks ambient resume");
-  assert.match(hero, /el\.loop\s*=\s*false/, "reel does not endlessly loop");
-  assert.match(hero, /addEventListener\("playing"/, "chrome syncs to real playing event");
-  assert.match(hero, /addEventListener\("ended"/, "ended holds frame for replay control");
+  assert.match(hero, /el\.loop\s*=\s*true/, "reel loops");
+  assert.match(hero, /<video[\s\S]*?\bloop\b/, "video element loops");
+  assert.doesNotMatch(hero, /manualPauseRef|togglePlayback|<button/, "no play or pause button");
+  assert.doesNotMatch(hero, /<video[\s\S]*?\bcontrols\b/, "video element has no controls");
   assert.doesNotMatch(hero, /\bautoPlay\b/, "avoid autoPlay attribute desync with blocked autoplay");
-  assert.doesNotMatch(hero, /<video[\s\S]*?\bloop\b/, "no loop attribute on video element");
 });
 
-test("ambient chrome is corner-only; overlay cannot steal control taps", () => {
+test("hero has no playback chrome; overlay cannot steal taps", () => {
   const css = fs.readFileSync(path.join(root, "src/app/globals.css"), "utf8");
-  assert.match(css, /\.framed-ambient-control\s*\{/, "discreet ambient control styled");
-  assert.match(
-    css,
-    /\.framed-ambient-control\s*\{[\s\S]*?right:\s*[\d.]+rem/,
-    "control anchored lower-right",
-  );
+  assert.doesNotMatch(css, /\.framed-ambient-control\s*\{/, "no corner play control");
+  assert.doesNotMatch(css, /\.framed-play-icon\s*\{/, "no play icon");
+  assert.doesNotMatch(css, /\.framed-hero-chrome\s*\{/, "no playback chrome layer");
   assert.match(
     css,
     /\.framed-hero-overlay\s*\{[\s\S]*?pointer-events:\s*none/,
     "optional overlay is pointer-events none",
-  );
-  assert.match(
-    css,
-    /\.framed-hero-chrome\s*\{[\s\S]*?z-index:\s*4/,
-    "chrome stacks above overlay",
   );
   assert.match(css, /framed-hero-actions[\s\S]*?pointer-events:\s*auto/, "CTAs remain clickable");
   assert.doesNotMatch(css, /\.framed-play\s*\{/, "oversized center play button removed");

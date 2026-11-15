@@ -9,8 +9,8 @@ import { useEffect, useRef, useState } from "react";
  *
  * Playback:
  * - Poster first; muted inline play when ~50% visible (IntersectionObserver).
- * - Auto-pause off-viewport / tab hidden; never override a manual pause.
- * - Play once (~30s), hold end frame; replay only via discreet corner control.
+ * - Loops for as long as it stays on screen. Pauses off-viewport / tab hidden.
+ * - No play button, pause button, or other controls.
  * - prefers-reduced-motion + Save-Data → still poster only.
  */
 const DEFAULT_POSTER = {
@@ -26,7 +26,7 @@ function prepareVideoEl(el: HTMLVideoElement) {
   el.muted = true;
   el.defaultMuted = true;
   el.playsInline = true;
-  el.loop = false;
+  el.loop = true;
   el.setAttribute("playsinline", "");
   el.setAttribute("webkit-playsinline", "");
   el.setAttribute("muted", "");
@@ -73,10 +73,7 @@ export function HeroMedia({
   void _durationLabel;
   const frameRef = useRef<HTMLElement | null>(null);
   const videoRef = useRef<HTMLVideoElement | null>(null);
-  const manualPauseRef = useRef(false);
   const playGenRef = useRef(0);
-  const [playing, setPlaying] = useState(false);
-  const [ended, setEnded] = useState(false);
   const [reduceMotion, setReduceMotion] = useState(false);
   const [saveData, setSaveData] = useState(false);
 
@@ -101,38 +98,14 @@ export function HeroMedia({
 
     prepareVideoEl(el);
 
-    const syncPlaying = () => {
-      setPlaying(!el.paused && !el.ended);
-      if (!el.ended) setEnded(false);
-    };
-    const onEnded = () => {
-      setPlaying(false);
-      setEnded(true);
-    };
-    const onError = () => setPlaying(false);
-
-    el.addEventListener("play", syncPlaying);
-    el.addEventListener("playing", syncPlaying);
-    el.addEventListener("pause", syncPlaying);
-    el.addEventListener("ended", onEnded);
-    el.addEventListener("error", onError);
-
     const tryAmbientPlay = () => {
-      if (manualPauseRef.current) return;
-      if (el.ended) return;
       if (document.visibilityState === "hidden") return;
       prepareVideoEl(el);
-      const gen = ++playGenRef.current;
-      void el
-        .play()
-        .then(() => {
-          if (gen !== playGenRef.current) return;
-          setPlaying(!el.paused && !el.ended);
-        })
-        .catch(() => {
-          if (gen !== playGenRef.current) return;
-          setPlaying(false);
-        });
+      playGenRef.current += 1;
+      const gen = playGenRef.current;
+      void el.play().catch(() => {
+        if (gen !== playGenRef.current) return;
+      });
     };
 
     const pauseAmbient = () => {
@@ -158,7 +131,6 @@ export function HeroMedia({
         pauseAmbient();
         return;
       }
-      if (manualPauseRef.current || el.ended) return;
       if (visibleRatio(frame) >= 0.5) tryAmbientPlay();
     };
     document.addEventListener("visibilitychange", onVisibility);
@@ -167,43 +139,8 @@ export function HeroMedia({
       playGenRef.current += 1;
       io.disconnect();
       document.removeEventListener("visibilitychange", onVisibility);
-      el.removeEventListener("play", syncPlaying);
-      el.removeEventListener("playing", syncPlaying);
-      el.removeEventListener("pause", syncPlaying);
-      el.removeEventListener("ended", onEnded);
-      el.removeEventListener("error", onError);
     };
   }, [canPlayVideo, videoSrc]);
-
-  function togglePlayback() {
-    const el = videoRef.current;
-    if (!el || !canPlayVideo) return;
-    prepareVideoEl(el);
-
-    if (el.paused || el.ended) {
-      manualPauseRef.current = false;
-      if (el.ended || ended) {
-        el.currentTime = 0;
-        setEnded(false);
-      }
-      // User gesture stack — required for iOS after a blocked autoplay.
-      setPlaying(true);
-      void el.play().catch(() => {
-        setPlaying(false);
-      });
-      return;
-    }
-
-    manualPauseRef.current = true;
-    el.pause();
-    setPlaying(false);
-  }
-
-  const controlLabel = ended
-    ? "Replay atmosphere reel"
-    : playing
-      ? "Pause atmosphere reel"
-      : "Play atmosphere reel";
 
   return (
     <div className="framed-hero">
@@ -218,6 +155,7 @@ export function HeroMedia({
               ref={videoRef}
               className="hero-video"
               muted
+              loop
               playsInline
               preload="metadata"
               poster={poster.src}
@@ -234,24 +172,6 @@ export function HeroMedia({
             />
           )}
         </figure>
-
-        {canPlayVideo ? (
-          <div className="framed-hero-chrome">
-            <button
-              type="button"
-              className="framed-ambient-control"
-              onClick={togglePlayback}
-              aria-pressed={playing}
-              aria-label={controlLabel}
-            >
-              <span
-                className="framed-play-icon"
-                data-paused={playing ? "false" : "true"}
-                aria-hidden="true"
-              />
-            </button>
-          </div>
-        ) : null}
 
         {overlay ? <div className="framed-hero-overlay">{overlay}</div> : null}
       </section>

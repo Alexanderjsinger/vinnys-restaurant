@@ -110,7 +110,7 @@ test("framed hero is full-bleed ambient media + honest poster structure", () => 
   assert.match(hero, /framed-hero-credit/, "stock-photo honesty caption remains available");
   const heroLib = read(path.join(root, "src/lib/hero.ts"));
   assert.match(heroLib, /SIZZLE_REEL/, "approved sizzle reel constant is defined");
-  assert.match(heroLib, /durationLabel:\s*"0:30"/, "duration matches measured ~30s file");
+  assert.match(heroLib, /durationLabel:\s*"0:16"/, "duration matches measured ~16.13s file");
   assert.match(page, /SIZZLE_REEL\.src/, "homepage wires the approved sizzle reel");
   assert.match(page, /durationLabel=\{SIZZLE_REEL\.durationLabel\}/, "homepage passes measured duration only");
   assert.match(
@@ -120,10 +120,11 @@ test("framed hero is full-bleed ambient media + honest poster structure", () => 
   );
   assert.ok(fs.existsSync(reelPath), "sizzle reel mp4 is present under public/hero");
   assert.match(hero, /prefers-reduced-motion/, "hero respects reduced motion");
+  assert.match(hero, /saveData|connectionWantsDataSave/, "Save-Data still shows the poster");
   assert.match(hero, /IntersectionObserver/, "ambient play uses viewport visibility");
-  assert.match(hero, /manualPauseRef/, "manual pause is never overridden by ambient resume");
-  assert.match(hero, /framed-ambient-control/, "discreet corner control only");
-  assert.doesNotMatch(hero, /framed-play(?!-icon)/, "no oversized center play button");
+  assert.match(hero, /el\.loop\s*=\s*true/, "reel loops while it plays");
+  assert.doesNotMatch(hero, /manualPauseRef|togglePlayback|framed-ambient-control|<button/, "no play or pause control");
+  assert.doesNotMatch(hero, /framed-play/, "no play icon");
   assert.doesNotMatch(hero, /Watch atmosphere reel/, "no persistent watch-label chrome");
   assert.match(hero, /Atmosphere reel|atmosphere reel/, "honest atmosphere copy (no invented dazzle branding)");
   assert.doesNotMatch(hero, /1:13|1:20|DAZZLE REEL/i);
