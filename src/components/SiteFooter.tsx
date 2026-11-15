@@ -56,6 +56,7 @@ export function SiteFooter({ site }: { site: PublicSite }) {
                 <OrderLink url={site.toastUrl} />
               </li>
             ) : null}
+            <li><Link href="/about">Our Story</Link></li>
             <li>
               <Link href="/contact">Contact</Link>
             </li>

@@ -1,6 +1,6 @@
 # Vinny’s Story — owner-provided source
 
-Provided by Vinny through the Product Owner on 2026-11-15. Preserve this full text for the future About page. The homepage uses an approved condensed version; this document does not create an About route.
+Provided by Vinny through the Product Owner on 2026-11-15. Preserve this full text as the owner-approved source for `/about`. The Story page presents the complete text; the homepage uses an approved condensed version.
 
 ## Our Story
 

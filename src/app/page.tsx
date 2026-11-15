@@ -89,6 +89,7 @@ export default async function HomePage() {
           </h1>
           <div className="gold-rule" aria-hidden="true" />
           {heroSupport ? <p className="stitch-hero-support">{heroSupport}</p> : null}
+          <Link className="hero-menu-link" href="/menu">View Menu <span aria-hidden="true">→</span></Link>
         </div>
 
       </section>
@@ -108,7 +109,7 @@ export default async function HomePage() {
             </p>
             <p>Come for a meal, connect with friends, and come back often.</p>
             <p className="about-lede">Meet me at Vinny’s.</p>
-            <Link className="text-link" href="/contact">Come find us <span aria-hidden="true">→</span></Link>
+            <Link className="text-link" href="/about">Read our story <span aria-hidden="true">→</span></Link>
           </div>
         </div>
       </section>
