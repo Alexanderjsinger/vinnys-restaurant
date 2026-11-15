@@ -19,7 +19,7 @@ Capture before/after screenshots at **390×844, 430×932, 768×1024, 1280×800, 
 | Quick actions | Menu, Call to Reserve (`tel:`), and Directions; no nonfunctional party/date/time inputs |
 | Food | Published names, descriptions, prices; only matching approved burger/cauliflower photos; one highlighted dish at a time, text-only for unmatched photos; manual previous/next; Lunch / Happy Hour / Dinner expand one menu at a time; unconfirmed menus show a details-unavailable message |
 | Events | Compact dark cards; dates/times prominent, descriptions readable, status/next-step behavior preserved; home displays at most three upcoming |
-| Visit | Authentic storefront beside a cream Our Story panel on desktop, photo then story on mobile; known-facts copy only; compact hours/address/call/directions row below; footer usable |
+| Visit | Authentic storefront beside a cream Our Story panel on desktop, photo then story on mobile; known-facts copy only; one bottom footer with branding, hours, address, and navigation; no repeated Visit/Hours band above it |
 | Public routes | `/`, `/menu`, `/events`, `/contact`, `/order`, `/reserve` render; legacy `/parties` redirects to Contact |
 | Media | No broken image paths; `/api/sizzle` serves video and Range requests return 206 |
 

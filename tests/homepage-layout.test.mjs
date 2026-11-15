@@ -9,7 +9,7 @@ test("homepage exposes honest reservation actions and published menu content", (
   const page = read("src/app/page.tsx");
   assert.match(page, /listMenu\("public"\)/);
   assert.match(page, /listEvents\("public"\)/);
-  assert.match(page, /href=\{phoneHref\}[^>]*>Call to Reserve/);
+  assert.match(read("src/components/SiteFooter.tsx"), /Call to reserve/);
   assert.doesNotMatch(page, /Party size|type="date"|type="time"|label: "Happy Hour"|label: "Dinner"/);
   assert.doesNotMatch(page, /private part(?:y|ies)|href="\/parties"|testimonial|EST\.\s*1964/i);
   assert.match(page, /LUNCH_PLATES\.find/);
