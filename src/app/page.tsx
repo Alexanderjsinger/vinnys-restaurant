@@ -100,16 +100,14 @@ export default async function HomePage() {
           </figure>
           <div className="about-copy">
             <p className="micro-label">Our Story</p>
-            <h2 id="about-heading">Meet me on Cross Street.</h2>
-            <p className="about-lede">Vinny’s Bar &amp; Grill, Ypsilanti.</p>
+            <h2 id="about-heading">A place to call your own.</h2>
             <p>
-              You’ll find Vinny’s at 705 W. Cross Street, right across from Eastern Michigan University.
-              Look for the Vinny’s sign above the storefront and come on in.
+              Elevated food, reasonable prices, and a warm welcome—that’s the idea behind Vinny’s.
+              We’ve transformed the former Wurst Bar into a gathering spot for our Ypsilanti neighbors
+              and the EMU community, pairing thoughtfully prepared favorites with carefully made cocktails.
             </p>
-            <p>
-              Explore the lunch menu, see what’s on the calendar, or call us to plan your visit.
-              Lunch is served daily, 11–3pm.
-            </p>
+            <p>Come for a meal, connect with friends, and come back often.</p>
+            <p className="about-lede">Meet me at Vinny’s.</p>
             <Link className="text-link" href="/contact">Come find us <span aria-hidden="true">→</span></Link>
           </div>
         </div>
