@@ -29,7 +29,7 @@ export function SiteHeader({ site }: { site: PublicSite }) {
             <span className="brand-sub">{brandSub}</span>
             <span className="brand-tagline">{HERO_LINE}</span>
           </Link>
-          <PrimaryNav />
+          <PrimaryNav phoneHref={phoneHref} directionsUrl={site.mapUrl} />
           <div className="header-actions">
             <a className="btn btn-outline" href={phoneHref} data-track="phone_click">
               <span className="label-long">Call {phoneLabel}</span>

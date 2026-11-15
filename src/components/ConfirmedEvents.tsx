@@ -102,7 +102,7 @@ export function ConfirmedEvents({
         return (
           <article key={event.id} className="event">
             <h3>{event.title}</h3>
-            <p>
+            <p className="event-date">
               <time dateTime={event.starts_at}>{formatLongDate(eventDatePart(event.starts_at))}</time>
             </p>
             {time ? (

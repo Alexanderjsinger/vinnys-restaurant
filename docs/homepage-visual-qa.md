@@ -1,38 +1,35 @@
 # Homepage visual QA
 
-Catch image-frame and CTA regressions before merge. Staging: https://vinnys-bar-grill.toastisadog.workers.dev/
+Validate the public refinement against its source SHA and actual rendered behavior. Staging: https://vinnys-bar-grill.toastisadog.workers.dev/. Record the deployed version separately; local SQLite content can differ from staging D1.
 
-## Automated (required in CI)
+## Automated checks
 
-```bash
-npm test
-```
+Run `npm run ci` (typecheck, tests, Vinext production build). Homepage guardrails cover published-content reads, honest call-to-reserve actions, matching food photography with text fallback, navigation disclosure semantics, motion preferences, and the Range-aware video source. Source assertions complement browser checks; they do not establish visual acceptance.
 
-`tests/homepage-layout.test.mjs` asserts:
+## Rendered checks
 
-1. `home-intro` has **no** twin `.cta-row` (header keeps Call / Directions / Order).
-2. Select Dishes: the featured photo and dish-card photos use `object-fit: cover` inside **4/3** frames with no padding, border, or radius (not letterboxed `contain`).
-3. Desktop CSS does **not** force bare `.shot img { width: 100% }` (the Phase 2 letterbox regression).
-4. Hero `.poster` is **full-bleed** (`width: 100%`, viewport-driven `height`, **no** `aspect-ratio` that shrinks/overflows width). Hero image uses `object-fit: cover`. The stock-still disclaimer is not guest copy under the band (removed per owner markup). Venue band keeps a landscape `aspect-ratio` with cover crop and is not capped at `14rem`.
+Capture before/after screenshots at **390×844, 430×932, 768×1024, 1280×800, and 1440×900**. Scroll through each page before full-page capture so lazy images load. Record date, source SHA, viewport, Expected / Actual / Result / Evidence. Use PASS / FAIL / BLOCKED / NOT TESTED.
 
-## Manual smoke (desktop + mobile)
-
-Viewports: **1280×800**, **1920×1080**, and **390×844**.
-
-| Check | Pass criteria |
+| Surface | Expected |
 | --- | --- |
-| Header CTAs | Exactly one primary utility row: Call / Directions / Order |
-| Intro | Brand + lede only — no second gold button row under the H1 |
-| Hero | Edge-to-edge under site chrome on typical desktop widths; no large side gutters; no disclaimer caption under the reel |
-| Destination tiles | Three full-bleed links: Reservations, Menus, Events. Photos sit flush in the frame. |
-| Select Dishes | Featured photo beside its menu card, a row of other published dishes, and Lunch opens the published menu. Food fills the frame. |
-| Storefront band | Wide landscape crop; not a skinny ribbon |
-| Mobile | Same rules; no horizontal overflow from the hero; header actions wrap once; plates stack without letterbox voids |
+| Desktop hero/header | Full-viewport reel, readable overlay header throughout playback; one clear action area below the reel |
+| Mobile header | Compact logo, CMS Order link when configured, menu disclosure; no overlap or overflow; targets at least 44px |
+| Navigation | Menu opens and closes; Escape closes and returns focus; hidden links are not keyboard reachable; links reach advertised routes |
+| Hero motion | Pause persists while scrolling away/back; Resume works; reduced motion and Save-Data use still poster; mobile reel remains 16:9 |
+| Quick actions | Menu, Call to Reserve (`tel:`), and Directions; no nonfunctional party/date/time inputs |
+| Food | Published names, descriptions, prices; only matching approved burger/cauliflower photos; text cards for unmatched items; full-menu link; no invented Happy Hour/Dinner tabs |
+| Events | Dates/times prominent, descriptions readable, status/next-step behavior preserved; home displays at most three upcoming |
+| Visit | Authentic storefront retained without added frame or crop; hours/address/call/directions legible; map and footer usable |
+| Public routes | `/`, `/menu`, `/events`, `/contact`, `/order`, `/reserve` render; legacy `/parties` redirects to Contact |
+| Media | No broken image paths; `/api/sizzle` serves video and Range requests return 206 |
 
-## Evidence
+Do not infer real-device PASS from desktop emulation. Record an actual mobile-browser check separately when available.
 
-Layout / CTA restore: Project store `media/homepage-layout-fix/`
+## Data and release constraints
 
-Hero full-bleed UX: Project store `media/hero-ux-fix/`
-
-Record the date, viewport, and PASS/FAIL in the PR when visuals change.
+- No live D1 writes during visual review. Leave the registered Limp Bizkit demo row unchanged.
+- Demo content remains excluded from production launch readiness: see `events-demo-content-registry.md`.
+- Empty-state recovery requires independent evidence; do not archive demo content to manufacture it.
+- Preserve necessary attribution based on verified image permissions; never invent credit or restaurant facts.
+- E6 HOLD is separate from visual review and remains unchanged until its acceptance evidence is reviewed.
+- Publish only with owner approval through the established Vinext path; Workers Builds remains disconnected.

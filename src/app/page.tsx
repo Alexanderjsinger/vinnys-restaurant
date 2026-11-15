@@ -5,8 +5,8 @@ import { SIZZLE_REEL } from "@/lib/hero";
 import { HoursList } from "@/components/HoursList";
 import { listEvents, listMenu } from "@/lib/content";
 import { detroitNowLocal } from "@/lib/format";
-import { LUNCH_FOOTNOTE, LUNCH_SERVICE } from "@/lib/lunch-menu";
-import { SelectDishes, type SelectDish, type SelectMenu } from "@/components/SelectDishes";
+import { LUNCH_SERVICE } from "@/lib/lunch-menu";
+import { SelectDishes, type SelectDish } from "@/components/SelectDishes";
 import { DEFAULT_PLACE_NAME, isVinnyShortMark, splitPlaceWordmark } from "@/lib/brand";
 import { VinnyWordmark } from "@/components/VinnyWordmark";
 import { DIRECTIONS_URL, isMeetMeLine, MAP_QUERY, PHONE_DISPLAY, RESERVE_TEL } from "@/lib/public";
@@ -25,8 +25,6 @@ export const metadata = pageMeta(
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
 
-const PARTY_SIZES = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10] as const;
-
 const SELECT_DISH_NAMES = [
   "VINNY'S BURGER",
   "SPICY CAULIFLOWER",
@@ -36,29 +34,13 @@ const SELECT_DISH_NAMES = [
   "BAVARIAN PRETZEL",
 ] as const;
 
-const STAND_IN_FOOD = [
-  {
-    src: "/photos/pasta.webp",
-    alt: "Fettuccine in a cream sauce with shrimp, parmesan, and herbs",
-    width: 765,
-    height: 1020,
-  },
-  {
-    src: "/photos/cheesecake.webp",
-    alt: "Cheesecake slice with berries, mint, and raspberry sauce",
-    width: 765,
-    height: 1020,
-  },
-] as const;
-
 function selectDishes(menu: MenuSection[]): SelectDish[] {
   const rows = menu.flatMap((section) => section.items.map((item) => ({ item, sectionName: section.name })));
-  let standIn = 0;
   return SELECT_DISH_NAMES.flatMap((name) => {
     const row = rows.find((entry) => entry.item.name === name);
     if (!row) return [];
     const plate = LUNCH_PLATES.find((photo) => photo.menuName === name);
-    const photo = plate ?? STAND_IN_FOOD[standIn++ % STAND_IN_FOOD.length];
+    const photo = plate;
     return [
       {
         id: row.item.id,
@@ -67,48 +49,16 @@ function selectDishes(menu: MenuSection[]): SelectDish[] {
         price: row.item.price,
         section: row.sectionName,
         glutenFree: row.item.gluten_free,
-        photo: { src: photo.src, alt: photo.alt, width: photo.width, height: photo.height },
+        photo: photo ? { src: photo.src, alt: photo.alt, width: photo.width, height: photo.height } : null,
       },
     ];
   });
-}
-
-function menuSections(menu: MenuSection[], sectionNames?: string[]): SelectMenu["sections"] {
-  return menu
-    .filter((section) => section.items.length > 0 && (!sectionNames || sectionNames.includes(section.name)))
-    .map((section) => ({
-      id: section.id,
-      name: section.name,
-      blurb: section.blurb,
-      items: section.items.map((item) => ({
-        id: item.id,
-        name: item.name,
-        description: item.description,
-        price: item.price,
-        glutenFree: item.gluten_free,
-        marked: item.marked,
-      })),
-    }));
-}
-
-function publishedMenus(menu: MenuSection[]): SelectMenu[] {
-  const lunch = menuSections(menu);
-  const happyHour = menuSections(menu, ["Appetizer"]);
-  const dinner = menuSections(menu, ["Salads", "Pizza", "Handhelds"]);
-  const footnoteFor = (sections: SelectMenu["sections"]) =>
-    sections.some((section) => section.items.some((item) => item.marked)) ? LUNCH_FOOTNOTE : null;
-  return [
-    { id: "lunch", label: "Lunch", service: LUNCH_SERVICE, footnote: footnoteFor(lunch), sections: lunch },
-    { id: "happy-hour", label: "Happy Hour", service: "", footnote: footnoteFor(happyHour), sections: happyHour },
-    { id: "dinner", label: "Dinner", service: "", footnote: footnoteFor(dinner), sections: dinner },
-  ];
 }
 
 export default async function HomePage() {
   const site = await getSite();
   const menu = await listMenu("public");
   const dishes = selectDishes(menu);
-  const menus = publishedMenus(menu);
   const now = detroitNowLocal();
   const upcoming = (await listEvents("public"))
     .filter((event) => (event.ends_at || event.starts_at) >= now)
@@ -145,162 +95,22 @@ export default async function HomePage() {
           {heroSupport ? <p className="stitch-hero-support">{heroSupport}</p> : null}
         </div>
 
-        {/* /contact and /reserve cannot take party size, date, or time. The fields match the bar layout; Reserve opens the call-to-reserve page. */}
-        <div
-          className="reserve-bar"
-          role="group"
-          aria-labelledby="reserve-bar-label"
-          aria-describedby="reserve-bar-note"
-        >
-          <p id="reserve-bar-label" className="reserve-bar-label">
-            Reservations
-          </p>
-          <p id="reserve-bar-note" className="sr-only">
-            Party size, date, and time are not saved. Reserve opens the call-to-reserve page.
-          </p>
-          <label className="reserve-bar-field">
-            <span className="reserve-bar-icon" aria-hidden="true">
-              <svg viewBox="0 0 24 24" focusable="false">
-                <circle cx="12" cy="8" r="3.2" fill="none" stroke="currentColor" strokeWidth="1.6" />
-                <path
-                  d="M5.5 19.2c1.4-3.2 3.6-4.7 6.5-4.7s5.1 1.5 6.5 4.7"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="1.6"
-                  strokeLinecap="round"
-                />
-              </svg>
-            </span>
-            <span className="sr-only">Party size</span>
-            <select defaultValue="">
-              <option value="">Party size</option>
-              {PARTY_SIZES.map((size) => (
-                <option key={size} value={size}>
-                  {size}
-                </option>
-              ))}
-            </select>
-          </label>
-          <label className="reserve-bar-field">
-            <span className="reserve-bar-icon" aria-hidden="true">
-              <svg viewBox="0 0 24 24" focusable="false">
-                <rect x="4" y="5.5" width="16" height="14" rx="1.5" fill="none" stroke="currentColor" strokeWidth="1.6" />
-                <path
-                  d="M4 10h16M8 3.5v4M16 3.5v4"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="1.6"
-                  strokeLinecap="round"
-                />
-              </svg>
-            </span>
-            <span className="sr-only">Date</span>
-            <input type="date" />
-          </label>
-          <label className="reserve-bar-field">
-            <span className="reserve-bar-icon" aria-hidden="true">
-              <svg viewBox="0 0 24 24" focusable="false">
-                <circle cx="12" cy="12" r="7.5" fill="none" stroke="currentColor" strokeWidth="1.6" />
-                <path
-                  d="M12 8.2V12l2.8 2"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="1.6"
-                  strokeLinecap="round"
-                />
-              </svg>
-            </span>
-            <span className="sr-only">Time</span>
-            <input type="time" />
-          </label>
-          <Link className="btn btn-gold reserve-bar-submit" href="/reserve">
-            Reserve
-          </Link>
-        </div>
       </section>
 
-      <section className="story-split" aria-labelledby="story-heading">
-        <div className="story-grid">
-          <div className="story-copy">
-            <p className="micro-label">Find us in Ypsilanti</p>
-            <h2 id="story-heading">Right across from EMU.</h2>
-            <p className="story-address">705 W Cross Street</p>
-            <p>
-              A bar and grill on Cross Street, just across from Eastern Michigan University. Lunch is
-              served daily, 11–3pm.
-            </p>
-            <p className="story-links">
-              <a
-                className="btn btn-ink"
-                href={site.mapUrl || DIRECTIONS_URL}
-                data-track="directions_click"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                Get Directions
-                <span className="sr-only"> (opens in a new tab)</span>
-              </a>
-              <Link className="text-link" href="/contact#hours-heading">
-                View Hours
-              </Link>
-            </p>
-            <p className="story-caption">
-              Listing photo of the exterior, not an owner photo of the dining room.
-            </p>
+      <section className="quick-actions" aria-label="Plan your visit">
+        <div className="wrap quick-actions-inner">
+          <div className="reserve-copy">
+            <p className="micro-label">Meet me at Vinny’s</p>
+            <p>Menu, a table, or the way here.</p>
           </div>
-          <figure className="story-frame">
-            <img
-              src="/photos/storefront.webp"
-              alt={`Exterior of ${DEFAULT_PLACE_NAME} at 705 W. Cross St.`}
-              width={1110}
-              height={886}
-            />
-          </figure>
+          <div className="quick-action-links">
+            <Link className="btn btn-ink" href="/menu">View Menu</Link>
+            <a className="btn" href={phoneHref} data-track="phone_click">Call to Reserve</a>
+            <a className="btn" href={site.mapUrl || DIRECTIONS_URL} target="_blank" rel="noopener noreferrer" data-track="directions_click">
+              Directions<span className="sr-only"> (opens in a new tab)</span>
+            </a>
+          </div>
         </div>
-      </section>
-
-      <section className="destination-tiles" aria-labelledby="destinations-heading">
-        <h2 id="destinations-heading" className="sr-only">
-          Reservations, menus, and events
-        </h2>
-        <ul>
-          <li>
-            <Link className="destination-tile" href="/reserve">
-              <img
-                className="tile-table"
-                src="/hero/meet-me.jpg"
-                alt="Friends sharing drinks and plates at a restaurant table"
-                width={1800}
-                height={1203}
-              />
-              <span>Reservations</span>
-            </Link>
-          </li>
-          <li>
-            <Link className="destination-tile" href="/menu">
-              <img
-                className="tile-burger"
-                src="/photos/burger-fries.webp"
-                alt="Cheeseburger on a brioche bun with bacon jam, lettuce, tomato, onion, and fries"
-                width={765}
-                height={1020}
-              />
-              <span>Menus</span>
-            </Link>
-          </li>
-          <li>
-            <Link className="destination-tile" href="/events">
-              <img
-                className="tile-bar"
-                src="/hero/sizzle-bartender.jpg"
-                alt="Bartender serving cocktails to guests at the Vinny's bar"
-                width={1280}
-                height={720}
-              />
-              <span>Events</span>
-            </Link>
-          </li>
-        </ul>
       </section>
 
       <section className="band-cream food-band" aria-labelledby="select-dishes-heading">
@@ -309,13 +119,14 @@ export default async function HomePage() {
             <h2 id="select-dishes-heading">Select Dishes</h2>
             <p className="band-lede">{LUNCH_SERVICE}.</p>
           </div>
-          <SelectDishes dishes={dishes} menus={menus} toastUrl={site.toastUrl} />
+          <SelectDishes dishes={dishes} toastUrl={site.toastUrl} />
         </div>
       </section>
 
       <section className="page wrap home-cards" aria-label="Events">
         <article className="home-card">
-          <h2>Events</h2>
+          <p className="micro-label">On the calendar</p>
+          <h2>What’s happening</h2>
           {upcoming.length ? (
             <>
               <ConfirmedEvents events={upcoming} />
@@ -335,11 +146,15 @@ export default async function HomePage() {
       </section>
 
       <section className="visit-band" aria-labelledby="visit-heading">
+        <figure className="story-frame visit-storefront">
+          <img src="/photos/storefront.webp" alt={`Exterior of ${DEFAULT_PLACE_NAME} at 705 W. Cross St.`} width={1110} height={886} loading="lazy" />
+        </figure>
         <div className="wrap visit-grid">
           <div>
             <p className="micro-label">Visit</p>
-            <h2 id="visit-heading">Find us on Cross Street</h2>
+            <h2 id="visit-heading">Right across from EMU.</h2>
             <p className="lunch-line">{LUNCH_SERVICE}</p>
+            <h3 id="home-hours-heading">Hours</h3>
             <HoursList hours={site.hours} />
             <p className="visit-address">{addressLine}</p>
             <p>
