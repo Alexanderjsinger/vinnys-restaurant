@@ -221,16 +221,33 @@ test("birthday signup route stays closed and homepage has no birthday list", () 
   assert.doesNotMatch(pub, /BIRTHDAY_HEADING|Free appetizer on your birthday/i);
 });
 
-test("homepage hero uses table photo and story uses storefront exterior", () => {
+test("homepage hero poster is the bartender still and story uses storefront exterior", () => {
   const hero = fs.readFileSync(path.join(root, "src/components/HeroMedia.tsx"), "utf8");
   const poster = fs.readFileSync(path.join(root, "src/components/PosterSlider.tsx"), "utf8");
   const page = fs.readFileSync(path.join(root, "src/app/page.tsx"), "utf8");
   const layout = fs.readFileSync(path.join(root, "src/app/layout.tsx"), "utf8");
   const seo = fs.readFileSync(path.join(root, "src/lib/seo.ts"), "utf8");
-  assert.match(hero, /\/hero\/meet-me\.jpg/);
-  assert.match(hero, /Friends at a restaurant table/, "poster alt stays a table photo");
+  assert.match(hero, /\/hero\/sizzle-bartender\.jpg/);
+  assert.doesNotMatch(hero, /meet-me\.jpg/, "hero poster is not the stock table photo");
+  assert.match(hero, /Bartender serving cocktails/, "poster alt matches the reel still");
+  assert.doesNotMatch(hero, /poster="\/hero\/meet-me\.jpg"/);
   assert.doesNotMatch(hero, /Not a photo of Vinny/, "hero disclaimer is not guest copy");
   assert.doesNotMatch(hero, /dining room/);
+  const social = page.match(/className="social-rituals"[\s\S]*?<\/section>/);
+  assert.ok(social, "social band exists");
+  assert.match(social[0], /src="\/hero\/meet-me\.jpg"/, "social band keeps the table photo tile");
+  const posterFile = path.join(root, "public/hero/sizzle-bartender.jpg");
+  assert.ok(fs.existsSync(posterFile), "bartender poster file is present");
+  const posterBytes = fs.statSync(posterFile).size;
+  assert.ok(
+    posterBytes > 20_000 && posterBytes < 400_000,
+    `poster jpeg stays a reasonable size (got ${posterBytes})`,
+  );
+  assert.equal(
+    fs.statSync(path.join(root, "public/hero/vinnys-sizzle-reel.mp4")).size,
+    2_511_869,
+    "sizzle mp4 is unchanged",
+  );
   assert.match(poster, /\/photos\/storefront\.webp/);
   assert.match(poster, /listing photo of the exterior/);
   assert.match(page, /\/photos\/storefront\.webp/);
