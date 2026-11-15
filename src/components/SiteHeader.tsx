@@ -5,6 +5,7 @@ import { HERO_LINE, PHONE_DISPLAY, RESERVE_TEL } from "@/lib/public";
 import type { PublicSite } from "@/lib/types";
 import { OrderLink } from "./OrderLink";
 import { PrimaryNav } from "./PrimaryNav";
+import { ReelHeaderBar } from "./ReelHeaderBar";
 
 export function SiteHeader({ site }: { site: PublicSite }) {
   const phoneHref = site.phoneHref || RESERVE_TEL;
@@ -15,7 +16,7 @@ export function SiteHeader({ site }: { site: PublicSite }) {
   const brandSub = rest ? `${rest} · Ypsilanti, MI` : "Ypsilanti, MI";
   return (
     <header className="site-header">
-      <div className="sticky-bar">
+      <ReelHeaderBar>
         <div className="wrap brand-row">
           <Link className="brand" href="/" aria-label={placeName}>
             <span className="brand-mark">
@@ -39,7 +40,7 @@ export function SiteHeader({ site }: { site: PublicSite }) {
             </OrderLink>
           </div>
         </div>
-      </div>
+      </ReelHeaderBar>
     </header>
   );
 }

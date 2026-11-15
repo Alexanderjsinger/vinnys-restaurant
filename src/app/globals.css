@@ -121,6 +121,57 @@ address { font-style: normal; }
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.04);
 }
 
+/* Homepage: the bar is out of flow so the reel can be the whole first screen. */
+.sticky-bar--home {
+  position: fixed;
+  left: 0;
+  right: 0;
+}
+.sticky-bar--on-reel {
+  background: transparent;
+  border-bottom-color: transparent;
+  box-shadow: none;
+  backdrop-filter: none;
+}
+.sticky-bar--on-reel .brand,
+.sticky-bar--on-reel .brand:hover,
+.sticky-bar--on-reel .brand-sub,
+.sticky-bar--on-reel .brand-tagline,
+.sticky-bar--on-reel .primary-nav a {
+  color: #f6f1e7;
+}
+.sticky-bar--on-reel .brand:hover .brand-sub,
+.sticky-bar--on-reel .brand:hover .brand-tagline,
+.sticky-bar--on-reel .primary-nav a:hover {
+  color: var(--gold-hot);
+}
+.sticky-bar--on-reel .primary-nav a[aria-current="page"] {
+  color: var(--gold-hot);
+  box-shadow: inset 0 -2px 0 var(--gold-hot);
+}
+.sticky-bar--on-reel .vinny-wordmark {
+  filter: brightness(0) invert(1);
+}
+.sticky-bar--on-reel .btn-outline {
+  border-color: rgba(246, 241, 231, 0.85);
+  color: #f6f1e7;
+  background: transparent;
+}
+.sticky-bar--on-reel .btn-outline:hover {
+  background: rgba(246, 241, 231, 0.12);
+  color: #fff;
+}
+.sticky-bar--on-reel .btn-ink {
+  background: #f6f1e7;
+  border-color: #f6f1e7;
+  color: var(--black);
+}
+.sticky-bar--on-reel .btn-ink:hover {
+  background: #fff;
+  border-color: #fff;
+  color: var(--black);
+}
+
 .brand-row {
   display: flex;
   flex-wrap: wrap;
@@ -508,6 +559,99 @@ address { font-style: normal; }
   border-color: var(--brass-press);
   color: #0c0a08;
 }
+
+/* Fullscreen sizzle: the reel is the first viewport. The reservation bar sits on the video. */
+.stitch-hero.reel-hero {
+  width: 100vw;
+  max-width: 100%;
+  height: 100vh;
+  height: 100dvh;
+  margin: 0;
+  padding: 0;
+  position: relative;
+  overflow: hidden;
+  background: #140f0c;
+  animation: none;
+}
+.reel-hero .framed-hero {
+  height: 100%;
+  margin: 0;
+}
+.reel-hero .framed-hero-frame {
+  width: 100%;
+  height: 100%;
+  max-height: none;
+  border-radius: 0;
+  animation: none;
+}
+.reel-hero .framed-hero-frame::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background:
+    linear-gradient(180deg, rgba(12, 11, 10, 0.62) 0%, rgba(12, 11, 10, 0.22) 28%, rgba(12, 11, 10, 0.14) 52%, rgba(12, 11, 10, 0.28) 100%);
+}
+.reel-hero-copy {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: clamp(5.5rem, 16vh, 8rem) 1.25rem 7.5rem;
+  pointer-events: none;
+}
+.reel-hero-copy::before {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 42%;
+  z-index: -1;
+  width: min(40rem, 88vw);
+  height: 14rem;
+  transform: translate(-50%, -50%);
+  background: radial-gradient(ellipse at center, rgba(12, 11, 10, 0.42), rgba(12, 11, 10, 0) 70%);
+  pointer-events: none;
+}
+.reel-hero .stitch-wordmark,
+.reel-hero .stitch-wordmark-rest,
+.reel-hero .stitch-hero-support {
+  color: #f6f1e7;
+}
+.reel-hero .stitch-wordmark-mark .vinny-wordmark--lg {
+  height: clamp(3.4rem, 14vw, 8.5rem);
+}
+.reel-hero .stitch-wordmark-rest {
+  letter-spacing: 0.28em;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.45);
+}
+.reel-hero .stitch-hero-support {
+  margin-top: 0.15rem;
+  max-width: 34rem;
+  font-size: clamp(1rem, 2.1vw, 1.2rem);
+  line-height: 1.45;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.55), 0 12px 28px rgba(0, 0, 0, 0.4);
+}
+.reel-hero .gold-rule {
+  background: var(--gold-hot);
+}
+.reel-hero .reserve-bar {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 3;
+}
+@media (max-width: 799px) {
+  .reel-hero-copy {
+    padding: 12.75rem 1rem 18.75rem;
+  }
+}
+
 @keyframes rise-in {
   from { opacity: 0; transform: translateY(0.7rem); }
   to { opacity: 1; transform: translateY(0); }
