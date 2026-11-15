@@ -228,7 +228,9 @@ test("homepage hero uses table photo and story uses storefront exterior", () => 
   const layout = fs.readFileSync(path.join(root, "src/app/layout.tsx"), "utf8");
   const seo = fs.readFileSync(path.join(root, "src/lib/seo.ts"), "utf8");
   assert.match(hero, /\/hero\/meet-me\.jpg/);
-  assert.match(hero, /Not a photo of Vinny/);
+  assert.match(hero, /Friends at a restaurant table/, "poster alt stays a table photo");
+  assert.doesNotMatch(hero, /Not a photo of Vinny/, "hero disclaimer is not guest copy");
+  assert.doesNotMatch(hero, /dining room/);
   assert.match(poster, /\/photos\/storefront\.webp/);
   assert.match(poster, /listing photo of the exterior/);
   assert.match(page, /\/photos\/storefront\.webp/);
