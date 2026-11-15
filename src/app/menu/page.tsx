@@ -1,13 +1,12 @@
-import { PhotoStrip } from "@/components/PhotoStrip";
+import { MenuChoices } from "@/components/SelectDishes";
+import { publishedMenus } from "@/lib/menu-options";
 import { TrackView } from "@/components/TrackView";
-import { formatPrice } from "@/lib/format";
 import { listMenu } from "@/lib/content";
-import { LUNCH_FOOTNOTE, LUNCH_SERVICE } from "@/lib/lunch-menu";
+import { LUNCH_SERVICE } from "@/lib/lunch-menu";
 import { OrderLink } from "@/components/OrderLink";
 import { DEFAULT_PLACE_NAME } from "@/lib/brand";
 import { pageMeta } from "@/lib/seo";
 import { getSite } from "@/lib/site";
-import type { MenuItem, MenuSection } from "@/lib/types";
 
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
@@ -21,7 +20,6 @@ export default async function MenuPage() {
   const site = await getSite();
   const placeName = site.name.trim() || DEFAULT_PLACE_NAME;
   const sections = await listMenu("public");
-  const showFootnote = sections.some((section) => section.items.some((item) => item.marked));
   return (
     <div className="page wrap">
       <TrackView name="menu_view" />
@@ -31,69 +29,7 @@ export default async function MenuPage() {
       <p>
         <OrderLink className="btn btn-solid" url={site.toastUrl} />
       </p>
-      <PhotoStrip />
-      {sections.length === 0 ? (
-        <p>The menu has not been published yet.</p>
-      ) : (
-        <div className="paper menu-sheet">
-          {sections.map((section) => (
-            <MenuBlock key={section.id} section={section} />
-          ))}
-          {showFootnote ? (
-            <p className="menu-note">
-              <span aria-hidden="true">* </span>
-              {LUNCH_FOOTNOTE}
-            </p>
-          ) : null}
-        </div>
-      )}
+      <MenuChoices menus={publishedMenus(sections)} />
     </div>
-  );
-}
-
-function MenuBlock({ section }: { section: MenuSection }) {
-  const solo =
-    section.items.length === 1 &&
-    section.items[0].name.toLowerCase() === section.name.toLowerCase() &&
-    !section.items[0].description;
-  if (solo) {
-    const item = section.items[0];
-    return (
-      <section className="menu-section" aria-labelledby={`section-${section.id}`}>
-        <div className="menu-top">
-          <h2 id={`section-${section.id}`}>{section.name}</h2>
-          <span className="dots" aria-hidden="true" />
-          <span className="price">{formatPrice(item.price)}</span>
-        </div>
-      </section>
-    );
-  }
-  return (
-    <section className="menu-section" aria-labelledby={`section-${section.id}`}>
-      <h2 id={`section-${section.id}`}>{section.name}</h2>
-      {section.blurb ? <p className="menu-blurb">{section.blurb}</p> : null}
-      <ul className="menu-list">
-        {section.items.map((item) => (
-          <MenuRow key={item.id} item={item} />
-        ))}
-      </ul>
-    </section>
-  );
-}
-
-function MenuRow({ item }: { item: MenuItem }) {
-  return (
-    <li className="menu-item">
-      <div className="menu-top">
-        <strong>
-          {item.marked ? <span className="mark">* </span> : null}
-          {item.name}
-          {item.gluten_free ? <span className="chip">Gluten free</span> : null}
-        </strong>
-        <span className="dots" aria-hidden="true" />
-        <span className="price">{formatPrice(item.price)}</span>
-      </div>
-      {item.description ? <p>{item.description}</p> : null}
-    </li>
   );
 }

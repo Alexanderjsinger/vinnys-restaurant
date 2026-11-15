@@ -11,7 +11,7 @@ import { useEffect, useRef, useState } from "react";
  * Playback:
  * - Poster first; muted inline play when ~50% visible (IntersectionObserver).
  * - Loops for as long as it stays on screen. Pauses off-viewport / tab hidden.
- * - No play button, pause button, or other controls.
+ * - No visible playback controls; the reel loops automatically.
  * - prefers-reduced-motion + Save-Data → still poster only.
  */
 const DEFAULT_POSTER = {

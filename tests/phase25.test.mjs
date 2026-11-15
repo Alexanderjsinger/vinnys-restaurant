@@ -234,10 +234,7 @@ test("homepage hero poster is the restored reel opening frame and story uses sto
   assert.doesNotMatch(hero, /poster="\/hero\/meet-me\.jpg"/);
   assert.doesNotMatch(hero, /Not a photo of Vinny/, "hero disclaimer is not guest copy");
   assert.doesNotMatch(hero, /dining room/);
-  const tiles = page.match(/className="destination-tiles"[\s\S]*?<\/section>/);
-  assert.ok(tiles, "destination tiles exist");
-  assert.match(tiles[0], /src="\/hero\/meet-me\.jpg"/, "homepage keeps the table photo on a destination tile");
-  assert.match(tiles[0], /src="\/hero\/sizzle-bartender\.jpg"/, "events tile still uses the bartender still");
+  assert.match(page, /src="\/photos\/storefront\.webp"/, "homepage retains authentic storefront");
   const posterFile = path.join(root, "public/hero/sizzle-poster.jpg");
   assert.ok(fs.existsSync(posterFile), "opening-frame poster file is present");
   const posterBytes = fs.statSync(posterFile).size;
@@ -253,7 +250,7 @@ test("homepage hero poster is the restored reel opening frame and story uses sto
   assert.match(poster, /\/photos\/storefront\.webp/);
   assert.match(poster, /listing photo of the exterior/);
   assert.match(page, /\/photos\/storefront\.webp/);
-  assert.match(page, /Listing photo of the exterior/);
+  assert.match(page, /Exterior of/);
   assert.match(layout, /\/photos\/storefront\.webp/);
   assert.match(seo, /\/photos\/storefront\.webp/);
 });

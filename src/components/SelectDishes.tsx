@@ -60,7 +60,6 @@ export function SelectDishes({
   toastUrl: string | null;
 }) {
   const [featureId, setFeatureId] = useState<number | null>(dishes[0]?.id ?? null);
-  const [openMenu, setOpenMenu] = useState<string | null>(null);
   const feature = dishes.find((dish) => dish.id === featureId) ?? null;
   const featureIndex = feature ? dishes.findIndex((dish) => dish.id === feature.id) : -1;
 
@@ -71,12 +70,12 @@ export function SelectDishes({
   }
 
   if (!feature) {
-    return <p>The menu has not been published yet.</p>;
+    return <><p>Explore the menus below.</p><MenuChoices menus={menus} /></>;
   }
 
   return (
     <div className="select-dishes">
-      <div className="select-stage" aria-roledescription="carousel" aria-label="Featured dish">
+      <div className={feature.photo ? "select-stage" : "select-stage select-stage--text"} role="region" aria-roledescription="carousel" aria-label="Featured dish">
         {feature.photo ? (
           <figure className="select-feature-photo">
             <img
@@ -85,22 +84,10 @@ export function SelectDishes({
               width={feature.photo.width}
               height={feature.photo.height}
             />
-            {dishes.length > 1 ? (
-              <>
-                <button type="button" className="select-photo-arrow select-photo-arrow-prev" onClick={() => showDish(-1)}>
-                  <span className="sr-only">Previous dish</span>
-                  <Arrow direction="prev" />
-                </button>
-                <button type="button" className="select-photo-arrow select-photo-arrow-next" onClick={() => showDish(1)}>
-                  <span className="sr-only">Next dish</span>
-                  <Arrow direction="next" />
-                </button>
-              </>
-            ) : null}
           </figure>
         ) : null}
         <div className="select-card">
-          <h3 id="select-dish-title">{feature.name}</h3>
+          <h3 id="select-dish-title" aria-live="polite" aria-atomic="true">{feature.name}</h3>
           <p className="select-meta">
             {feature.section}
             {feature.price ? <span> · {formatPrice(feature.price)}</span> : null}
@@ -139,42 +126,15 @@ export function SelectDishes({
         </div>
       </div>
 
-      {dishes.length ? (
-        <div className="select-teasers">
-          <ul className="select-row">
-            {dishes.map((dish) => (
-              <li key={dish.id}>
-                <button
-                  type="button"
-                  className={dish.id === feature.id ? "select-row-card is-current" : "select-row-card"}
-                  aria-label={dish.name}
-                  aria-current={dish.id === feature.id ? "true" : undefined}
-                  onClick={() => setFeatureId(dish.id)}
-                >
-                  {dish.photo ? (
-                    <figure className="select-row-photo">
-                      <img src={dish.photo.src} alt="" width={dish.photo.width} height={dish.photo.height} />
-                    </figure>
-                  ) : null}
-                </button>
-              </li>
-            ))}
-          </ul>
-          <div className="select-dots select-teaser-dots" role="group" aria-label="More select dishes">
-            {dishes.map((dish) => (
-              <button
-                key={dish.id}
-                type="button"
-                className={dish.id === feature.id ? "is-current" : undefined}
-                aria-label={`Show ${dish.name}`}
-                aria-current={dish.id === feature.id ? "true" : undefined}
-                onClick={() => setFeatureId(dish.id)}
-              />
-            ))}
-          </div>
-        </div>
-      ) : null}
+      <MenuChoices menus={menus} />
+    </div>
+  );
+}
 
+export function MenuChoices({ menus }: { menus: SelectMenu[] }) {
+  const [openMenu, setOpenMenu] = useState<string | null>(null);
+  return (
+    <>
       {menus.length ? (
         <div className="select-menus">
           <div className="select-menu-controls">
@@ -194,6 +154,7 @@ export function SelectDishes({
             openMenu === menu.id ? (
               <div key={menu.id} id={`select-menu-${menu.id}`} className="paper menu-sheet select-menu-panel">
                 {menu.service ? <p className="lunch-line">{menu.service}</p> : null}
+                {!menu.sections.length ? <p>{menu.label} menu details aren’t available online yet.</p> : null}
                 {menu.sections.map((section) => (
                   <MenuBlock key={section.id} section={section} />
                 ))}
@@ -208,7 +169,7 @@ export function SelectDishes({
           )}
         </div>
       ) : null}
-    </div>
+    </>
   );
 }
 
