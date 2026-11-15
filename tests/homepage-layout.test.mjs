@@ -146,6 +146,43 @@ test("framed hero is full-bleed ambient media + honest poster structure", () => 
   );
 });
 
+test("Cross Street band is full-bleed: photo column is half the section, no frame or cap", () => {
+  const css = read(cssPath);
+  const split = css.match(/\.story-split\s*\{[^}]*\}/);
+  assert.ok(split, "story-split rule exists");
+  assert.match(split[0], /width:\s*100%/, "section is the full width of its band");
+  assert.match(split[0], /padding:\s*0/, "section has no padding around the photograph");
+  assert.match(split[0], /margin:\s*0/);
+
+  const desktopBlocks = [...css.matchAll(/@media \(min-width:\s*860px\)\s*\{([\s\S]*?)\n\}/g)].map(
+    (match) => match[1],
+  );
+  const gridDesktop = desktopBlocks.find((block) => block.includes(".story-grid"));
+  assert.ok(gridDesktop, "desktop story-grid rule present");
+  assert.match(
+    gridDesktop,
+    /\.story-grid\s*\{[^}]*grid-template-columns:\s*minmax\(0,\s*1fr\)\s*minmax\(0,\s*50%\)/,
+    "photograph column is half the section, not a capped auto track",
+  );
+  assert.doesNotMatch(css, /min\(50vw,\s*40rem\)/, "photograph is not capped at 40rem");
+
+  const frame = css.match(/\.story-frame\s*\{[^}]*\}/);
+  assert.ok(frame, "story-frame rule exists");
+  assert.match(frame[0], /padding:\s*0/);
+  assert.match(frame[0], /border-radius:\s*0/);
+  assert.match(frame[0], /width:\s*100%/);
+  assert.match(frame[0], /max-width:\s*none/, "frame is not capped inside the band");
+
+  const img = css.match(/\.story-frame img\s*\{[^}]*\}/);
+  assert.ok(img, "story-frame img rule exists");
+  assert.match(img[0], /width:\s*100%/);
+  assert.match(img[0], /height:\s*auto/, "uniform scale, section height follows the file");
+  assert.match(img[0], /padding:\s*0/);
+  assert.match(img[0], /border-radius:\s*0/);
+  assert.match(img[0], /max-height:\s*none/);
+  assert.doesNotMatch(img[0], /object-fit:/, "the listing photo is not cropped or stretched");
+});
+
 test("stitch homepage keeps authenticity constraints in markup", () => {
   const page = read(pagePath);
   assert.match(page, /HeroMedia/, "homepage uses video-ready HeroMedia");

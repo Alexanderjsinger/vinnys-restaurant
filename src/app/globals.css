@@ -472,25 +472,38 @@ address { font-style: normal; }
 }
 
 /* ——— Story split ——— */
+/* The band is the section. The photograph fills the right half and is the
+   section’s top, right, and bottom edges. Copy cannot open a cream gap. */
 .story-split {
   margin: 0;
   padding: 0;
+  width: 100%;
+  max-width: none;
   background: transparent;
 }
 .story-grid {
   display: grid;
   grid-template-columns: minmax(0, 1fr);
-  align-items: center;
+  align-items: stretch;
   margin: 0;
   padding: 0;
   gap: 0;
+  width: 100%;
 }
 @media (min-width: 860px) {
-  .story-grid { grid-template-columns: minmax(0, 1fr) auto; }
+  .story-grid { grid-template-columns: minmax(0, 1fr) minmax(0, 50%); }
 }
 .story-copy { padding: 1.15rem 1rem 1.15rem; }
 @media (min-width: 860px) {
-  .story-copy { padding: 0 2.5rem 0 max(1.25rem, calc((100vw - 1120px) / 2)); }
+  .story-copy {
+    padding: 0 2.5rem 0 max(1.25rem, calc((100vw - 1120px) / 2));
+    /* Size the row from the photograph. Copy centers in that height. */
+    height: 0;
+    min-height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
 }
 .story-copy p { color: var(--paper-muted); max-width: 34rem; }
 .story-copy h2 { color: var(--black); max-width: none; }
@@ -531,13 +544,9 @@ address { font-style: normal; }
   line-height: 0;
   width: 100%;
   max-width: none;
+  height: auto;
   justify-self: stretch;
-}
-@media (min-width: 860px) {
-  .story-frame {
-    width: min(50vw, 40rem);
-    justify-self: end;
-  }
+  align-self: stretch;
 }
 .story-frame img {
   display: block;
