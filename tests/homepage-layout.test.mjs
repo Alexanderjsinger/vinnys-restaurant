@@ -53,51 +53,61 @@ test("header chrome matches Stitch light composition (Call + Order)", () => {
 test("lunch plate frames use cover framing instead of letterboxed tall voids", () => {
   const css = read(cssPath);
 
-  // Mobile-first plates are 4/5 (#26 widen); desktop two-up keeps 3/4.
-  // Match only the base rule — do not rely on a later hero aspect-ratio.
-  const plateShot = css.match(/\.plate \.shot(?:\s*,\s*[^,{]+)*\s*\{[^}]*\}/);
-  assert.ok(plateShot, "plate .shot rule exists");
-  assert.match(plateShot[0], /aspect-ratio:\s*4\s*\/\s*5/, "mobile plate figure locks a 4/5 frame");
-  assert.match(
-    css,
-    /\.plate \.shot img[\s\S]*?object-fit:\s*cover/,
-    "plate images cover the frame (no contain letterboxing)",
-  );
-  assert.match(
-    css,
-    /\.plate \.shot img[\s\S]*?max-height:\s*none/,
-    "plate images are not capped into a letterbox box",
-  );
+  const feature = css.match(/\.select-feature-photo\s*\{[^}]*\}/);
+  assert.ok(feature, "featured dish photo frame exists");
+  assert.match(feature[0], /aspect-ratio:\s*16\s*\/\s*10/, "featured dish locks a 16/10 frame on small screens");
+  assert.match(feature[0], /padding:\s*0/);
+  assert.match(feature[0], /border-radius:\s*0/);
+  assert.match(feature[0], /border:\s*0/);
+
+  const featureImg = css.match(/\.select-feature-photo img\s*\{[^}]*\}/);
+  assert.ok(featureImg, "featured dish image rule exists");
+  assert.match(featureImg[0], /object-fit:\s*cover/, "featured dish covers the frame");
+  assert.match(featureImg[0], /width:\s*100%/);
+  assert.match(featureImg[0], /height:\s*100%/);
+  assert.match(featureImg[0], /max-height:\s*none/);
+  assert.match(featureImg[0], /padding:\s*0/);
+  assert.match(featureImg[0], /border-radius:\s*0/);
+  assert.doesNotMatch(featureImg[0], /object-fit:\s*contain/);
+
+  const thumb = css.match(/\.select-row-photo\s*\{[^}]*\}/);
+  assert.ok(thumb, "dish card frame exists");
+  assert.match(thumb[0], /padding:\s*0/);
+  assert.match(thumb[0], /border-radius:\s*0/);
+  assert.match(thumb[0], /aspect-ratio:\s*4\s*\/\s*3/);
+  const thumbImg = css.match(/\.select-row-photo img\s*\{[^}]*\}/);
+  assert.ok(thumbImg, "dish card image rule exists");
+  assert.match(thumbImg[0], /object-fit:\s*cover/);
+  assert.match(thumbImg[0], /max-height:\s*none/);
+  assert.match(thumbImg[0], /padding:\s*0/);
+  assert.match(thumbImg[0], /border-radius:\s*0/);
 
   const desktopBlocks = [...css.matchAll(/@media \(min-width:\s*800px\)\s*\{([\s\S]*?)\n\}/g)].map(
     (match) => match[1],
   );
-  const plateDesktop = desktopBlocks.find((block) => block.includes(".plate-list"));
-  assert.ok(plateDesktop, "desktop plate-list media query present");
+  const plateDesktop = desktopBlocks.find((block) => block.includes(".select-stage"));
+  assert.ok(plateDesktop, "desktop select-dishes media query present");
   assert.match(
     plateDesktop,
-    /\.plate \.shot[\s\S]*?aspect-ratio:\s*3\s*\/\s*4/,
-    "desktop two-up plates keep 3/4 panels",
+    /\.select-stage\s*\{[^}]*grid-template-columns:\s*minmax\(0,\s*1\.2fr\)\s*minmax\(17rem,\s*0\.8fr\)/,
+    "desktop featured photo sits beside the card",
   );
-  assert.doesNotMatch(
+  assert.match(
     plateDesktop,
+    /\.select-feature-photo\s*\{[^}]*height:\s*100%/,
+    "desktop featured photo fills the card row",
+  );
+  assert.match(
+    plateDesktop,
+    /\.select-row\s*\{[^}]*grid-template-columns:\s*repeat\(6,\s*minmax\(0,\s*1fr\)\)/,
+    "teaser photos fill one tight row",
+  );
+  const shotDesktop = desktopBlocks.find((block) => block.includes(".photo-row"));
+  assert.ok(shotDesktop, "menu photo-row desktop rule still present");
+  assert.doesNotMatch(
+    shotDesktop,
     /\.shot img\s*\{[^}]*width:\s*100%/,
     "desktop must not set bare .shot img { width: 100% }",
-  );
-  assert.match(
-    plateDesktop,
-    /\.plate \.shot img[\s\S]*?max-height:\s*none/,
-    "desktop keeps plate cover frames uncapped",
-  );
-  assert.match(
-    plateDesktop,
-    /\.plate \.shot\s*\{[^}]*max-width:\s*none/,
-    "desktop lunch plates fill the column",
-  );
-  assert.match(
-    plateDesktop,
-    /\.plate \.shot\s*\{[^}]*width:\s*100%/,
-    "desktop lunch plate frame is the full column width",
   );
 });
 
@@ -232,10 +242,10 @@ test("stitch homepage keeps authenticity constraints in markup", () => {
   assert.match(page, /HeroMedia/, "homepage uses video-ready HeroMedia");
   assert.match(page, /stitch-hero/, "cream Stitch hero composition");
   assert.match(page, /story-split/, "cream story split");
-  assert.match(page, /social-rituals/, "dark social rituals band");
+  assert.match(page, /destination-tiles/, "destination tiles replace the curated band");
   assert.doesNotMatch(
     page,
-    /18 Cold Craft Taps|dry-aged|stone-fired|truffle fries|Happy Hour|Campus Nights|Pease Auditorium|Good Food, Great Times|SCRATCH TAVERN|EST\.\s*1964|Reserve a Table|Weekend Brunch|Birthday list|Lunch, dinner and everything after/i,
+    /18 Cold Craft Taps|dry-aged|stone-fired|truffle fries|Campus Nights|Pease Auditorium|Good Food, Great Times|SCRATCH TAVERN|EST\.\s*1964|Reserve a Table|Weekend Brunch|Birthday list|Lunch, dinner and everything after/i,
   );
   assert.doesNotMatch(page, /testimonial|inquiry form|name="event_type"/i);
   assert.doesNotMatch(page, /private part(?:y|ies)|\/parties|Party details/i);
@@ -244,14 +254,31 @@ test("stitch homepage keeps authenticity constraints in markup", () => {
   assert.match(page, /listMenu\("public"\)/);
   assert.match(page, /Listing photo of the exterior/);
 
-  const social = page.match(/className="social-rituals"[\s\S]*?<\/section>/);
-  assert.ok(social, "social band exists");
-  assert.doesNotMatch(social[0], /Published events when we have them/, "social lede is removed");
-  assert.doesNotMatch(social[0], /figcaption/, "social photos have no captions");
-  assert.doesNotMatch(social[0], /phoneHref|Call /, "social band has no phone CTA");
-  assert.match(social[0], />\s*Events\s*</);
-  assert.match(social[0], /href="\/contact"[\s\S]*Reserve/, "Reserve uses the contact path");
-  assert.match(social[0], /OrderLink[\s\S]*Order/, "Order uses the Toast link");
+  const tiles = page.match(/className="destination-tiles"[\s\S]*?<\/section>/);
+  assert.ok(tiles, "destination tiles exist");
+  assert.doesNotMatch(tiles[0], /Curated for every|Social rituals|figcaption|phoneHref|Call |OrderLink|private part/i);
+  assert.match(tiles[0], /href="\/reserve"[\s\S]*Reservations/);
+  assert.match(tiles[0], /href="\/menu"[\s\S]*Menus/);
+  assert.match(tiles[0], /href="\/events"[\s\S]*Events/);
+  assert.match(tiles[0], /src="\/hero\/meet-me\.jpg"/, "table photo stays on a tile");
+  const lunch = page.match(/className="band-cream food-band"[\s\S]*?<\/section>/);
+  assert.ok(lunch, "select dishes section exists");
+  assert.match(lunch[0], />\s*Select Dishes\s*</);
+  assert.doesNotMatch(lunch[0], /Lunch plates|truffle|testimonial|CHEF'S FAVORITE/i);
+  assert.match(page, /SELECT_DISH_NAMES/);
+  assert.match(page, /"VINNY'S BURGER"/);
+  assert.match(lunch[0], /toastUrl=\{site\.toastUrl\}/);
+  assert.doesNotMatch(page, /\bORDER_URL\b/);
+  const select = read(path.join(root, "src/components/SelectDishes.tsx"));
+  assert.match(page, /label: "Lunch"/);
+  assert.match(page, /label: "Happy Hour"/);
+  assert.match(page, /label: "Dinner"/);
+  assert.match(select, /Order online/);
+  assert.match(select, /feature\.description/);
+  assert.match(select, /OrderLink/);
+  assert.match(select, />\s*Next\s*</);
+  assert.doesNotMatch(select, /truffle|testimonial|CHEF'S FAVORITE|\bdemo\b/i);
+  assert.doesNotMatch(page, /\bdemo\b/i);
 
   const layout = read(path.join(root, "src/app/layout.tsx"));
   assert.match(layout, /Montserrat/, "Meet me loads Montserrat through next/font");
@@ -271,14 +298,18 @@ test("stitch homepage keeps authenticity constraints in markup", () => {
   assert.match(footer, /brand-tagline/, "footer Meet me uses the same tagline style");
   assert.match(footer, /VinnyWordmark size="sm"/, "footer wordmark size matches the header");
 
-  const strip = css.match(/\.ritual-strip\s*\{[^}]*\}/);
-  assert.ok(strip, "ritual strip rule exists");
-  assert.match(strip[0], /gap:\s*0/, "social photos have no gap between frames");
-  const ritualImg = css.match(/\.ritual-strip img\s*\{[^}]*\}/);
-  assert.ok(ritualImg, "ritual image rule exists");
-  assert.match(ritualImg[0], /width:\s*100%/);
-  assert.match(ritualImg[0], /object-fit:\s*cover/);
-  assert.match(ritualImg[0], /aspect-ratio:\s*3\s*\/\s*2/);
-  assert.match(ritualImg[0], /border-radius:\s*0/);
-  assert.doesNotMatch(ritualImg[0], /max-height:\s*min\(/, "social photos are not capped into an inset");
+  const tile = css.match(/\.destination-tile\s*\{[^}]*\}/);
+  assert.ok(tile, "destination tile rule exists");
+  assert.match(tile[0], /padding:\s*0/);
+  assert.match(tile[0], /border-radius:\s*0/);
+  assert.match(tile[0], /border:\s*0/);
+  const tileImg = css.match(/\.destination-tile img\s*\{[^}]*\}/);
+  assert.ok(tileImg, "destination tile image rule exists");
+  assert.match(tileImg[0], /width:\s*100%/);
+  assert.match(tileImg[0], /height:\s*100%/);
+  assert.match(tileImg[0], /object-fit:\s*cover/);
+  assert.match(tileImg[0], /padding:\s*0/);
+  assert.match(tileImg[0], /border-radius:\s*0/);
+  assert.match(tileImg[0], /border:\s*0/);
+  assert.doesNotMatch(tileImg[0], /max-height:\s*min\(/, "tile photos are not capped into an inset");
 });

@@ -4,8 +4,9 @@ import { HeroMedia } from "@/components/HeroMedia";
 import { SIZZLE_REEL } from "@/lib/hero";
 import { HoursList } from "@/components/HoursList";
 import { listEvents, listMenu } from "@/lib/content";
-import { detroitNowLocal, formatPrice } from "@/lib/format";
-import { LUNCH_SERVICE } from "@/lib/lunch-menu";
+import { detroitNowLocal } from "@/lib/format";
+import { LUNCH_FOOTNOTE, LUNCH_SERVICE } from "@/lib/lunch-menu";
+import { SelectDishes, type SelectDish, type SelectMenu } from "@/components/SelectDishes";
 import { DEFAULT_PLACE_NAME, isVinnyShortMark, splitPlaceWordmark } from "@/lib/brand";
 import { VinnyWordmark } from "@/components/VinnyWordmark";
 import { DIRECTIONS_URL, isMeetMeLine, MAP_QUERY, PHONE_DISPLAY, RESERVE_TEL } from "@/lib/public";
@@ -13,7 +14,7 @@ import { OrderLink } from "@/components/OrderLink";
 import { LUNCH_PLATES } from "@/lib/lunch-photos";
 import { pageMeta } from "@/lib/seo";
 import { getSite } from "@/lib/site";
-import type { MenuItem } from "@/lib/types";
+import type { MenuSection } from "@/lib/types";
 
 export const metadata = pageMeta(
   "/",
@@ -24,38 +25,90 @@ export const metadata = pageMeta(
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
 
-const HIGHLIGHT_NAMES = [
+const PARTY_SIZES = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10] as const;
+
+const SELECT_DISH_NAMES = [
   "VINNY'S BURGER",
   "SPICY CAULIFLOWER",
   "SOUTHERN CHICKEN SALAD",
   "WINGS (8)",
   "FRENCH DIP",
   "BAVARIAN PRETZEL",
-];
+] as const;
 
-const PARTY_SIZES = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10] as const;
+const STAND_IN_FOOD = [
+  {
+    src: "/photos/pasta.webp",
+    alt: "Fettuccine in a cream sauce with shrimp, parmesan, and herbs",
+    width: 765,
+    height: 1020,
+  },
+  {
+    src: "/photos/cheesecake.webp",
+    alt: "Cheesecake slice with berries, mint, and raspberry sauce",
+    width: 765,
+    height: 1020,
+  },
+] as const;
 
-function lunchPlates(menu: Awaited<ReturnType<typeof listMenu>>): { plate: (typeof LUNCH_PLATES)[number]; item: MenuItem }[] {
-  const items = menu.flatMap((section) => section.items);
-  return LUNCH_PLATES.flatMap((plate) => {
-    const item = items.find((row) => row.name === plate.menuName);
-    return item ? [{ plate, item }] : [];
+function selectDishes(menu: MenuSection[]): SelectDish[] {
+  const rows = menu.flatMap((section) => section.items.map((item) => ({ item, sectionName: section.name })));
+  let standIn = 0;
+  return SELECT_DISH_NAMES.flatMap((name) => {
+    const row = rows.find((entry) => entry.item.name === name);
+    if (!row) return [];
+    const plate = LUNCH_PLATES.find((photo) => photo.menuName === name);
+    const photo = plate ?? STAND_IN_FOOD[standIn++ % STAND_IN_FOOD.length];
+    return [
+      {
+        id: row.item.id,
+        name: row.item.name,
+        description: row.item.description,
+        price: row.item.price,
+        section: row.sectionName,
+        glutenFree: row.item.gluten_free,
+        photo: { src: photo.src, alt: photo.alt, width: photo.width, height: photo.height },
+      },
+    ];
   });
 }
 
-function lunchHighlights(menu: Awaited<ReturnType<typeof listMenu>>): MenuItem[] {
-  const items = menu.flatMap((section) => section.items);
-  return HIGHLIGHT_NAMES.flatMap((name) => {
-    const match = items.find((item) => item.name === name);
-    return match ? [match] : [];
-  });
+function menuSections(menu: MenuSection[], sectionNames?: string[]): SelectMenu["sections"] {
+  return menu
+    .filter((section) => section.items.length > 0 && (!sectionNames || sectionNames.includes(section.name)))
+    .map((section) => ({
+      id: section.id,
+      name: section.name,
+      blurb: section.blurb,
+      items: section.items.map((item) => ({
+        id: item.id,
+        name: item.name,
+        description: item.description,
+        price: item.price,
+        glutenFree: item.gluten_free,
+        marked: item.marked,
+      })),
+    }));
+}
+
+function publishedMenus(menu: MenuSection[]): SelectMenu[] {
+  const lunch = menuSections(menu);
+  const happyHour = menuSections(menu, ["Appetizer"]);
+  const dinner = menuSections(menu, ["Salads", "Pizza", "Handhelds"]);
+  const footnoteFor = (sections: SelectMenu["sections"]) =>
+    sections.some((section) => section.items.some((item) => item.marked)) ? LUNCH_FOOTNOTE : null;
+  return [
+    { id: "lunch", label: "Lunch", service: LUNCH_SERVICE, footnote: footnoteFor(lunch), sections: lunch },
+    { id: "happy-hour", label: "Happy Hour", service: "", footnote: footnoteFor(happyHour), sections: happyHour },
+    { id: "dinner", label: "Dinner", service: "", footnote: footnoteFor(dinner), sections: dinner },
+  ];
 }
 
 export default async function HomePage() {
   const site = await getSite();
   const menu = await listMenu("public");
-  const plates = lunchPlates(menu);
-  const highlights = lunchHighlights(menu);
+  const dishes = selectDishes(menu);
+  const menus = publishedMenus(menu);
   const now = detroitNowLocal();
   const upcoming = (await listEvents("public"))
     .filter((event) => (event.ends_at || event.starts_at) >= now)
@@ -205,92 +258,57 @@ export default async function HomePage() {
         </div>
       </section>
 
-      <section className="social-rituals" aria-labelledby="rituals-heading">
-        <div className="wrap">
-          <p className="micro-label">Social rituals & gatherings</p>
-          <h2 id="rituals-heading">Curated for every Cross Street night</h2>
-        </div>
-        <ul className="ritual-strip">
+      <section className="destination-tiles" aria-labelledby="destinations-heading">
+        <h2 id="destinations-heading" className="sr-only">
+          Reservations, menus, and events
+        </h2>
+        <ul>
           <li>
-            <img
-              className="ritual-faces"
-              src="/hero/meet-me.jpg"
-              alt="Friends sharing drinks and plates at a restaurant table"
-              width={1800}
-              height={1203}
-            />
+            <Link className="destination-tile" href="/reserve">
+              <img
+                className="tile-table"
+                src="/hero/meet-me.jpg"
+                alt="Friends sharing drinks and plates at a restaurant table"
+                width={1800}
+                height={1203}
+              />
+              <span>Reservations</span>
+            </Link>
           </li>
-          {plates.map(({ plate, item }) => (
-            <li key={item.id}>
-              <img src={plate.src} alt={plate.alt} width={plate.width} height={plate.height} />
-            </li>
-          ))}
           <li>
-            <img
-              className="ritual-sign"
-              src="/photos/storefront.webp"
-              alt={`Exterior of ${DEFAULT_PLACE_NAME} at 705 W. Cross St.`}
-              width={1110}
-              height={886}
-            />
+            <Link className="destination-tile" href="/menu">
+              <img
+                className="tile-burger"
+                src="/photos/burger-fries.webp"
+                alt="Cheeseburger on a brioche bun with bacon jam, lettuce, tomato, onion, and fries"
+                width={765}
+                height={1020}
+              />
+              <span>Menus</span>
+            </Link>
+          </li>
+          <li>
+            <Link className="destination-tile" href="/events">
+              <img
+                className="tile-bar"
+                src="/hero/sizzle-bartender.jpg"
+                alt="Bartender serving cocktails to guests at the Vinny's bar"
+                width={1280}
+                height={720}
+              />
+              <span>Events</span>
+            </Link>
           </li>
         </ul>
-        <div className="wrap">
-          <p className="cta-row social-ctas">
-            <Link className="btn btn-gold" href="/events">
-              Events
-            </Link>
-            <Link className="btn btn-outline-light" href="/contact">
-              Reserve
-            </Link>
-            <OrderLink className="btn btn-outline-light" url={site.toastUrl}>
-              Order
-            </OrderLink>
-          </p>
-        </div>
       </section>
 
-      <section className="band-cream food-band" aria-labelledby="plates-heading">
+      <section className="band-cream food-band" aria-labelledby="select-dishes-heading">
         <div className="wrap page">
-          <p className="micro-label">From the kitchen</p>
-          <h2 id="plates-heading">Lunch plates</h2>
-          <p className="band-lede">Published lunch items with prices from the menu. {LUNCH_SERVICE}.</p>
-          <ul className="plate-list">
-            {plates.map(({ plate, item }) => (
-              <li key={item.id} className="plate">
-                <figure className="shot">
-                  <img src={plate.src} alt={plate.alt} width={plate.width} height={plate.height} />
-                </figure>
-                <h3>{item.name}</h3>
-                {item.description ? <p>{item.description}</p> : null}
-                <p className="price">{formatPrice(item.price)}</p>
-              </li>
-            ))}
-          </ul>
-          {highlights.length ? (
-            <div className="menu-highlights">
-              <h3 className="menu-highlights-title">Lunch highlights</h3>
-              <ul className="highlights">
-                {highlights.map((item) => (
-                  <li key={item.id}>
-                    <span>
-                      {item.name}
-                      {item.description ? <small>{item.description}</small> : null}
-                    </span>
-                    <span className="price">{formatPrice(item.price)}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          ) : null}
-          <p className="menu-banner">
-            <Link className="btn btn-ink" href="/menu">
-              Full lunch menu
-            </Link>
-            <OrderLink className="btn btn-gold" url={site.toastUrl}>
-              Order takeout
-            </OrderLink>
-          </p>
+          <div className="select-intro">
+            <h2 id="select-dishes-heading">Select Dishes</h2>
+            <p className="band-lede">{LUNCH_SERVICE}.</p>
+          </div>
+          <SelectDishes dishes={dishes} menus={menus} toastUrl={site.toastUrl} />
         </div>
       </section>
 
