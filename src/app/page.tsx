@@ -33,6 +33,8 @@ const HIGHLIGHT_NAMES = [
   "BAVARIAN PRETZEL",
 ];
 
+const PARTY_SIZES = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10] as const;
+
 function lunchPlates(menu: Awaited<ReturnType<typeof listMenu>>): { plate: (typeof LUNCH_PLATES)[number]; item: MenuItem }[] {
   const items = menu.flatMap((section) => section.items);
   return LUNCH_PLATES.flatMap((plate) => {
@@ -90,17 +92,77 @@ export default async function HomePage() {
 
         <HeroMedia videoSrc={SIZZLE_REEL.src} durationLabel={SIZZLE_REEL.durationLabel} />
 
-        <div className="wrap">
-          <div className="sizzle-below">
-            <p className="framed-hero-actions">
-              <a className="btn btn-gold" href={phoneHref} data-track="phone_click">
-                Call {phoneLabel}
-              </a>
-              <Link className="btn btn-ink" href="/menu">
-                View menus
-              </Link>
-            </p>
-          </div>
+        {/* /contact and /reserve cannot take party size, date, or time. The fields match the bar layout; Reserve opens the call-to-reserve page. */}
+        <div
+          className="reserve-bar"
+          role="group"
+          aria-labelledby="reserve-bar-label"
+          aria-describedby="reserve-bar-note"
+        >
+          <p id="reserve-bar-label" className="reserve-bar-label">
+            Reservations
+          </p>
+          <p id="reserve-bar-note" className="sr-only">
+            Party size, date, and time are not saved. Reserve opens the call-to-reserve page.
+          </p>
+          <label className="reserve-bar-field">
+            <span className="reserve-bar-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" focusable="false">
+                <circle cx="12" cy="8" r="3.2" fill="none" stroke="currentColor" strokeWidth="1.6" />
+                <path
+                  d="M5.5 19.2c1.4-3.2 3.6-4.7 6.5-4.7s5.1 1.5 6.5 4.7"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="1.6"
+                  strokeLinecap="round"
+                />
+              </svg>
+            </span>
+            <span className="sr-only">Party size</span>
+            <select defaultValue="">
+              <option value="">Party size</option>
+              {PARTY_SIZES.map((size) => (
+                <option key={size} value={size}>
+                  {size}
+                </option>
+              ))}
+            </select>
+          </label>
+          <label className="reserve-bar-field">
+            <span className="reserve-bar-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" focusable="false">
+                <rect x="4" y="5.5" width="16" height="14" rx="1.5" fill="none" stroke="currentColor" strokeWidth="1.6" />
+                <path
+                  d="M4 10h16M8 3.5v4M16 3.5v4"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="1.6"
+                  strokeLinecap="round"
+                />
+              </svg>
+            </span>
+            <span className="sr-only">Date</span>
+            <input type="date" />
+          </label>
+          <label className="reserve-bar-field">
+            <span className="reserve-bar-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" focusable="false">
+                <circle cx="12" cy="12" r="7.5" fill="none" stroke="currentColor" strokeWidth="1.6" />
+                <path
+                  d="M12 8.2V12l2.8 2"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="1.6"
+                  strokeLinecap="round"
+                />
+              </svg>
+            </span>
+            <span className="sr-only">Time</span>
+            <input type="time" />
+          </label>
+          <Link className="btn btn-gold reserve-bar-submit" href="/reserve">
+            Reserve
+          </Link>
         </div>
       </section>
 

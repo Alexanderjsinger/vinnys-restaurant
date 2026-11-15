@@ -294,7 +294,7 @@ address { font-style: normal; }
 
 /* ——— Stitch hero (cream first viewport) ——— */
 .stitch-hero {
-  padding: 1.36rem 0 1rem;
+  padding: 1.36rem 0 0;
   animation: rise-in 700ms ease both;
 }
 .stitch-hero-copy {
@@ -398,9 +398,7 @@ address { font-style: normal; }
   pointer-events: none;
 }
 .framed-hero-overlay a,
-.framed-hero-overlay .btn,
-.framed-hero-actions a,
-.framed-hero-actions .btn {
+.framed-hero-overlay .btn {
   pointer-events: auto;
 }
 .hero-video {
@@ -420,21 +418,95 @@ address { font-style: normal; }
   font-size: 0.95rem;
   max-width: 34rem;
 }
-.sizzle-below {
-  /* CTAs sit in .wrap under full-bleed reel (#27); no max-width needed here */
-  margin: 0.85rem 0 0;
+/* Dark reservation bar flush under the reel. Gold action, not a second phone/menu row. */
+.reserve-bar {
+  position: relative;
   display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: center;
-  gap: 0.85rem 1.25rem;
-}
-.framed-hero-actions {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.55rem;
+  align-items: stretch;
+  width: 100%;
+  max-width: none;
   margin: 0;
-  justify-content: center;
+  padding: 0;
+  background: var(--black);
+  color: var(--cream);
+  color-scheme: dark;
+  border: 0;
+  border-radius: 0;
+}
+.reserve-bar-label {
+  display: flex;
+  align-items: center;
+  flex: 0 0 auto;
+  margin: 0;
+  padding: 0 1.75rem;
+  color: var(--cream);
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  line-height: 1.2;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+.reserve-bar-field {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  flex: 1 1 0;
+  min-width: 0;
+  min-height: 5rem;
+  margin: 0;
+  padding: 0 1rem;
+  border-left: 1px solid rgba(247, 244, 236, 0.16);
+}
+.reserve-bar-icon {
+  display: inline-flex;
+  flex: 0 0 auto;
+  width: 1.05rem;
+  height: 1.05rem;
+  color: var(--cream);
+}
+.reserve-bar-icon svg { display: block; width: 100%; height: 100%; }
+.reserve-bar-field select,
+.reserve-bar-field input {
+  flex: 1 1 auto;
+  width: 100%;
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  color: var(--cream);
+  font: inherit;
+  font-size: 0.84rem;
+  font-weight: 650;
+  letter-spacing: 0.06em;
+  line-height: 1.2;
+  text-transform: uppercase;
+}
+.reserve-bar-field select {
+  cursor: pointer;
+}
+.reserve-bar-field input[type="date"]::-webkit-calendar-picker-indicator,
+.reserve-bar-field input[type="time"]::-webkit-calendar-picker-indicator {
+  display: none;
+}
+.reserve-bar .reserve-bar-submit {
+  flex: 0 0 auto;
+  align-self: stretch;
+  min-height: 5rem;
+  margin: 0;
+  padding: 0 2.15rem;
+  border: 0;
+  border-radius: 0;
+  background: var(--gold-hot);
+  color: var(--black);
+  letter-spacing: 0.14em;
+}
+.reserve-bar .reserve-bar-submit:hover {
+  background: var(--brass-press);
+  border-color: var(--brass-press);
+  color: #0c0a08;
 }
 @keyframes rise-in {
   from { opacity: 0; transform: translateY(0.7rem); }
@@ -1283,12 +1355,28 @@ input[type="checkbox"] { width: 1.15rem; height: 1.15rem; min-height: 0; accent-
   .framed-hero-overlay {
     padding: 1rem;
   }
-  .sizzle-below {
+  .reserve-bar {
     flex-direction: column;
     align-items: stretch;
-    margin-top: 0.75rem;
   }
-  .framed-hero-actions .btn { flex: 1; text-align: center; }
+  .reserve-bar-label {
+    justify-content: center;
+    min-height: 3.25rem;
+    padding: 0.85rem 1rem;
+    border-bottom: 1px solid rgba(247, 244, 236, 0.16);
+  }
+  .reserve-bar-field {
+    flex: none;
+    width: 100%;
+    min-height: 3.25rem;
+    border-left: 0;
+    border-top: 1px solid rgba(247, 244, 236, 0.16);
+    padding-inline: 1rem;
+  }
+  .reserve-bar .reserve-bar-submit {
+    width: 100%;
+    min-height: 3.5rem;
+  }
   .photo-row .shot {
     max-width: none;
     width: 100%;
