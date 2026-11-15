@@ -63,7 +63,11 @@ test("hero has no playback chrome; overlay cannot steal taps", () => {
     /\.framed-hero-overlay\s*\{[\s\S]*?pointer-events:\s*none/,
     "optional overlay is pointer-events none",
   );
-  assert.match(css, /framed-hero-actions[\s\S]*?pointer-events:\s*auto/, "CTAs remain clickable");
+  assert.match(
+    css,
+    /\.framed-hero-overlay a[\s\S]*?pointer-events:\s*auto/,
+    "optional overlay links stay clickable",
+  );
   assert.doesNotMatch(css, /\.framed-play\s*\{/, "oversized center play button removed");
   assert.doesNotMatch(css, /\.framed-hero-watch\s*\{/, "watch-label chrome removed");
 });

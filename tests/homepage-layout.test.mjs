@@ -35,8 +35,14 @@ test("header chrome matches Stitch light composition (Call + Order)", () => {
   assert.match(hero[0], /stitch-wordmark-mark/, "hero keeps short wordmark art direction");
   assert.match(hero[0], /VinnyWordmark/, "hero uses sign wordmark");
   assert.match(hero[0], /stitch-wordmark-rest/, "hero shows Bar & Grill from CMS place name");
-  assert.match(hero[0], /framed-hero-actions/, "primary CTAs stay in stitch hero (outside video)");
-  assert.match(hero[0], /sizzle-below/, "CTAs sit below ambient reel, not over footage");
+  assert.match(hero[0], /reserve-bar/, "reservation bar sits in the stitch hero, under the reel");
+  assert.match(hero[0], /href="\/reserve"/, "Reserve opens the existing call-to-reserve page");
+  assert.match(hero[0], /Party size/);
+  assert.match(hero[0], /type="date"/);
+  assert.match(hero[0], /type="time"/);
+  assert.doesNotMatch(hero[0], /View menus|sizzle-below|framed-hero-actions/, "phone and menu row under the reel is gone");
+  assert.doesNotMatch(hero[0], /Call \{phoneLabel\}/, "hero does not repeat the header phone CTA");
+  assert.doesNotMatch(hero[0], /\/api\/inquiries|name="party_size"|name="event_date"/, "bar does not post a booking");
   assert.doesNotMatch(hero[0], /sizzle-lockup/, "Meet me removed from cream/sizzle sub-header");
   assert.doesNotMatch(hero[0], /overlay=\{/, "no copy/CTA overlay on moving video");
   assert.doesNotMatch(hero[0], /Reserve a Table|Happy Hour|EST\.\s*1964/i);
@@ -132,9 +138,25 @@ test("framed hero is full-bleed ambient media + honest poster structure", () => 
   assert.match(page, /durationLabel=\{SIZZLE_REEL\.durationLabel\}/, "homepage passes measured duration only");
   assert.match(
     page,
-    /<\/div>\s*<HeroMedia[\s\S]*?<div className="wrap">\s*<div className="sizzle-below">/,
-    "HeroMedia sits outside wrap for full-bleed; CTAs stay in wrap below",
+    /<\/div>\s*<HeroMedia[\s\S]*?<div\s+className="reserve-bar"/,
+    "HeroMedia stays outside the copy wrap; reservation bar is full-bleed under the reel",
   );
+  assert.doesNotMatch(
+    page,
+    /<div className="wrap">\s*<div className="sizzle-below">/,
+    "the old phone and menu row is not wrapped under the reel",
+  );
+  const reserveBar = css.match(/\.reserve-bar\s*\{[^}]*\}/);
+  assert.ok(reserveBar, "reserve-bar rule exists");
+  assert.match(reserveBar[0], /width:\s*100%/, "reservation bar is full-bleed");
+  assert.match(reserveBar[0], /margin:\s*0/, "reservation bar sits flush under the reel");
+  assert.match(reserveBar[0], /background:\s*var\(--black\)/);
+  assert.match(reserveBar[0], /border-radius:\s*0/);
+  const stitchHero = css.match(/\.stitch-hero\s*\{[^}]*\}/);
+  assert.ok(stitchHero, "stitch-hero rule exists");
+  assert.match(stitchHero[0], /padding:\s*1\.36rem 0 0/, "no cream gap between the reel and the bar");
+  assert.match(css, /\.reserve-bar \.reserve-bar-submit[\s\S]*?background:\s*var\(--gold-hot\)/);
+  assert.doesNotMatch(css, /#e72225|#e62527/, "reservation bar does not copy the reference red");
   assert.ok(fs.existsSync(reelPath), "sizzle reel mp4 is present under public/hero");
   assert.match(hero, /\/hero\/sizzle-bartender\.jpg/, "hero poster is the bartender still from the reel");
   assert.doesNotMatch(hero, /meet-me\.jpg/, "hero poster is not the stock table photo");
