@@ -53,16 +53,16 @@ test("header chrome matches Stitch light composition (Call + Order)", () => {
 test("lunch plate frames use cover framing instead of letterboxed tall voids", () => {
   const css = read(cssPath);
 
-  const feature = css.match(/\.lunch-feature-photo\s*\{[^}]*\}/);
-  assert.ok(feature, "featured lunch photo frame exists");
-  assert.match(feature[0], /aspect-ratio:\s*4\s*\/\s*5/, "mobile featured plate locks a 4/5 frame");
+  const feature = css.match(/\.select-feature-photo\s*\{[^}]*\}/);
+  assert.ok(feature, "featured dish photo frame exists");
+  assert.match(feature[0], /aspect-ratio:\s*4\s*\/\s*3/, "featured dish locks a 4/3 frame");
   assert.match(feature[0], /padding:\s*0/);
   assert.match(feature[0], /border-radius:\s*0/);
   assert.match(feature[0], /border:\s*0/);
 
-  const featureImg = css.match(/\.lunch-feature-photo img\s*\{[^}]*\}/);
-  assert.ok(featureImg, "featured lunch image rule exists");
-  assert.match(featureImg[0], /object-fit:\s*cover/, "featured plate covers the frame");
+  const featureImg = css.match(/\.select-feature-photo img\s*\{[^}]*\}/);
+  assert.ok(featureImg, "featured dish image rule exists");
+  assert.match(featureImg[0], /object-fit:\s*cover/, "featured dish covers the frame");
   assert.match(featureImg[0], /width:\s*100%/);
   assert.match(featureImg[0], /height:\s*100%/);
   assert.match(featureImg[0], /max-height:\s*none/);
@@ -70,13 +70,13 @@ test("lunch plate frames use cover framing instead of letterboxed tall voids", (
   assert.match(featureImg[0], /border-radius:\s*0/);
   assert.doesNotMatch(featureImg[0], /object-fit:\s*contain/);
 
-  const thumb = css.match(/\.dish-thumb\s*\{[^}]*\}/);
-  assert.ok(thumb, "smaller dish frame exists");
+  const thumb = css.match(/\.select-row-photo\s*\{[^}]*\}/);
+  assert.ok(thumb, "dish card frame exists");
   assert.match(thumb[0], /padding:\s*0/);
   assert.match(thumb[0], /border-radius:\s*0/);
   assert.match(thumb[0], /aspect-ratio:\s*4\s*\/\s*3/);
-  const thumbImg = css.match(/\.dish-thumb img\s*\{[^}]*\}/);
-  assert.ok(thumbImg, "smaller dish image rule exists");
+  const thumbImg = css.match(/\.select-row-photo img\s*\{[^}]*\}/);
+  assert.ok(thumbImg, "dish card image rule exists");
   assert.match(thumbImg[0], /object-fit:\s*cover/);
   assert.match(thumbImg[0], /max-height:\s*none/);
   assert.match(thumbImg[0], /padding:\s*0/);
@@ -85,17 +85,17 @@ test("lunch plate frames use cover framing instead of letterboxed tall voids", (
   const desktopBlocks = [...css.matchAll(/@media \(min-width:\s*800px\)\s*\{([\s\S]*?)\n\}/g)].map(
     (match) => match[1],
   );
-  const plateDesktop = desktopBlocks.find((block) => block.includes(".lunch-feature-photo"));
-  assert.ok(plateDesktop, "desktop featured-plate media query present");
+  const plateDesktop = desktopBlocks.find((block) => block.includes(".select-stage"));
+  assert.ok(plateDesktop, "desktop select-dishes media query present");
   assert.match(
     plateDesktop,
-    /\.lunch-feature-photo\s*\{[^}]*aspect-ratio:\s*4\s*\/\s*3/,
-    "desktop featured plate is a 4/3 cover frame beside the card",
+    /\.select-stage\s*\{[^}]*grid-template-columns:\s*minmax\(0,\s*1\.15fr\)\s*minmax\(16rem,\s*0\.85fr\)/,
+    "desktop featured photo sits beside the card",
   );
   assert.match(
     plateDesktop,
-    /\.dish-row\s*\{[^}]*grid-template-columns:\s*repeat\(4,\s*minmax\(0,\s*1fr\)\)/,
-    "smaller dishes stay in a row of slots, not a second hero",
+    /\.select-feature-photo\s*\{[^}]*aspect-ratio:\s*4\s*\/\s*3/,
+    "desktop featured photo stays a 4/3 cover frame",
   );
   const shotDesktop = desktopBlocks.find((block) => block.includes(".photo-row"));
   assert.ok(shotDesktop, "menu photo-row desktop rule still present");
@@ -257,14 +257,18 @@ test("stitch homepage keeps authenticity constraints in markup", () => {
   assert.match(tiles[0], /href="\/events"[\s\S]*Events/);
   assert.match(tiles[0], /src="\/hero\/meet-me\.jpg"/, "table photo stays on a tile");
   const lunch = page.match(/className="band-cream food-band"[\s\S]*?<\/section>/);
-  assert.ok(lunch, "lunch plates section exists");
-  assert.match(page, /menuName === "VINNY'S BURGER"/);
-  assert.match(lunch[0], /featuredPlate\.item\.description/);
-  assert.match(lunch[0], /formatPrice\(featuredPlate\.item\.price\)/);
-  assert.match(lunch[0], /otherPlates\.map/);
-  assert.match(lunch[0], /href="\/menu"/);
-  assert.match(lunch[0], /OrderLink/);
-  assert.doesNotMatch(lunch[0], /truffle|review|testimonial|CHEF'S FAVORITE/i);
+  assert.ok(lunch, "select dishes section exists");
+  assert.match(lunch[0], />\s*Select Dishes\s*</);
+  assert.doesNotMatch(lunch[0], /Lunch plates|truffle|testimonial|CHEF'S FAVORITE/i);
+  assert.match(page, /SELECT_DISH_NAMES/);
+  assert.match(page, /"VINNY'S BURGER"/);
+  assert.match(lunch[0], /toastUrl=\{site\.toastUrl\}/);
+  assert.doesNotMatch(page, /\bORDER_URL\b/);
+  const select = read(path.join(root, "src/components/SelectDishes.tsx"));
+  assert.match(select, /Order online/);
+  assert.match(select, /dish\.description/);
+  assert.match(select, /OrderLink/);
+  assert.doesNotMatch(select, /truffle|testimonial|CHEF'S FAVORITE|Happy Hour/i);
 
   const layout = read(path.join(root, "src/app/layout.tsx"));
   assert.match(layout, /Montserrat/, "Meet me loads Montserrat through next/font");

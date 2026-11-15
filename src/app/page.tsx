@@ -4,8 +4,9 @@ import { HeroMedia } from "@/components/HeroMedia";
 import { SIZZLE_REEL } from "@/lib/hero";
 import { HoursList } from "@/components/HoursList";
 import { listEvents, listMenu } from "@/lib/content";
-import { detroitNowLocal, formatPrice } from "@/lib/format";
-import { LUNCH_SERVICE } from "@/lib/lunch-menu";
+import { detroitNowLocal } from "@/lib/format";
+import { LUNCH_FOOTNOTE, LUNCH_SERVICE } from "@/lib/lunch-menu";
+import { SelectDishes, type SelectDish, type SelectMenu } from "@/components/SelectDishes";
 import { DEFAULT_PLACE_NAME, isVinnyShortMark, splitPlaceWordmark } from "@/lib/brand";
 import { VinnyWordmark } from "@/components/VinnyWordmark";
 import { DIRECTIONS_URL, isMeetMeLine, MAP_QUERY, PHONE_DISPLAY, RESERVE_TEL } from "@/lib/public";
@@ -13,7 +14,7 @@ import { OrderLink } from "@/components/OrderLink";
 import { LUNCH_PLATES } from "@/lib/lunch-photos";
 import { pageMeta } from "@/lib/seo";
 import { getSite } from "@/lib/site";
-import type { MenuItem } from "@/lib/types";
+import type { MenuSection } from "@/lib/types";
 
 export const metadata = pageMeta(
   "/",
@@ -26,22 +27,71 @@ export const runtime = "nodejs";
 
 const PARTY_SIZES = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10] as const;
 
-type LunchPlate = { plate: (typeof LUNCH_PLATES)[number]; item: MenuItem };
+const SELECT_DISH_NAMES = [
+  "VINNY'S BURGER",
+  "SPICY CAULIFLOWER",
+  "SOUTHERN CHICKEN SALAD",
+  "WINGS (8)",
+  "FRENCH DIP",
+  "BAVARIAN PRETZEL",
+] as const;
 
-function lunchPlates(menu: Awaited<ReturnType<typeof listMenu>>): LunchPlate[] {
-  const items = menu.flatMap((section) => section.items);
-  return LUNCH_PLATES.flatMap((plate) => {
-    const item = items.find((row) => row.name === plate.menuName);
-    return item ? [{ plate, item }] : [];
+function selectDishes(menu: MenuSection[]): SelectDish[] {
+  const rows = menu.flatMap((section) => section.items.map((item) => ({ item, sectionName: section.name })));
+  return SELECT_DISH_NAMES.flatMap((name) => {
+    const row = rows.find((entry) => entry.item.name === name);
+    if (!row) return [];
+    const plate = LUNCH_PLATES.find((photo) => photo.menuName === name);
+    return [
+      {
+        id: row.item.id,
+        name: row.item.name,
+        description: row.item.description,
+        price: row.item.price,
+        section: row.sectionName,
+        glutenFree: row.item.gluten_free,
+        photo: plate
+          ? { src: plate.src, alt: plate.alt, width: plate.width, height: plate.height }
+          : null,
+      },
+    ];
   });
+}
+
+function publishedMenus(menu: MenuSection[]): SelectMenu[] {
+  const sections = menu
+    .filter((section) => section.items.length > 0)
+    .map((section) => ({
+      id: section.id,
+      name: section.name,
+      blurb: section.blurb,
+      items: section.items.map((item) => ({
+        id: item.id,
+        name: item.name,
+        description: item.description,
+        price: item.price,
+        glutenFree: item.gluten_free,
+        marked: item.marked,
+      })),
+    }));
+  if (!sections.length) return [];
+  const marked = sections.some((section) => section.items.some((item) => item.marked));
+  return [
+    {
+      id: "lunch",
+      label: "Lunch",
+      service: LUNCH_SERVICE,
+      footnote: marked ? LUNCH_FOOTNOTE : null,
+      sections,
+    },
+  ];
 }
 
 export default async function HomePage() {
   const site = await getSite();
   const menu = await listMenu("public");
-  const plates = lunchPlates(menu);
-  const featuredPlate = plates.find((row) => row.plate.menuName === "VINNY'S BURGER") ?? null;
-  const otherPlates = featuredPlate ? plates.filter((row) => row !== featuredPlate) : plates;
+  const dishes = selectDishes(menu);
+  const menus = publishedMenus(menu);
   const now = detroitNowLocal();
   const upcoming = (await listEvents("public"))
     .filter((event) => (event.ends_at || event.starts_at) >= now)
@@ -235,54 +285,13 @@ export default async function HomePage() {
         </ul>
       </section>
 
-      <section className="band-cream food-band" aria-labelledby="plates-heading">
+      <section className="band-cream food-band" aria-labelledby="select-dishes-heading">
         <div className="wrap page">
-          <div className="lunch-intro">
-            <p className="micro-label">From the kitchen</p>
-            <h2 id="plates-heading">Lunch plates</h2>
-            <p className="band-lede">Published lunch items with prices from the menu. {LUNCH_SERVICE}.</p>
+          <div className="select-intro">
+            <h2 id="select-dishes-heading">Select Dishes</h2>
+            <p className="band-lede">{LUNCH_SERVICE}.</p>
           </div>
-          {featuredPlate ? (
-            <div className="lunch-feature">
-              <figure className="lunch-feature-photo">
-                <img
-                  src={featuredPlate.plate.src}
-                  alt={featuredPlate.plate.alt}
-                  width={featuredPlate.plate.width}
-                  height={featuredPlate.plate.height}
-                />
-              </figure>
-              <div className="lunch-feature-card">
-                <h3>{featuredPlate.item.name}</h3>
-                {featuredPlate.item.description ? <p>{featuredPlate.item.description}</p> : null}
-                <p className="price">{formatPrice(featuredPlate.item.price)}</p>
-                <p className="lunch-feature-actions">
-                  <Link className="btn btn-ink" href="/menu">
-                    Full lunch menu
-                  </Link>
-                  <OrderLink className="btn btn-gold" url={site.toastUrl}>
-                    Order takeout
-                  </OrderLink>
-                </p>
-              </div>
-            </div>
-          ) : null}
-          {otherPlates.length ? (
-            <ul className="dish-row">
-              {otherPlates.map(({ plate, item }) => (
-                <li key={item.id}>
-                  <Link className="dish-card" href="/menu">
-                    <figure className="dish-thumb">
-                      <img src={plate.src} alt={plate.alt} width={plate.width} height={plate.height} />
-                    </figure>
-                    <span className="dish-name">{item.name}</span>
-                    {item.description ? <p>{item.description}</p> : null}
-                    <span className="price">{formatPrice(item.price)}</span>
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          ) : null}
+          <SelectDishes dishes={dishes} menus={menus} toastUrl={site.toastUrl} />
         </div>
       </section>
 
