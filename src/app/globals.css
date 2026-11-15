@@ -400,67 +400,6 @@ address { font-style: normal; }
   object-position: center 42%;
   display: block;
 }
-.framed-hero-frame::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  /* Subtle corner scrim only — control legibility, not a copy overlay */
-  background: linear-gradient(
-    225deg,
-    transparent 55%,
-    rgba(8, 6, 4, 0.28) 100%
-  );
-  pointer-events: none;
-  z-index: 2;
-}
-.framed-hero-chrome {
-  position: absolute;
-  z-index: 4;
-  inset: 0;
-  pointer-events: none;
-}
-.framed-ambient-control {
-  position: absolute;
-  right: 0.85rem;
-  bottom: 0.85rem;
-  width: 2.35rem;
-  height: 2.35rem;
-  border: 1px solid rgba(255, 255, 255, 0.28);
-  border-radius: 999px;
-  background: rgba(20, 16, 12, 0.42);
-  backdrop-filter: blur(6px);
-  display: grid;
-  place-items: center;
-  pointer-events: auto;
-  cursor: pointer;
-  transition: background 180ms ease, border-color 180ms ease, transform 180ms ease;
-}
-button.framed-ambient-control:hover {
-  background: rgba(20, 16, 12, 0.62);
-  border-color: rgba(255, 255, 255, 0.45);
-  transform: scale(1.04);
-}
-button.framed-ambient-control:focus-visible {
-  outline: 2px solid var(--gold-hot);
-  outline-offset: 2px;
-}
-.framed-play-icon {
-  width: 0;
-  height: 0;
-  border-style: solid;
-  border-width: 0.38rem 0 0.38rem 0.62rem;
-  border-color: transparent transparent transparent #fff;
-  margin-left: 0.12rem;
-}
-.framed-play-icon[data-paused="false"] {
-  width: 0.55rem;
-  height: 0.72rem;
-  border: 0;
-  margin: 0;
-  background:
-    linear-gradient(#fff, #fff) 0 0 / 0.18rem 100% no-repeat,
-    linear-gradient(#fff, #fff) 100% 0 / 0.18rem 100% no-repeat;
-}
 /* Optional overlay (unused on ambient homepage) */
 .framed-hero-overlay {
   position: absolute;
@@ -1277,12 +1216,6 @@ input[type="checkbox"] { width: 1.15rem; height: 1.15rem; min-height: 0; accent-
   }
   .framed-hero-overlay {
     padding: 1rem;
-  }
-  .framed-ambient-control {
-    width: 2.55rem;
-    height: 2.55rem;
-    right: 0.7rem;
-    bottom: 0.7rem;
   }
   .sizzle-below {
     flex-direction: column;

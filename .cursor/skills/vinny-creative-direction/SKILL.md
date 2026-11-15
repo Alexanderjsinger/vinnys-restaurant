@@ -61,7 +61,7 @@ Docs such as `docs/project-context.md` and `docs/events-cms-backlog.md` may desc
 | Events public | `src/app/events/page.tsx`, `src/components/ConfirmedEvents.tsx`, `src/lib/events-public.ts` |
 | Event photos | `src/components/EventPhoto.tsx` |
 
-**Sizzle reel constraints (do not “improve” without evidence):** ~720p encoded asset, ~30s duration, `GET /api/sizzle` for Range 206; large 1080p masters previously OOM’d the Worker (`src/lib/hero.ts` comments). Poster honesty: stock still ≠ dining room (`HeroMedia.tsx`).
+**Sizzle reel constraints (do not “improve” without evidence):** ~720p encoded asset, ~16s duration (ffprobe 16.125000s on the committed reel), looping with no playback controls, `GET /api/sizzle` for Range 206; large 1080p masters previously OOM’d the Worker (`src/lib/hero.ts` comments). Poster honesty: stock still ≠ dining room (`HeroMedia.tsx`). Reduced motion and Save-Data stay on the poster.
 
 ## Workflow
 
