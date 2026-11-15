@@ -140,7 +140,7 @@ test("framed hero is full-bleed ambient media + honest poster structure", () => 
   );
   const heroLib = read(path.join(root, "src/lib/hero.ts"));
   assert.match(heroLib, /SIZZLE_REEL/, "approved sizzle reel constant is defined");
-  assert.match(heroLib, /durationLabel:\s*"0:16"/, "duration matches measured ~16.13s file");
+  assert.match(heroLib, /durationLabel:\s*"0:30"/, "duration matches measured 30.250s file");
   assert.match(page, /SIZZLE_REEL\.src/, "homepage wires the approved sizzle reel");
   assert.match(page, /durationLabel=\{SIZZLE_REEL\.durationLabel\}/, "homepage passes measured duration only");
   assert.match(

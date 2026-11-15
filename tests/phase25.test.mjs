@@ -245,8 +245,8 @@ test("homepage hero poster is the bartender still and story uses storefront exte
   );
   assert.equal(
     fs.statSync(path.join(root, "public/hero/vinnys-sizzle-reel.mp4")).size,
-    2_511_869,
-    "sizzle mp4 is unchanged",
+    2_565_836,
+    "sizzle mp4 is the original pre-bartender reel",
   );
   assert.match(poster, /\/photos\/storefront\.webp/);
   assert.match(poster, /listing photo of the exterior/);
