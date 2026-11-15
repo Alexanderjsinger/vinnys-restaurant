@@ -156,7 +156,7 @@ export default async function HomePage() {
       <section className="band-cream food-band" aria-labelledby="select-dishes-heading">
         <div className="wrap page">
           <div className="select-intro">
-            <h2 id="select-dishes-heading">Select Dishes</h2>
+            <h2 id="select-dishes-heading">Much-loved dishes</h2>
             <p className="band-lede">{LUNCH_SERVICE}.</p>
           </div>
           <SelectDishes dishes={dishes} menus={publishedMenus(menu)} toastUrl={site.toastUrl} />

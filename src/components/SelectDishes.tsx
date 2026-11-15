@@ -74,58 +74,44 @@ export function SelectDishes({
   }
 
   return (
-    <div className="select-dishes">
-      <div className={feature.photo ? "select-stage" : "select-stage select-stage--text"} role="region" aria-roledescription="carousel" aria-label="Featured dish">
-        {feature.photo ? (
-          <figure className="select-feature-photo">
-            <img
-              src={feature.photo.src}
-              alt={feature.photo.alt}
-              width={feature.photo.width}
-              height={feature.photo.height}
-            />
-          </figure>
-        ) : null}
-        <div className="select-card">
-          <h3 id="select-dish-title" aria-live="polite" aria-atomic="true">{feature.name}</h3>
-          <p className="select-meta">
-            {feature.section}
-            {feature.price ? <span> · {formatPrice(feature.price)}</span> : null}
-            {feature.glutenFree ? <span className="chip">Gluten free</span> : null}
-          </p>
-          {feature.description ? <p className="select-writeup">{feature.description}</p> : null}
-          <div className="select-card-foot">
-            <OrderLink className="btn btn-gold select-order" url={toastUrl}>
-              Order online
-            </OrderLink>
-            {dishes.length > 1 ? (
-              <div className="select-card-nav">
-                <button type="button" className="select-card-arrow" onClick={() => showDish(-1)}>
-                  <Arrow direction="prev" />
-                  <span className="sr-only">Previous dish</span>
-                </button>
-                <div className="select-dots" role="group" aria-label="Featured dishes">
-                  {dishes.map((dish) => (
-                    <button
-                      key={dish.id}
-                      type="button"
-                      className={dish.id === feature.id ? "is-current" : undefined}
-                      aria-label={`Show ${dish.name}`}
-                      aria-current={dish.id === feature.id ? "true" : undefined}
-                      onClick={() => setFeatureId(dish.id)}
-                    />
-                  ))}
-                </div>
-                <button type="button" className="select-card-arrow" onClick={() => showDish(1)}>
-                  <span>Next</span>
-                  <Arrow direction="next" />
-                </button>
-              </div>
-            ) : null}
+    <div className="select-dishes select-editorial">
+      <div className="select-stage select-editorial-stage" role="region" aria-roledescription="carousel" aria-label="Featured dish">
+        <div className="select-feature-media">
+          {feature.photo ? (
+            <img src={feature.photo.src} alt={feature.photo.alt} width={feature.photo.width} height={feature.photo.height} />
+          ) : (
+            <div className="select-photo-missing">
+              <span className="micro-label">From the menu</span>
+              <span>{feature.name}</span>
+            </div>
+          )}
+          {dishes.length > 1 ? <>
+            <button className="select-feature-prev" type="button" onClick={() => showDish(-1)} aria-label="Previous dish"><Arrow direction="prev" /></button>
+            <button className="select-feature-next" type="button" onClick={() => showDish(1)} aria-label="Next dish"><Arrow direction="next" /></button>
+          </> : null}
+        </div>
+        <div className="select-feature-panel">
+          <div className="select-feature-meta">
+            <span>{feature.section}</span>
+            {feature.price ? <span className="select-feature-price">{formatPrice(feature.price)}</span> : null}
+          </div>
+          <h3 aria-live="polite" aria-atomic="true">{feature.name}</h3>
+          {feature.glutenFree ? <span className="chip">Gluten free</span> : null}
+          {feature.description ? <div className="select-feature-description"><p>{feature.description}</p></div> : null}
+          <div className="select-feature-bottom">
+            <OrderLink className="btn select-feature-order" url={toastUrl}>Order online</OrderLink>
+            {dishes.length > 1 ? <div className="select-dots" role="group" aria-label="Choose a featured dish">
+              {dishes.map(dish => <button key={dish.id} type="button" className={dish.id === feature.id ? "is-current" : undefined} aria-label={`Show ${dish.name}`} aria-current={dish.id === feature.id ? "true" : undefined} onClick={() => setFeatureId(dish.id)} />)}
+            </div> : null}
           </div>
         </div>
       </div>
-
+      <div className="select-preview-rail" role="group" aria-label="Dish previews">
+        {dishes.map(dish => <button key={dish.id} className={`select-preview${dish.id === feature.id ? " is-current" : ""}${dish.photo ? "" : " select-preview--text"}`} type="button" aria-label={`Preview ${dish.name}`} aria-pressed={dish.id === feature.id} onClick={() => setFeatureId(dish.id)}>
+          {dish.photo ? <img src={dish.photo.src} alt="" width={dish.photo.width} height={dish.photo.height} loading="lazy" /> : <span className="select-preview-section">{dish.section}</span>}
+          <span className="select-preview-name">{dish.name}</span>
+        </button>)}
+      </div>
       <MenuChoices menus={menus} />
     </div>
   );
