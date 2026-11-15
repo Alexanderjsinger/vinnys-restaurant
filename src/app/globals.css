@@ -1923,7 +1923,8 @@ a:focus-visible, button:focus-visible { outline: 3px solid var(--gold-hot); outl
 @media (max-width: 799px) {
   .brand-row { position: relative; flex-wrap: nowrap; gap: .75rem; padding-block: .7rem; }
   .brand-row .brand { flex: 1; min-width: 0; }
-  .brand-row .brand-sub, .brand-row .brand-tagline { display: none; }
+  .brand-row .brand-sub { display: block; max-width: 100%; font-size: .55rem; letter-spacing: .06em; line-height: 1.4; }
+  .brand-row .brand-tagline { display: block; max-width: 100%; margin-top: .1rem; font-size: .7rem; letter-spacing: 0; line-height: 1.35; }
   .brand-row .vinny-wordmark--sm { max-width: 7rem; height: auto; }
   .brand-row .header-actions { order: 1; width: auto; flex: none; }
   .header-actions > a:first-child { display: none; }
@@ -1974,3 +1975,12 @@ a:focus-visible, button:focus-visible { outline: 3px solid var(--gold-hot); outl
   .select-card-nav { flex-wrap: wrap; justify-content: space-between; }
   .select-dots { order: 3; width: 100%; justify-content: center; }
 }
+
+/* Footer signature is a readable brand lockup, not a miniature header mark. */
+.site-footer .brand { gap: .35rem; }
+.site-footer .brand-mark .vinny-wordmark { width: clamp(10rem, 14vw, 12rem); height: auto; }
+.site-footer .brand-sub { max-width: 100%; font-size: .78rem; letter-spacing: .1em; color: #d8d2c8; }
+.site-footer .brand-tagline { max-width: 100%; font-size: 1.1rem; line-height: 1.4; }
+
+.select-card-foot, .select-card-nav { min-width: 0; }
+.select-dots { flex-wrap: wrap; }
