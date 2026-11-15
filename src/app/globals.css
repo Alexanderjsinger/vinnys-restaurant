@@ -2029,3 +2029,20 @@ a:focus-visible, button:focus-visible { outline: 3px solid var(--gold-hot); outl
 }
 
 .home-events .event time { color: #e7bb66; }
+
+/* Occasion cards bridge the story and featured dishes. */
+.occasion-band { background: #171411; color: #f7f4ec; }
+.occasion-inner { padding-block: clamp(2.5rem, 5vw, 4.5rem); }
+.occasion-intro { text-align: center; max-width: 38rem; margin: 0 auto 2rem; }
+.occasion-intro h2 { font-size: clamp(2rem, 3.6vw, 3rem); margin-bottom: .75rem; }
+.occasion-band .micro-label { color: #e7bb66; }
+.occasion-intro > p:last-child { color: #d1c7b9; }
+.occasion-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1rem; }
+.occasion-card { display: flex; flex-direction: column; min-width: 0; background: #211d18; border: 1px solid #ffffff12; }
+.occasion-card > img { display: block; width: 100%; height: 15rem; object-fit: cover; flex: none; }
+.occasion-copy { display: flex; flex: 1; flex-direction: column; padding: 1.4rem; }
+.occasion-copy h3 { font-size: 1.6rem; margin: .25rem 0 .75rem; }
+.occasion-copy > p:not(.micro-label) { color: #e2d9cc; line-height: 1.65; margin-bottom: 1.25rem; }
+.occasion-copy > a { display: inline-flex; align-items: center; justify-content: space-between; gap: .8rem; color: #e7bb66; min-height: 44px; margin-top: auto; font-weight: 600; }
+@media (max-width: 799px) { .occasion-grid { grid-template-columns: minmax(0, 1fr); } .occasion-card { display: grid; grid-template-columns: minmax(0, .8fr) minmax(0, 1.2fr); } .occasion-card > img { height: 16rem; } .occasion-copy { padding: 1.1rem; } }
+@media (max-width: 540px) { .occasion-card { display: flex; } .occasion-card > img { height: 12rem; } }

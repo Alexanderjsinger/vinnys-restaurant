@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { OrderLink } from "@/components/OrderLink";
 import { formatPrice } from "@/lib/format";
 
@@ -133,6 +133,15 @@ export function SelectDishes({
 
 export function MenuChoices({ menus }: { menus: SelectMenu[] }) {
   const [openMenu, setOpenMenu] = useState<string | null>(null);
+  useEffect(() => {
+    const sync = () => {
+      const id = window.location.hash.replace("#select-menu-", "");
+      if (menus.some(menu => menu.id === id)) setOpenMenu(id);
+    };
+    sync();
+    window.addEventListener("hashchange", sync);
+    return () => window.removeEventListener("hashchange", sync);
+  }, [menus]);
   return (
     <>
       {menus.length ? (
