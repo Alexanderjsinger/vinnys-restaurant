@@ -23,12 +23,7 @@ export function HoursList({ hours }: { hours: Hour[] }) {
         </>
       ) : null}
       {confirmed.length ? <HourRows hours={confirmed} /> : null}
-      {pending.length ? (
-        <>
-          <p className="unconfirmed-note">Not confirmed yet. Lunch daily, 11–3pm, is the printed menu.</p>
-          <HourRows hours={pending} />
-        </>
-      ) : null}
+      {pending.length ? <HourRows hours={pending} /> : null}
     </>
   );
 }

@@ -18,8 +18,6 @@ const DEFAULT_POSTER = {
   alt: "Friends at a restaurant table with drinks and appetizers",
   width: 1800,
   height: 1203,
-  credit:
-    "Atmosphere reel from Vinny’s Bar & Grill. Poster still is a stock table photo — Not a photo of Vinny’s dining room.",
 } as const;
 
 function prepareVideoEl(el: HTMLVideoElement) {
@@ -65,7 +63,6 @@ export function HeroMedia({
     alt: string;
     width: number;
     height: number;
-    credit: string;
   };
   /** Optional overlay — prefer keeping CTAs outside the moving frame. */
   overlay?: ReactNode;
@@ -175,7 +172,6 @@ export function HeroMedia({
 
         {overlay ? <div className="framed-hero-overlay">{overlay}</div> : null}
       </section>
-      <p className="framed-hero-credit">{poster.credit}</p>
     </div>
   );
 }

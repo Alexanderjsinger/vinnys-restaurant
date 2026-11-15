@@ -1,6 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { headers } from "next/headers";
-import { Playfair_Display, Plus_Jakarta_Sans } from "next/font/google";
+import { Montserrat, Playfair_Display, Plus_Jakarta_Sans } from "next/font/google";
 import { LocalBusinessJsonLd } from "@/components/LocalBusinessJsonLd";
 import { SiteFooter } from "@/components/SiteFooter";
 import { SiteHeader } from "@/components/SiteHeader";
@@ -24,6 +24,13 @@ const sans = Plus_Jakarta_Sans({
   subsets: ["latin"],
   weight: ["400", "500", "600", "700"],
   variable: "--font-body",
+  display: "swap",
+});
+
+const tagline = Montserrat({
+  subsets: ["latin"],
+  weight: ["500", "600"],
+  variable: "--font-tagline",
   display: "swap",
 });
 
@@ -64,7 +71,7 @@ export async function generateMetadata(): Promise<Metadata> {
 export default async function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   const site = await getSite();
   return (
-    <html lang="en" className={`${display.variable} ${sans.variable}`}>
+    <html lang="en" className={`${display.variable} ${sans.variable} ${tagline.variable}`}>
       <body>
         <LocalBusinessJsonLd />
         <TrackClicks />
