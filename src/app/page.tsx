@@ -64,7 +64,6 @@ export default async function HomePage() {
   const upcoming = (await listEvents("public"))
     .filter((event) => (event.ends_at || event.starts_at) >= now)
     .slice(0, 3);
-  const mapSrc = `https://maps.google.com/maps?q=${encodeURIComponent(MAP_QUERY)}&z=16&output=embed`;
   const addressLine = site.address || MAP_QUERY;
   const phoneHref = site.phoneHref || RESERVE_TEL;
   const phoneLabel = site.phone || PHONE_DISPLAY;
@@ -124,10 +123,10 @@ export default async function HomePage() {
         </div>
       </section>
 
-      <section className="page wrap home-cards" aria-label="Events">
-        <article className="home-card">
+      <section className="home-events" aria-labelledby="home-events-heading">
+        <div className="wrap home-events-inner">
           <p className="micro-label">On the calendar</p>
-          <h2>What’s happening</h2>
+          <h2 id="home-events-heading">What’s happening at Vinny’s</h2>
           {upcoming.length ? (
             <>
               <ConfirmedEvents events={upcoming} />
@@ -143,20 +142,36 @@ export default async function HomePage() {
               toastUrl={site.toastUrl}
             />
           )}
-        </article>
+        </div>
       </section>
 
-      <section className="visit-band" aria-labelledby="visit-heading">
-        <figure className="story-frame visit-storefront">
-          <img src="/photos/storefront.webp" alt={`Exterior of ${DEFAULT_PLACE_NAME} at 705 W. Cross St.`} width={1110} height={886} loading="lazy" />
-        </figure>
+      <section className="about-band" aria-labelledby="about-heading">
+        <div className="about-grid">
+          <figure className="about-exterior">
+            <img src="/photos/storefront.webp" alt={`Exterior of ${DEFAULT_PLACE_NAME} at 705 W. Cross St.`} width={1110} height={886} loading="lazy" />
+          </figure>
+          <div className="about-copy">
+            <p className="micro-label">Our Story</p>
+            <h2 id="about-heading">Meet me on Cross Street.</h2>
+            <p className="about-lede">Vinny’s Bar &amp; Grill, Ypsilanti.</p>
+            <p>
+              You’ll find Vinny’s at 705 W. Cross Street, right across from Eastern Michigan University.
+              Look for the Vinny’s sign above the storefront and come on in.
+            </p>
+            <p>
+              Explore the lunch menu, see what’s on the calendar, or call us to plan your visit.
+              Lunch is served daily, 11–3pm.
+            </p>
+            <Link className="text-link" href="/contact">Come find us <span aria-hidden="true">→</span></Link>
+          </div>
+        </div>
+      </section>
+
+      <section className="visit-band visit-band--compact" aria-labelledby="visit-heading">
         <div className="wrap visit-grid">
           <div>
             <p className="micro-label">Visit</p>
-            <h2 id="visit-heading">Right across from EMU.</h2>
-            <p className="lunch-line">{LUNCH_SERVICE}</p>
-            <h3 id="home-hours-heading">Hours</h3>
-            <HoursList hours={site.hours} />
+            <h2 id="visit-heading">See you at Vinny’s.</h2>
             <p className="visit-address">{addressLine}</p>
             <p>
               <a href={phoneHref} data-track="phone_click">
@@ -173,13 +188,11 @@ export default async function HomePage() {
               <OrderLink className="btn btn-ink" url={site.toastUrl} />
             </p>
           </div>
-          <iframe
-            className="visit-map"
-            title={`Map of ${DEFAULT_PLACE_NAME} at 705 W. Cross St., Ypsilanti`}
-            src={mapSrc}
-            loading="lazy"
-            referrerPolicy="no-referrer-when-downgrade"
-          />
+          <div className="visit-hours">
+            <h3 id="home-hours-heading">Hours</h3>
+            <p className="lunch-line">{LUNCH_SERVICE}</p>
+            <HoursList hours={site.hours} />
+          </div>
         </div>
       </section>
     </>

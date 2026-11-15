@@ -18,8 +18,8 @@ Capture before/after screenshots at **390×844, 430×932, 768×1024, 1280×800, 
 | Hero motion | Reel loops automatically without visible playback buttons; reduced motion and Save-Data use still poster; mobile reel remains 16:9 |
 | Quick actions | Menu, Call to Reserve (`tel:`), and Directions; no nonfunctional party/date/time inputs |
 | Food | Published names, descriptions, prices; only matching approved burger/cauliflower photos; one highlighted dish at a time, text-only for unmatched photos; manual previous/next; Lunch / Happy Hour / Dinner expand one menu at a time; unconfirmed menus show a details-unavailable message |
-| Events | Dates/times prominent, descriptions readable, status/next-step behavior preserved; home displays at most three upcoming |
-| Visit | Authentic storefront retained without added frame or crop; hours/address/call/directions legible; map and footer usable |
+| Events | Compact dark cards; dates/times prominent, descriptions readable, status/next-step behavior preserved; home displays at most three upcoming |
+| Visit | Authentic storefront beside a cream Our Story panel on desktop, photo then story on mobile; known-facts copy only; compact hours/address/call/directions row below; footer usable |
 | Public routes | `/`, `/menu`, `/events`, `/contact`, `/order`, `/reserve` render; legacy `/parties` redirects to Contact |
 | Media | No broken image paths; `/api/sizzle` serves video and Range requests return 206 |
 
