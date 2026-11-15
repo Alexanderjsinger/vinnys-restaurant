@@ -1171,13 +1171,47 @@ input[type="checkbox"] { width: 1.15rem; height: 1.15rem; min-height: 0; accent-
 .row-actions form { display: flex; flex-wrap: wrap; gap: 0.5rem; align-items: center; }
 
 .site-footer {
-  border-top: 1px solid var(--line);
-  padding: 1.5rem 0 2rem;
+  border-top: 1px solid rgba(246, 241, 231, 0.12);
+  padding: 2.75rem 0 3rem;
   background: var(--black);
   color: #f6f1e7;
 }
 .site-footer a { color: var(--gold-hot); }
 .site-footer a:hover { color: #fff; }
+.site-footer .footer-grid {
+  align-items: start;
+  gap: 2rem 3rem;
+}
+@media (min-width: 800px) {
+  .site-footer .footer-grid {
+    grid-template-columns: minmax(0, 1.15fr) minmax(0, 1.15fr) minmax(11rem, 0.7fr);
+  }
+}
+.site-footer .footer-brand {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 1.5rem;
+}
+.site-footer .footer-contact {
+  display: grid;
+  gap: 0.4rem;
+}
+.site-footer .footer-contact address,
+.site-footer .footer-contact p {
+  margin: 0;
+  line-height: 1.45;
+}
+.site-footer .footer-hours h2 {
+  margin: 0 0 0.85rem;
+  font-family: var(--font-body), "Avenir Next", "Segoe UI", sans-serif;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  line-height: 1.35;
+  color: rgba(246, 241, 231, 0.62);
+}
 
 .vinny-wordmark {
   display: block;
@@ -1191,21 +1225,38 @@ input[type="checkbox"] { width: 1.15rem; height: 1.15rem; min-height: 0; accent-
 }
 .site-footer .brand {
   color: #f6f1e7;
+  gap: 0.15rem;
 }
 .site-footer .brand-sub {
-  color: #d4af37;
+  color: rgba(246, 241, 231, 0.62);
 }
 .site-footer .brand-tagline {
-  color: var(--gold-hot);
+  color: #f6f1e7;
 }
-.site-footer .brand:hover,
-.site-footer .brand:hover .brand-sub,
-.site-footer .brand:hover .brand-tagline {
-  color: #fff;
+.site-footer .brand:hover { color: #fff; }
+.site-footer .brand:hover .brand-sub { color: rgba(246, 241, 231, 0.86); }
+.site-footer .brand:hover .brand-tagline { color: #fff; }
+.site-footer .lunch-line { margin: 0 0 0.85rem; }
+.site-footer .hours { margin: 0; }
+.site-footer .hours div {
+  border-top-color: rgba(246, 241, 231, 0.16);
+  padding: 0.55rem 0;
+  gap: 1.25rem;
 }
-.site-footer h2 { font-size: 1.1rem; color: #fff; }
+.site-footer .hours div:first-child {
+  border-top: 0;
+  padding-top: 0;
+}
+.site-footer nav ul {
+  display: grid;
+  gap: 0;
+  margin: 0;
+  padding: 0;
+  justify-items: start;
+}
 .site-footer .primary-nav a,
 .site-footer nav a { color: #f6f1e7; }
+.site-footer nav a:hover { color: var(--gold-hot); }
 
 .embed {
   width: 100%;
