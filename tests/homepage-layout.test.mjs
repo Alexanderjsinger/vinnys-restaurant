@@ -200,6 +200,46 @@ test("framed hero is full-bleed ambient media + honest poster structure", () => 
   );
 });
 
+test("phone header scrolls away and the reel is a 16:9 edge-to-edge frame", () => {
+  const css = read(cssPath);
+  const homeBar = css.match(/\.sticky-bar--home\s*\{[^}]*\}/);
+  assert.ok(homeBar, "homepage header rule exists");
+  assert.match(homeBar[0], /position:\s*fixed/, "desktop header stays fixed over the reel");
+  assert.match(
+    css,
+    /@media \(max-width:\s*799px\)\s*\{\s*\.sticky-bar--home\s*\{[^}]*position:\s*static/,
+    "phone header is in normal flow and scrolls away",
+  );
+  assert.doesNotMatch(
+    css.match(/@media \(max-width:\s*799px\)\s*\{\s*\.sticky-bar--home\s*\{[^}]*\}/)?.[0] || "",
+    /position:\s*fixed|position:\s*sticky/,
+    "phone header is not pinned",
+  );
+  assert.match(
+    css,
+    /@media \(min-width:\s*800px\)\s*\{\s*\.sticky-bar--on-reel\s*\{[^}]*background:\s*transparent/,
+    "transparent over-reel header is desktop only",
+  );
+
+  const phoneStart = css.search(/@media \(max-width:\s*799px\)\s*\{\s*\.stitch-hero\.reel-hero/);
+  assert.ok(phoneStart >= 0, "phone reel media query exists");
+  const phoneCss = css.slice(phoneStart, css.indexOf("@keyframes rise-in", phoneStart));
+  const phoneReel = phoneCss.match(/\.stitch-hero\.reel-hero\s*\{[^}]*\}/);
+  assert.ok(phoneReel, "phone reel rule exists");
+  assert.match(phoneReel[0], /width:\s*100%/, "phone reel stays edge to edge");
+  assert.match(phoneReel[0], /height:\s*auto/, "phone reel is not a full viewport");
+  assert.doesNotMatch(phoneReel[0], /100dvh|100vh/);
+  const phoneFrame = phoneCss.match(/\.reel-hero \.framed-hero-frame\s*\{[^}]*\}/);
+  assert.ok(phoneFrame, "phone reel frame rule exists");
+  assert.match(phoneFrame[0], /width:\s*100%/, "picture meets the side edges");
+  assert.match(phoneFrame[0], /aspect-ratio:\s*16\s*\/\s*9/, "phone picture uses the reel frame");
+  assert.match(phoneFrame[0], /max-height:\s*none/, "aspect-ratio must not shrink the width");
+  const phoneBar = phoneCss.match(/\.reel-hero \.reserve-bar\s*\{[^}]*\}/);
+  assert.ok(phoneBar, "phone reservation bar rule exists");
+  assert.match(phoneBar[0], /position:\s*relative/, "reservation bar does not cover the picture");
+  assert.doesNotMatch(phoneBar[0], /position:\s*absolute/);
+});
+
 test("Cross Street band is full-bleed: photo column is half the section, no frame or cap", () => {
   const css = read(cssPath);
   const split = css.match(/\.story-split\s*\{[^}]*\}/);

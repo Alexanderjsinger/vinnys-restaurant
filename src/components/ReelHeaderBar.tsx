@@ -4,8 +4,9 @@ import { usePathname } from "next/navigation";
 import { useEffect, useState, type ReactNode } from "react";
 
 /**
- * On the homepage the header sits on the fullscreen reel.
- * After the reel scrolls away it returns to the solid bar so later sections stay readable.
+ * Desktop homepage: the header is fixed on the fullscreen reel, then returns to
+ * the solid bar after the reel scrolls away. On a phone the header stays in
+ * normal flow (see globals.css) and scrolls away with the page.
  * Other routes keep the in-flow sticky bar.
  */
 export function ReelHeaderBar({ children }: { children: ReactNode }) {

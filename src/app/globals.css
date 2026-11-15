@@ -121,55 +121,65 @@ address { font-style: normal; }
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.04);
 }
 
-/* Homepage: the bar is out of flow so the reel can be the whole first screen. */
+/* Homepage desktop: the bar is out of flow so the reel is the whole first screen.
+   On a phone the bar stays in the page and scrolls away. It must not pin over the reel. */
 .sticky-bar--home {
   position: fixed;
   left: 0;
   right: 0;
 }
-.sticky-bar--on-reel {
-  background: transparent;
-  border-bottom-color: transparent;
-  box-shadow: none;
-  backdrop-filter: none;
+@media (max-width: 799px) {
+  .sticky-bar--home {
+    position: static;
+    left: auto;
+    right: auto;
+  }
 }
-.sticky-bar--on-reel .brand,
-.sticky-bar--on-reel .brand:hover,
-.sticky-bar--on-reel .brand-sub,
-.sticky-bar--on-reel .brand-tagline,
-.sticky-bar--on-reel .primary-nav a {
-  color: #f6f1e7;
-}
-.sticky-bar--on-reel .brand:hover .brand-sub,
-.sticky-bar--on-reel .brand:hover .brand-tagline,
-.sticky-bar--on-reel .primary-nav a:hover {
-  color: var(--gold-hot);
-}
-.sticky-bar--on-reel .primary-nav a[aria-current="page"] {
-  color: var(--gold-hot);
-  box-shadow: inset 0 -2px 0 var(--gold-hot);
-}
-.sticky-bar--on-reel .vinny-wordmark {
-  filter: brightness(0) invert(1);
-}
-.sticky-bar--on-reel .btn-outline {
-  border-color: rgba(246, 241, 231, 0.85);
-  color: #f6f1e7;
-  background: transparent;
-}
-.sticky-bar--on-reel .btn-outline:hover {
-  background: rgba(246, 241, 231, 0.12);
-  color: #fff;
-}
-.sticky-bar--on-reel .btn-ink {
-  background: #f6f1e7;
-  border-color: #f6f1e7;
-  color: var(--black);
-}
-.sticky-bar--on-reel .btn-ink:hover {
-  background: #fff;
-  border-color: #fff;
-  color: var(--black);
+@media (min-width: 800px) {
+  .sticky-bar--on-reel {
+    background: transparent;
+    border-bottom-color: transparent;
+    box-shadow: none;
+    backdrop-filter: none;
+  }
+  .sticky-bar--on-reel .brand,
+  .sticky-bar--on-reel .brand:hover,
+  .sticky-bar--on-reel .brand-sub,
+  .sticky-bar--on-reel .brand-tagline,
+  .sticky-bar--on-reel .primary-nav a {
+    color: #f6f1e7;
+  }
+  .sticky-bar--on-reel .brand:hover .brand-sub,
+  .sticky-bar--on-reel .brand:hover .brand-tagline,
+  .sticky-bar--on-reel .primary-nav a:hover {
+    color: var(--gold-hot);
+  }
+  .sticky-bar--on-reel .primary-nav a[aria-current="page"] {
+    color: var(--gold-hot);
+    box-shadow: inset 0 -2px 0 var(--gold-hot);
+  }
+  .sticky-bar--on-reel .vinny-wordmark {
+    filter: brightness(0) invert(1);
+  }
+  .sticky-bar--on-reel .btn-outline {
+    border-color: rgba(246, 241, 231, 0.85);
+    color: #f6f1e7;
+    background: transparent;
+  }
+  .sticky-bar--on-reel .btn-outline:hover {
+    background: rgba(246, 241, 231, 0.12);
+    color: #fff;
+  }
+  .sticky-bar--on-reel .btn-ink {
+    background: #f6f1e7;
+    border-color: #f6f1e7;
+    color: var(--black);
+  }
+  .sticky-bar--on-reel .btn-ink:hover {
+    background: #fff;
+    border-color: #fff;
+    color: var(--black);
+  }
 }
 
 .brand-row {
@@ -645,9 +655,44 @@ address { font-style: normal; }
   bottom: 0;
   z-index: 3;
 }
+/* Phone: the reel is the asset's 16:9 frame, edge to edge, under the in-flow
+   header. The reservation bar sits beneath the picture so it does not cover it.
+   Header + picture + wordmark + bar fit the first screen; desktop stays 100dvh. */
 @media (max-width: 799px) {
+  .stitch-hero.reel-hero {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: auto auto;
+    width: 100%;
+    height: auto;
+  }
+  .reel-hero .framed-hero {
+    grid-area: 1 / 1;
+    width: 100%;
+    height: auto;
+  }
+  .reel-hero .framed-hero-frame {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 16 / 9;
+    max-height: none;
+  }
   .reel-hero-copy {
-    padding: 12.75rem 1rem 18.75rem;
+    grid-area: 1 / 1;
+    position: relative;
+    inset: auto;
+    align-self: stretch;
+    min-height: 0;
+    height: 100%;
+    padding: 0.5rem 1rem;
+    overflow: hidden;
+  }
+  .reel-hero .reserve-bar {
+    grid-area: 2 / 1;
+    position: relative;
+    left: auto;
+    right: auto;
+    bottom: auto;
   }
 }
 
