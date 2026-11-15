@@ -136,6 +136,8 @@ test("framed hero is full-bleed ambient media + honest poster structure", () => 
     "HeroMedia sits outside wrap for full-bleed; CTAs stay in wrap below",
   );
   assert.ok(fs.existsSync(reelPath), "sizzle reel mp4 is present under public/hero");
+  assert.match(hero, /\/hero\/sizzle-bartender\.jpg/, "hero poster is the bartender still from the reel");
+  assert.doesNotMatch(hero, /meet-me\.jpg/, "hero poster is not the stock table photo");
   assert.match(hero, /prefers-reduced-motion/, "hero respects reduced motion");
   assert.match(hero, /saveData|connectionWantsDataSave/, "Save-Data still shows the poster");
   assert.match(hero, /IntersectionObserver/, "ambient play uses viewport visibility");

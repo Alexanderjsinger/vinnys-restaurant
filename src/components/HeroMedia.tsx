@@ -5,7 +5,8 @@ import { useEffect, useRef, useState } from "react";
 
 /**
  * Framed homepage hero media — ambient cinematic reel (not a video player chrome).
- * Approved sizzle via /api/sizzle (Range 206); poster remains meet-me.jpg.
+ * Approved sizzle via /api/sizzle (Range 206). Poster is a still from that reel
+ * at the bartender shot (~11.8s), so the first paint matches the video.
  *
  * Playback:
  * - Poster first; muted inline play when ~50% visible (IntersectionObserver).
@@ -14,10 +15,10 @@ import { useEffect, useRef, useState } from "react";
  * - prefers-reduced-motion + Save-Data → still poster only.
  */
 const DEFAULT_POSTER = {
-  src: "/hero/meet-me.jpg",
-  alt: "Friends at a restaurant table with drinks and appetizers",
-  width: 1800,
-  height: 1203,
+  src: "/hero/sizzle-bartender.jpg",
+  alt: "Bartender serving cocktails to guests at the Vinny's bar",
+  width: 1280,
+  height: 720,
 } as const;
 
 function prepareVideoEl(el: HTMLVideoElement) {
