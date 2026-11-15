@@ -97,18 +97,63 @@ export default async function HomePage() {
 
       </section>
 
-      <section className="quick-actions" aria-label="Plan your visit">
-        <div className="wrap quick-actions-inner">
-          <div className="reserve-copy">
-            <p className="micro-label">Meet me at Vinny’s</p>
-            <p>Menu, a table, or the way here.</p>
+      <section className="about-band" aria-labelledby="about-heading">
+        <div className="about-grid">
+          <figure className="about-exterior">
+            <img src="/photos/storefront.webp" alt={`Exterior of ${DEFAULT_PLACE_NAME} at 705 W. Cross St.`} width={1110} height={886} loading="lazy" />
+          </figure>
+          <div className="about-copy">
+            <p className="micro-label">Our Story</p>
+            <h2 id="about-heading">Meet me on Cross Street.</h2>
+            <p className="about-lede">Vinny’s Bar &amp; Grill, Ypsilanti.</p>
+            <p>
+              You’ll find Vinny’s at 705 W. Cross Street, right across from Eastern Michigan University.
+              Look for the Vinny’s sign above the storefront and come on in.
+            </p>
+            <p>
+              Explore the lunch menu, see what’s on the calendar, or call us to plan your visit.
+              Lunch is served daily, 11–3pm.
+            </p>
+            <Link className="text-link" href="/contact">Come find us <span aria-hidden="true">→</span></Link>
           </div>
-          <div className="quick-action-links">
-            <Link className="btn btn-ink" href="/menu">View Menu</Link>
-            <a className="btn" href={phoneHref} data-track="phone_click">Call to Reserve</a>
-            <a className="btn" href={site.mapUrl || DIRECTIONS_URL} target="_blank" rel="noopener noreferrer" data-track="directions_click">
-              Directions<span className="sr-only"> (opens in a new tab)</span>
-            </a>
+        </div>
+      </section>
+
+      <section className="occasion-band" aria-labelledby="occasion-heading">
+        <div className="wrap occasion-inner">
+          <div className="occasion-intro">
+            <p className="micro-label">Meet me at Vinny’s</p>
+            <h2 id="occasion-heading">Curated for every occasion.</h2>
+            <p>Find your next reason to stop by.</p>
+          </div>
+          <div className="occasion-grid">
+            <article className="occasion-card">
+              <img src="/photos/burger-fries.webp" alt="Vinny’s burger with fries" width={765} height={1020} loading="lazy" />
+              <div className="occasion-copy">
+                <p className="micro-label">{LUNCH_SERVICE}</p>
+                <h3>Lunch</h3>
+                <p>Explore the published lunch menu, from handhelds to shareable appetizers.</p>
+                <Link href="/menu#select-menu-lunch">View lunch menu <span aria-hidden="true">→</span></Link>
+              </div>
+            </article>
+            <article className="occasion-card">
+              <img src="/hero/sizzle-bartender.jpg" alt="Cocktail atmosphere from the Vinny’s reel" width={1280} height={720} loading="lazy" />
+              <div className="occasion-copy">
+                <p className="micro-label">At the bar</p>
+                <h3>Happy Hour</h3>
+                <p>Happy Hour menu details will be posted here when available.</p>
+                <Link href="/menu#select-menu-happy-hour">Explore menus <span aria-hidden="true">→</span></Link>
+              </div>
+            </article>
+            <article className="occasion-card">
+              <img src="/photos/storefront.webp" alt="Vinny’s Bar & Grill on Cross Street" width={1110} height={886} loading="lazy" />
+              <div className="occasion-copy">
+                <p className="micro-label">Around the table</p>
+                <h3>Dinner</h3>
+                <p>Dinner menu details are on the way. Call us to plan your visit.</p>
+                <a href={phoneHref} data-track="phone_click">Call Vinny’s <span aria-hidden="true">→</span></a>
+              </div>
+            </article>
           </div>
         </div>
       </section>
@@ -145,28 +190,6 @@ export default async function HomePage() {
         </div>
       </section>
 
-      <section className="about-band" aria-labelledby="about-heading">
-        <div className="about-grid">
-          <figure className="about-exterior">
-            <img src="/photos/storefront.webp" alt={`Exterior of ${DEFAULT_PLACE_NAME} at 705 W. Cross St.`} width={1110} height={886} loading="lazy" />
-          </figure>
-          <div className="about-copy">
-            <p className="micro-label">Our Story</p>
-            <h2 id="about-heading">Meet me on Cross Street.</h2>
-            <p className="about-lede">Vinny’s Bar &amp; Grill, Ypsilanti.</p>
-            <p>
-              You’ll find Vinny’s at 705 W. Cross Street, right across from Eastern Michigan University.
-              Look for the Vinny’s sign above the storefront and come on in.
-            </p>
-            <p>
-              Explore the lunch menu, see what’s on the calendar, or call us to plan your visit.
-              Lunch is served daily, 11–3pm.
-            </p>
-            <Link className="text-link" href="/contact">Come find us <span aria-hidden="true">→</span></Link>
-          </div>
-        </div>
-      </section>
-
       <section className="visit-band visit-band--compact" aria-labelledby="visit-heading">
         <div className="wrap visit-grid">
           <div>
@@ -174,9 +197,7 @@ export default async function HomePage() {
             <h2 id="visit-heading">See you at Vinny’s.</h2>
             <p className="visit-address">{addressLine}</p>
             <p>
-              <a href={phoneHref} data-track="phone_click">
-                {phoneLabel}
-              </a>
+              <a href={phoneHref} data-track="phone_click">Call to Reserve · {phoneLabel}</a>
             </p>
             <p>
               <a href={site.mapUrl || DIRECTIONS_URL} data-track="directions_click" target="_blank" rel="noopener noreferrer">
