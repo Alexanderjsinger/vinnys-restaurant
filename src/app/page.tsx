@@ -12,6 +12,7 @@ import { VinnyWordmark } from "@/components/VinnyWordmark";
 import { DIRECTIONS_URL, isMeetMeLine, MAP_QUERY, PHONE_DISPLAY, RESERVE_TEL } from "@/lib/public";
 import { OrderLink } from "@/components/OrderLink";
 import { LUNCH_PLATES } from "@/lib/lunch-photos";
+import { publishedMenus } from "@/lib/menu-options";
 import { pageMeta } from "@/lib/seo";
 import { getSite } from "@/lib/site";
 import type { MenuSection } from "@/lib/types";
@@ -119,7 +120,7 @@ export default async function HomePage() {
             <h2 id="select-dishes-heading">Select Dishes</h2>
             <p className="band-lede">{LUNCH_SERVICE}.</p>
           </div>
-          <SelectDishes dishes={dishes} toastUrl={site.toastUrl} />
+          <SelectDishes dishes={dishes} menus={publishedMenus(menu)} toastUrl={site.toastUrl} />
         </div>
       </section>
 

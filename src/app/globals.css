@@ -1910,7 +1910,6 @@ input[type="checkbox"] { width: 1.15rem; height: 1.15rem; min-height: 0; accent-
 .visit-storefront { margin: 0; width: 100%; }
 .visit-storefront img { display: block; width: 100%; height: auto; padding: 0; border: 0; border-radius: 0; }
 .visit-grid { padding-block: 3rem; }
-.hero-motion-toggle { position: absolute; bottom: 1rem; right: 1rem; z-index: 4; min-height: 44px; padding: .6rem 1rem; border: 1px solid #ffffff80; background: #141414d9; color: white; border-radius: 0; font: inherit; font-size: .75rem; cursor: pointer; }
 .nav-toggle, .nav-mobile-action { display: none; }
 a:focus-visible, button:focus-visible { outline: 3px solid var(--gold-hot); outline-offset: 4px; }
 @media (min-width: 800px) {
@@ -1939,7 +1938,6 @@ a:focus-visible, button:focus-visible { outline: 3px solid var(--gold-hot); outl
   .quick-action-links { width: 100%; }
   .quick-action-links .btn { flex: 1 1 auto; justify-content: center; min-height: 44px; }
   .reel-hero-copy { padding-bottom: 3.5rem; }
-  .hero-motion-toggle { bottom: .5rem; right: .5rem; padding: .5rem .7rem; font-size: .7rem; }
   .visit-band .visit-grid { padding-block: 2rem; }
 }
 @media (max-width: 540px) {
@@ -1960,4 +1958,19 @@ a:focus-visible, button:focus-visible { outline: 3px solid var(--gold-hot); outl
   .hours div { gap: .75rem; }
   .hours dt { min-width: 0; overflow-wrap: anywhere; }
   .hours dd { white-space: nowrap; font-size: .9rem; }
+}
+
+/* One highlighted dish and owner-confirmed service menu selectors. */
+.select-stage--text { grid-template-columns: minmax(0, 1fr); }
+.select-stage--text .select-card { min-height: 17rem; }
+.select-menu-controls { display: flex; justify-content: center; flex-wrap: wrap; }
+.select-menu-controls button { min-height: 44px; }
+.select-dots button { display: grid; place-items: center; width: 44px; height: 44px; min-width: 44px; min-height: 44px; padding: 0; border: 0; background: transparent; }
+.select-dots button::after { content: ""; width: 8px; height: 8px; border-radius: 50%; background: #bbb; }
+.select-dots button.is-current { background: transparent; border-color: transparent; }
+.select-dots button.is-current::after { background: var(--black); }
+@media (max-width: 540px) {
+  .select-card { padding: 1.1rem; }
+  .select-card-nav { flex-wrap: wrap; justify-content: space-between; }
+  .select-dots { order: 3; width: 100%; justify-content: center; }
 }

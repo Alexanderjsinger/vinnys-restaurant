@@ -48,7 +48,7 @@ test("HeroMedia ambient playback: IO, muted playsInline, loops, no controls", ()
   assert.match(hero, /visibilitychange/, "pauses when tab hidden");
   assert.match(hero, /el\.loop\s*=\s*true/, "reel loops");
   assert.match(hero, /<video[\s\S]*?\bloop\b/, "video element loops");
-  assert.match(hero, /Pause reel/, "ambient reel has an explicit pause control");
+  assert.doesNotMatch(hero, /<button|Pause reel|Resume reel/, "ambient reel has no visible playback controls");
   assert.doesNotMatch(hero, /<video[\s\S]*?\bcontrols\b/, "video element has no controls");
   assert.doesNotMatch(hero, /\bautoPlay\b/, "avoid autoPlay attribute desync with blocked autoplay");
 });

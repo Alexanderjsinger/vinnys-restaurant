@@ -11,7 +11,7 @@ import { useEffect, useRef, useState } from "react";
  * Playback:
  * - Poster first; muted inline play when ~50% visible (IntersectionObserver).
  * - Loops for as long as it stays on screen. Pauses off-viewport / tab hidden.
- * - A discreet pause/resume button preserves the guest’s choice.
+ * - No visible playback controls; the reel loops automatically.
  * - prefers-reduced-motion + Save-Data → still poster only.
  */
 const DEFAULT_POSTER = {
@@ -74,7 +74,6 @@ export function HeroMedia({
   const playGenRef = useRef(0);
   const [reduceMotion, setReduceMotion] = useState(false);
   const [saveData, setSaveData] = useState(false);
-  const [manuallyPaused, setManuallyPaused] = useState(false);
 
   const canPlayVideo = Boolean(videoSrc) && !reduceMotion && !saveData;
 
@@ -96,10 +95,9 @@ export function HeroMedia({
     if (!el || !frame || !canPlayVideo) return;
 
     prepareVideoEl(el);
-    if (manuallyPaused) el.pause();
 
     const tryAmbientPlay = () => {
-      if (document.visibilityState === "hidden" || manuallyPaused) return;
+      if (document.visibilityState === "hidden") return;
       prepareVideoEl(el);
       playGenRef.current += 1;
       const gen = playGenRef.current;
@@ -140,7 +138,7 @@ export function HeroMedia({
       io.disconnect();
       document.removeEventListener("visibilitychange", onVisibility);
     };
-  }, [canPlayVideo, videoSrc, manuallyPaused]);
+  }, [canPlayVideo, videoSrc]);
 
   return (
     <div className="framed-hero">
@@ -173,11 +171,6 @@ export function HeroMedia({
           )}
         </figure>
 
-        {canPlayVideo ? (
-          <button className="hero-motion-toggle" type="button" aria-pressed={manuallyPaused} onClick={() => setManuallyPaused(!manuallyPaused)}>
-            {manuallyPaused ? "Resume reel" : "Pause reel"}
-          </button>
-        ) : null}
         {overlay ? <div className="framed-hero-overlay">{overlay}</div> : null}
       </section>
     </div>

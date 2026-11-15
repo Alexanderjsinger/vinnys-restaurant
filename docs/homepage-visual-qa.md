@@ -15,9 +15,9 @@ Capture before/after screenshots at **390×844, 430×932, 768×1024, 1280×800, 
 | Desktop hero/header | Full-viewport reel, readable overlay header throughout playback; one clear action area below the reel |
 | Mobile header | Compact logo, CMS Order link when configured, menu disclosure; no overlap or overflow; targets at least 44px |
 | Navigation | Menu opens and closes; Escape closes and returns focus; hidden links are not keyboard reachable; links reach advertised routes |
-| Hero motion | Pause persists while scrolling away/back; Resume works; reduced motion and Save-Data use still poster; mobile reel remains 16:9 |
+| Hero motion | Reel loops automatically without visible playback buttons; reduced motion and Save-Data use still poster; mobile reel remains 16:9 |
 | Quick actions | Menu, Call to Reserve (`tel:`), and Directions; no nonfunctional party/date/time inputs |
-| Food | Published names, descriptions, prices; only matching approved burger/cauliflower photos; text cards for unmatched items; full-menu link; no invented Happy Hour/Dinner tabs |
+| Food | Published names, descriptions, prices; only matching approved burger/cauliflower photos; one highlighted dish at a time, text-only for unmatched photos; manual previous/next; Lunch / Happy Hour / Dinner expand one menu at a time; unconfirmed menus show a details-unavailable message |
 | Events | Dates/times prominent, descriptions readable, status/next-step behavior preserved; home displays at most three upcoming |
 | Visit | Authentic storefront retained without added frame or crop; hours/address/call/directions legible; map and footer usable |
 | Public routes | `/`, `/menu`, `/events`, `/contact`, `/order`, `/reserve` render; legacy `/parties` redirects to Contact |

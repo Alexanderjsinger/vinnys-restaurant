@@ -19,19 +19,20 @@ test("homepage exposes honest reservation actions and published menu content", (
   assert.doesNotMatch(page, /\bORDER_URL\b/);
 });
 
-test("featured dishes provide accessible static cards and full-menu navigation", () => {
+test("featured dishes show one manually selected highlight and expandable menus", () => {
   const select = read("src/components/SelectDishes.tsx");
-  assert.match(select, /dish\.photo \?/);
-  assert.match(select, /dish\.description/);
-  assert.match(select, /formatPrice\(dish\.price\)/);
-  assert.match(select, /href="\/menu"/);
-  assert.doesNotMatch(select, /aria-roledescription="carousel"|select-menu-controls|select-dots/);
-  const css = read("src/app/globals.css");
-  assert.match(css, /\.dish-photo img\s*\{[^}]*object-fit:\s*cover/);
-  assert.match(css, /\.dish-photo img\s*\{[^}]*border-radius:\s*0/);
+  assert.match(select, /aria-roledescription="carousel"/);
+  assert.match(select, /feature\.photo \?/);
+  assert.match(select, /formatPrice\(feature\.price\)/);
+  assert.match(select, /aria-expanded=\{openMenu === menu.id\}/);
+  assert.match(select, /menu details aren’t available online yet/);
+  assert.doesNotMatch(select, /select-teasers|select-photo-arrow/);
+  const options = read("src/lib/menu-options.ts");
+  assert.match(options, /id: "happy-hour"[^\n]*sections: \[\]/);
+  assert.match(options, /id: "dinner"[^\n]*sections: \[\]/);
 });
 
-test("ambient reel retains Range API, reduced-motion fallback and user pause", () => {
+test("ambient reel retains Range API, reduced-motion fallback and automatic looping", () => {
   const hero = read("src/components/HeroMedia.tsx");
   const lib = read("src/lib/hero.ts");
   assert.match(lib, /src:\s*"\/api\/sizzle"/);
@@ -39,10 +40,8 @@ test("ambient reel retains Range API, reduced-motion fallback and user pause", (
   assert.match(hero, /prefers-reduced-motion/);
   assert.match(hero, /connectionWantsDataSave/);
   assert.match(hero, /IntersectionObserver/);
-  assert.match(hero, /manuallyPaused/);
-  assert.match(hero, /Resume reel/);
-  assert.match(hero, /Pause reel/);
-  assert.match(hero, /aria-pressed=\{manuallyPaused\}/);
+  assert.match(hero, /el\.loop\s*=\s*true/);
+  assert.doesNotMatch(hero, /<button|Pause reel|Resume reel|manuallyPaused/);
   assert.ok(fs.statSync(path.join(root, "public/hero/vinnys-sizzle-reel.mp4")).size < 4_000_000);
 });
 
