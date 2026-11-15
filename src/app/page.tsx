@@ -106,27 +106,32 @@ export default async function HomePage() {
       </section>
 
       <section className="story-split" aria-labelledby="story-heading">
-        <div className="wrap story-grid">
+        <div className="story-grid">
           <div className="story-copy">
-            <p className="micro-label">Our home on historic Cross Street</p>
-            <h2 id="story-heading">
-              705 W Cross St: across from EMU, built for gathering
-            </h2>
+            <p className="micro-label">Find us in Ypsilanti</p>
+            <h2 id="story-heading">Right across from EMU.</h2>
+            <p className="story-address">705 W Cross Street</p>
             <p>
-              {site.heroText?.trim() ||
-                `${DEFAULT_PLACE_NAME} is a bar and grill on historic Cross Street in Ypsilanti, directly across from Eastern Michigan University.`}
-            </p>
-            <p>
-              Lunch is served daily, 11–3pm, from the published menu. Call for the room, or order
-              takeout when Toast is connected.
+              A bar and grill on Cross Street, just across from Eastern Michigan University. Lunch is
+              served daily, 11–3pm.
             </p>
             <p className="story-links">
-              <Link className="btn btn-ink" href="/contact">
-                Visit & hours →
-              </Link>
-              <a className="text-link" href={phoneHref} data-track="phone_click">
-                Call to plan an evening →
+              <a
+                className="btn btn-ink"
+                href={site.mapUrl || DIRECTIONS_URL}
+                data-track="directions_click"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Get Directions
+                <span className="sr-only"> (opens in a new tab)</span>
               </a>
+              <Link className="text-link" href="/contact#hours-heading">
+                View Hours
+              </Link>
+            </p>
+            <p className="story-caption">
+              Listing photo of the exterior, not an owner photo of the dining room.
             </p>
           </div>
           <figure className="story-frame">
@@ -136,12 +141,6 @@ export default async function HomePage() {
               width={1110}
               height={886}
             />
-            <figcaption>
-              <span>705 W Cross St · Across from EMU / Ypsilanti, MI</span>
-              <span className="story-frame-note">
-                Listing photo of the exterior, not an owner photo of the dining room.
-              </span>
-            </figcaption>
           </figure>
         </div>
       </section>

@@ -473,57 +473,84 @@ address { font-style: normal; }
 
 /* ——— Story split ——— */
 .story-split {
-  padding: 3rem 0 3.2rem;
+  margin: 0;
+  padding: 0;
   background: transparent;
 }
 .story-grid {
   display: grid;
-  gap: 1.6rem;
+  grid-template-columns: minmax(0, 1fr);
   align-items: center;
+  margin: 0;
+  padding: 0;
+  gap: 0;
 }
 @media (min-width: 860px) {
-  .story-grid { grid-template-columns: 1.05fr 0.95fr; gap: 2.4rem; }
+  .story-grid { grid-template-columns: minmax(0, 1fr) auto; }
 }
-.story-copy p { color: var(--paper-muted); max-width: 36rem; }
-.story-copy h2 { color: var(--black); max-width: 16ch; }
+.story-copy { padding: 1.15rem 1rem 1.15rem; }
+@media (min-width: 860px) {
+  .story-copy { padding: 0 2.5rem 0 max(1.25rem, calc((100vw - 1120px) / 2)); }
+}
+.story-copy p { color: var(--paper-muted); max-width: 34rem; }
+.story-copy h2 { color: var(--black); max-width: none; }
+.story-copy .story-address {
+  margin: 0 0 0.85rem;
+  color: var(--ink-soft);
+  font-size: 1.05rem;
+  font-weight: 500;
+}
 .story-links {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.75rem 1.2rem;
+  gap: 0.35rem 1.15rem;
   align-items: center;
-  margin-top: 1.2rem;
+  margin-top: 1.35rem;
+}
+.story-links .text-link {
+  font-size: 0.86rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.story-caption {
+  margin: 0.85rem 0 0;
+  max-width: 34rem;
+  color: var(--paper-muted);
+  font-size: 0.78rem;
+  font-weight: 400;
+  letter-spacing: 0;
+  line-height: 1.4;
 }
 .story-frame {
   margin: 0;
-  max-width: 32rem;
-  justify-self: end;
-  background: var(--black);
-  border: 0.45rem solid var(--black);
-  box-shadow: var(--shadow);
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: none;
+  box-shadow: none;
+  line-height: 0;
+  width: 100%;
+  max-width: none;
+  justify-self: stretch;
+}
+@media (min-width: 860px) {
+  .story-frame {
+    width: min(50vw, 40rem);
+    justify-self: end;
+  }
 }
 .story-frame img {
+  display: block;
   width: 100%;
   height: auto;
-  /* Storefront source is ~5:4; keep honest, cap so the frame never dominates */
-  aspect-ratio: 5 / 4;
-  max-height: min(20rem, 46vh);
-  object-fit: cover;
-  object-position: center;
-  display: block;
-}
-.story-frame figcaption {
-  display: grid;
-  gap: 0.2rem;
-  padding: 0.75rem 0.9rem 0.85rem;
-  background: rgba(8, 6, 4, 0.92);
-  color: #fff;
-  font-size: 0.86rem;
-  letter-spacing: 0.04em;
-}
-.story-frame-note {
-  color: rgba(255, 255, 255, 0.65);
-  font-size: 0.78rem;
-  letter-spacing: 0;
+  max-width: none;
+  max-height: none;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: none;
+  box-shadow: none;
 }
 
 /* ——— Social rituals dark band ——— */
@@ -1049,8 +1076,6 @@ address { font-style: normal; }
   .plate .shot img,
   .photo-row .shot img { max-height: none; }
   .event img { max-height: 22rem; }
-  .story-frame { max-width: 28rem; }
-  .story-frame img { max-height: min(18rem, 42vh); }
   .ritual-strip img { max-height: min(13.5rem, 34vh); }
 }
 .chip {
@@ -1223,13 +1248,6 @@ input[type="checkbox"] { width: 1.15rem; height: 1.15rem; min-height: 0; accent-
     margin-top: 0.75rem;
   }
   .framed-hero-actions .btn { flex: 1; text-align: center; }
-  .story-frame {
-    max-width: none;
-    justify-self: stretch;
-  }
-  .story-frame img {
-    max-height: min(16rem, 42vh);
-  }
   .ritual-strip img {
     max-height: min(11rem, 34vh);
   }
