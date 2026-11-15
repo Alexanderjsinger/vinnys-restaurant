@@ -29,13 +29,15 @@ test("header chrome matches Stitch light composition (Call + Order)", () => {
   assert.doesNotMatch(header, /EST\.\s*1964|Happy Hour|Weekend Brunch/i);
   assert.doesNotMatch(header, /positioning/, "old brass positioning strip removed");
 
-  const hero = page.match(/className="stitch-hero"[\s\S]*?<\/section>/);
+  const hero = page.match(/className="stitch-hero reel-hero"[\s\S]*?<\/section>/);
   assert.ok(hero, "stitch-hero section exists");
   assert.doesNotMatch(hero[0], /Historic Cross Street/, "location eyebrow is removed from the wordmark block");
   assert.match(hero[0], /stitch-wordmark-mark/, "hero keeps short wordmark art direction");
   assert.match(hero[0], /VinnyWordmark/, "hero uses sign wordmark");
+  assert.match(hero[0], /surface="dark"/, "wordmark is light against the reel");
+  assert.match(hero[0], /reel-hero-copy/, "wordmark and line sit on the reel");
   assert.match(hero[0], /stitch-wordmark-rest/, "hero shows Bar & Grill from CMS place name");
-  assert.match(hero[0], /reserve-bar/, "reservation bar sits in the stitch hero, under the reel");
+  assert.match(hero[0], /reserve-bar/, "reservation bar sits on the reel");
   assert.match(hero[0], /href="\/reserve"/, "Reserve opens the existing call-to-reserve page");
   assert.match(hero[0], /Party size/);
   assert.match(hero[0], /type="date"/);
@@ -113,11 +115,6 @@ test("framed hero is full-bleed ambient media + honest poster structure", () => 
   assert.ok(frameRule, "framed-hero-frame rule exists");
   assert.match(frameRule[0], /border-radius:\s*0/, "edge-to-edge frame (no inset rounded card)");
   assert.match(frameRule[0], /width:\s*100%/, "frame width forced full-bleed (aspect-ratio must not shrink it)");
-  assert.match(
-    frameRule[0],
-    /height:\s*clamp\(|max-height:/,
-    "height stays capped so reel doesn’t dominate the page",
-  );
   assert.doesNotMatch(
     frameRule[0],
     /aspect-ratio:/,
@@ -138,8 +135,8 @@ test("framed hero is full-bleed ambient media + honest poster structure", () => 
   assert.match(page, /durationLabel=\{SIZZLE_REEL\.durationLabel\}/, "homepage passes measured duration only");
   assert.match(
     page,
-    /<\/div>\s*<HeroMedia[\s\S]*?<div\s+className="reserve-bar"/,
-    "HeroMedia stays outside the copy wrap; reservation bar is full-bleed under the reel",
+    /<section className="stitch-hero reel-hero"[\s\S]*?<HeroMedia[\s\S]*?\/>\s*<div className="reel-hero-copy"[\s\S]*?<div\s+className="reserve-bar"/,
+    "the reel is the first view, with the wordmark and reservation bar on the video",
   );
   assert.doesNotMatch(
     page,
@@ -149,12 +146,25 @@ test("framed hero is full-bleed ambient media + honest poster structure", () => 
   const reserveBar = css.match(/\.reserve-bar\s*\{[^}]*\}/);
   assert.ok(reserveBar, "reserve-bar rule exists");
   assert.match(reserveBar[0], /width:\s*100%/, "reservation bar is full-bleed");
-  assert.match(reserveBar[0], /margin:\s*0/, "reservation bar sits flush under the reel");
+  assert.match(reserveBar[0], /margin:\s*0/, "reservation bar has no outer gap");
   assert.match(reserveBar[0], /background:\s*var\(--black\)/);
   assert.match(reserveBar[0], /border-radius:\s*0/);
-  const stitchHero = css.match(/\.stitch-hero\s*\{[^}]*\}/);
-  assert.ok(stitchHero, "stitch-hero rule exists");
-  assert.match(stitchHero[0], /padding:\s*1\.36rem 0 0/, "no cream gap between the reel and the bar");
+  const reelRule = css.match(/\.stitch-hero\.reel-hero\s*\{[^}]*\}/);
+  assert.ok(reelRule, "fullscreen reel rule exists");
+  assert.match(reelRule[0], /width:\s*100vw/, "reel is the viewport width");
+  assert.match(reelRule[0], /height:\s*100dvh/, "reel is the dynamic viewport height");
+  assert.match(reelRule[0], /padding:\s*0/, "no cream box around the video");
+  assert.doesNotMatch(reelRule[0], /aspect-ratio:/);
+  const reelFrame = css.match(/\.reel-hero \.framed-hero-frame\s*\{[^}]*\}/);
+  assert.ok(reelFrame, "reel frame fills the hero");
+  assert.match(reelFrame[0], /height:\s*100%/);
+  assert.match(reelFrame[0], /max-height:\s*none/, "reel is not capped into a short band");
+  const reelBar = css.match(/\.reel-hero \.reserve-bar\s*\{[^}]*\}/);
+  assert.ok(reelBar, "reservation bar is positioned on the reel");
+  assert.match(reelBar[0], /position:\s*absolute/);
+  assert.match(reelBar[0], /bottom:\s*0/);
+  assert.match(reelBar[0], /left:\s*0/);
+  assert.match(reelBar[0], /right:\s*0/);
   assert.match(css, /\.reserve-bar \.reserve-bar-submit[\s\S]*?background:\s*var\(--gold-hot\)/);
   assert.doesNotMatch(css, /#e72225|#e62527/, "reservation bar does not copy the reference red");
   assert.ok(fs.existsSync(reelPath), "sizzle reel mp4 is present under public/hero");

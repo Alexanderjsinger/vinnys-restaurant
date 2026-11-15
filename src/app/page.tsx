@@ -74,12 +74,13 @@ export default async function HomePage() {
 
   return (
     <>
-      <section className="stitch-hero" aria-labelledby="home-heading">
-        <div className={`wrap stitch-hero-copy${heroSupport ? "" : " stitch-hero-copy-tight"}`}>
+      <section className="stitch-hero reel-hero" aria-labelledby="home-heading">
+        <HeroMedia videoSrc={SIZZLE_REEL.src} durationLabel={SIZZLE_REEL.durationLabel} />
+        <div className="reel-hero-copy">
           <h1 id="home-heading" className="stitch-wordmark">
             <span className="stitch-wordmark-mark">
               {isVinnyShortMark(heroMark) ? (
-                <VinnyWordmark size="lg" surface="light" decorative />
+                <VinnyWordmark size="lg" surface="dark" decorative />
               ) : (
                 heroMark
               )}
@@ -89,8 +90,6 @@ export default async function HomePage() {
           <div className="gold-rule" aria-hidden="true" />
           {heroSupport ? <p className="stitch-hero-support">{heroSupport}</p> : null}
         </div>
-
-        <HeroMedia videoSrc={SIZZLE_REEL.src} durationLabel={SIZZLE_REEL.durationLabel} />
 
         {/* /contact and /reserve cannot take party size, date, or time. The fields match the bar layout; Reserve opens the call-to-reserve page. */}
         <div
