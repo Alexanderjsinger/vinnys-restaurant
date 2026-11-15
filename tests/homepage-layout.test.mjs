@@ -291,6 +291,12 @@ test("stitch homepage keeps authenticity constraints in markup", () => {
   assert.doesNotMatch(page, /testimonial|inquiry form|name="event_type"/i);
   assert.doesNotMatch(page, /private part(?:y|ies)|\/parties|Party details/i);
   assert.match(page, /isMeetMeLine/, "cream hero omits Meet me when CMS hero_text is only that line");
+  assert.doesNotMatch(
+    page,
+    /A bar and grill across from EMU/,
+    "reel does not render or replace the EMU placeholder sentence",
+  );
+  assert.match(page, /stitch-wordmark/, "wordmark stays on the reel");
   assert.doesNotMatch(page, /Historic Cross Street/, "wordmark block has no location eyebrow");
   assert.match(page, /listMenu\("public"\)/);
   assert.match(page, /Listing photo of the exterior/);
