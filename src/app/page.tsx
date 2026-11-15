@@ -74,7 +74,6 @@ export default async function HomePage() {
     <>
       <section className="stitch-hero" aria-labelledby="home-heading">
         <div className={`wrap stitch-hero-copy${heroSupport ? "" : " stitch-hero-copy-tight"}`}>
-          <p className="micro-label stitch-hero-label">Historic Cross Street / Ypsilanti, Michigan</p>
           <h1 id="home-heading" className="stitch-wordmark">
             <span className="stitch-wordmark-mark">
               {isVinnyShortMark(heroMark) ? (
@@ -149,50 +148,43 @@ export default async function HomePage() {
         <div className="wrap">
           <p className="micro-label">Social rituals & gatherings</p>
           <h2 id="rituals-heading">Curated for every Cross Street night</h2>
-          <p className="band-lede social-lede">
-            Published events when we have them, and lunch from the menu.
-          </p>
-          <ul className="ritual-strip">
-            <li>
-              <figure>
-                <img
-                  src="/hero/meet-me.jpg"
-                  alt="Friends sharing drinks and plates at a restaurant table"
-                  width={900}
-                  height={600}
-                />
-                <figcaption>Meet me at Vinny&apos;s</figcaption>
-              </figure>
+        </div>
+        <ul className="ritual-strip">
+          <li>
+            <img
+              className="ritual-faces"
+              src="/hero/meet-me.jpg"
+              alt="Friends sharing drinks and plates at a restaurant table"
+              width={1800}
+              height={1203}
+            />
+          </li>
+          {plates.map(({ plate, item }) => (
+            <li key={item.id}>
+              <img src={plate.src} alt={plate.alt} width={plate.width} height={plate.height} />
             </li>
-            {plates.map(({ plate, item }) => (
-              <li key={item.id}>
-                <figure>
-                  <img src={plate.src} alt={plate.alt} width={plate.width} height={plate.height} />
-                  <figcaption>
-                    {item.name} · {formatPrice(item.price)}
-                  </figcaption>
-                </figure>
-              </li>
-            ))}
-            <li>
-              <figure>
-                <img
-                  src="/photos/storefront.webp"
-                  alt={`${DEFAULT_PLACE_NAME} storefront exterior`}
-                  width={555}
-                  height={443}
-                />
-                <figcaption>705 W Cross St</figcaption>
-              </figure>
-            </li>
-          </ul>
+          ))}
+          <li>
+            <img
+              className="ritual-sign"
+              src="/photos/storefront.webp"
+              alt={`Exterior of ${DEFAULT_PLACE_NAME} at 705 W. Cross St.`}
+              width={1110}
+              height={886}
+            />
+          </li>
+        </ul>
+        <div className="wrap">
           <p className="cta-row social-ctas">
             <Link className="btn btn-gold" href="/events">
               Events
             </Link>
-            <a className="btn btn-outline-light" href={phoneHref} data-track="phone_click">
-              Call {phoneLabel}
-            </a>
+            <Link className="btn btn-outline-light" href="/contact">
+              Reserve
+            </Link>
+            <OrderLink className="btn btn-outline-light" url={site.toastUrl}>
+              Order
+            </OrderLink>
           </p>
         </div>
       </section>

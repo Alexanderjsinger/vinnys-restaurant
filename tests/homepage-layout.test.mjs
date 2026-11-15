@@ -25,11 +25,13 @@ test("header chrome matches Stitch light composition (Call + Order)", () => {
   assert.match(header, /HERO_LINE/, "header tagline uses locked Meet me line");
   assert.match(header, /splitPlaceWordmark|site\.name/, "nav brand comes from CMS place name");
   assert.match(header, /Ypsilanti, MI/, "location subtitle without invented EST year");
+  assert.doesNotMatch(header, /className="rail"|Join us on Cross St/, "black info bar stays off the header");
   assert.doesNotMatch(header, /EST\.\s*1964|Happy Hour|Weekend Brunch/i);
   assert.doesNotMatch(header, /positioning/, "old brass positioning strip removed");
 
   const hero = page.match(/className="stitch-hero"[\s\S]*?<\/section>/);
   assert.ok(hero, "stitch-hero section exists");
+  assert.doesNotMatch(hero[0], /Historic Cross Street/, "location eyebrow is removed from the wordmark block");
   assert.match(hero[0], /stitch-wordmark-mark/, "hero keeps short wordmark art direction");
   assert.match(hero[0], /VinnyWordmark/, "hero uses sign wordmark");
   assert.match(hero[0], /stitch-wordmark-rest/, "hero shows Bar & Grill from CMS place name");
@@ -79,6 +81,16 @@ test("lunch plate frames use cover framing instead of letterboxed tall voids", (
     /\.plate \.shot img[\s\S]*?max-height:\s*none/,
     "desktop keeps plate cover frames uncapped",
   );
+  assert.match(
+    plateDesktop,
+    /\.plate \.shot\s*\{[^}]*max-width:\s*none/,
+    "desktop lunch plates fill the column",
+  );
+  assert.match(
+    plateDesktop,
+    /\.plate \.shot\s*\{[^}]*width:\s*100%/,
+    "desktop lunch plate frame is the full column width",
+  );
 });
 
 test("framed hero is full-bleed ambient media + honest poster structure", () => {
@@ -107,7 +119,12 @@ test("framed hero is full-bleed ambient media + honest poster structure", () => 
   );
   assert.match(css, /\.framed-hero-media img[\s\S]*?object-fit:\s*cover/, "hero image covers the frame");
   assert.match(hero, /framed-hero/, "hero wraps in framed band");
-  assert.match(hero, /framed-hero-credit/, "stock-photo honesty caption remains available");
+  assert.doesNotMatch(hero, /framed-hero-credit/, "hero caption is not rendered");
+  assert.doesNotMatch(
+    hero,
+    /Atmosphere reel|Not a photo of Vinny/,
+    "stock-still disclaimer is not guest copy on the hero",
+  );
   const heroLib = read(path.join(root, "src/lib/hero.ts"));
   assert.match(heroLib, /SIZZLE_REEL/, "approved sizzle reel constant is defined");
   assert.match(heroLib, /durationLabel:\s*"0:16"/, "duration matches measured ~16.13s file");
@@ -126,16 +143,8 @@ test("framed hero is full-bleed ambient media + honest poster structure", () => 
   assert.doesNotMatch(hero, /manualPauseRef|togglePlayback|framed-ambient-control|<button/, "no play or pause control");
   assert.doesNotMatch(hero, /framed-play/, "no play icon");
   assert.doesNotMatch(hero, /Watch atmosphere reel/, "no persistent watch-label chrome");
-  assert.match(hero, /Atmosphere reel|atmosphere reel/, "honest atmosphere copy (no invented dazzle branding)");
   assert.doesNotMatch(hero, /1:13|1:20|DAZZLE REEL/i);
-  assert.doesNotMatch(
-    hero,
-    /<figure className="framed-hero-media[\s\S]*?framed-hero-credit[\s\S]*?<\/figure>/,
-    "honesty caption must not float as an overlay inside the hero media figure",
-  );
-  const creditRule = css.match(/\.framed-hero-credit\s*\{[^}]*\}/);
-  assert.ok(creditRule, "framed-hero-credit rule exists");
-  assert.doesNotMatch(creditRule[0], /position:\s*absolute/, "credit is not absolutely positioned over media");
+  assert.doesNotMatch(css, /\.framed-hero-credit\s*\{/, "removed hero caption has no layout rule");
 
   assert.match(css, /\.venue-shot img\s*\{[\s\S]*?aspect-ratio:/, "venue band declares an aspect ratio");
   assert.match(css, /\.venue-shot img\s*\{[\s\S]*?object-fit:\s*cover/, "venue uses cover crop");
@@ -185,6 +194,7 @@ test("Cross Street band is full-bleed: photo column is half the section, no fram
 
 test("stitch homepage keeps authenticity constraints in markup", () => {
   const page = read(pagePath);
+  const css = read(cssPath);
   assert.match(page, /HeroMedia/, "homepage uses video-ready HeroMedia");
   assert.match(page, /stitch-hero/, "cream Stitch hero composition");
   assert.match(page, /story-split/, "cream story split");
@@ -196,7 +206,45 @@ test("stitch homepage keeps authenticity constraints in markup", () => {
   assert.doesNotMatch(page, /testimonial|inquiry form|name="event_type"/i);
   assert.doesNotMatch(page, /private part(?:y|ies)|\/parties|Party details/i);
   assert.match(page, /isMeetMeLine/, "cream hero omits Meet me when CMS hero_text is only that line");
-  assert.match(page, /Meet me at Vinny/, "ritual strip keeps Meet me caption");
+  assert.doesNotMatch(page, /Historic Cross Street/, "wordmark block has no location eyebrow");
   assert.match(page, /listMenu\("public"\)/);
   assert.match(page, /Listing photo of the exterior/);
+
+  const social = page.match(/className="social-rituals"[\s\S]*?<\/section>/);
+  assert.ok(social, "social band exists");
+  assert.doesNotMatch(social[0], /Published events when we have them/, "social lede is removed");
+  assert.doesNotMatch(social[0], /figcaption/, "social photos have no captions");
+  assert.doesNotMatch(social[0], /phoneHref|Call /, "social band has no phone CTA");
+  assert.match(social[0], />\s*Events\s*</);
+  assert.match(social[0], /href="\/contact"[\s\S]*Reserve/, "Reserve uses the contact path");
+  assert.match(social[0], /OrderLink[\s\S]*Order/, "Order uses the Toast link");
+
+  const layout = read(path.join(root, "src/app/layout.tsx"));
+  assert.match(layout, /Montserrat/, "Meet me loads Montserrat through next/font");
+  assert.match(layout, /--font-tagline/);
+  assert.match(css, /\.brand-tagline\s*\{[^}]*var\(--font-tagline\)/);
+  assert.match(
+    css,
+    /\.stitch-wordmark-mark \.vinny-wordmark--lg\s*\{[^}]*height:\s*clamp\(2\.56rem,\s*9\.6vw,\s*5\.6rem\)/,
+    "hero wordmark block is about 20% shorter",
+  );
+
+  const hours = read(path.join(root, "src/components/HoursList.tsx"));
+  assert.doesNotMatch(hours, /Not confirmed yet/, "draft hours note is not guest copy");
+  const footer = read(path.join(root, "src/components/SiteFooter.tsx"));
+  assert.match(footer, /Lunch daily, 11–3pm/, "printed lunch hours stay in the footer");
+  assert.match(footer, /brand-mark/, "footer wordmark uses the header lockup");
+  assert.match(footer, /brand-tagline/, "footer Meet me uses the same tagline style");
+  assert.match(footer, /VinnyWordmark size="sm"/, "footer wordmark size matches the header");
+
+  const strip = css.match(/\.ritual-strip\s*\{[^}]*\}/);
+  assert.ok(strip, "ritual strip rule exists");
+  assert.match(strip[0], /gap:\s*0/, "social photos have no gap between frames");
+  const ritualImg = css.match(/\.ritual-strip img\s*\{[^}]*\}/);
+  assert.ok(ritualImg, "ritual image rule exists");
+  assert.match(ritualImg[0], /width:\s*100%/);
+  assert.match(ritualImg[0], /object-fit:\s*cover/);
+  assert.match(ritualImg[0], /aspect-ratio:\s*3\s*\/\s*2/);
+  assert.match(ritualImg[0], /border-radius:\s*0/);
+  assert.doesNotMatch(ritualImg[0], /max-height:\s*min\(/, "social photos are not capped into an inset");
 });

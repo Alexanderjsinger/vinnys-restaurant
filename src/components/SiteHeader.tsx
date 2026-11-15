@@ -1,8 +1,7 @@
 import Link from "next/link";
 import { DEFAULT_PLACE_NAME, isVinnyShortMark, splitPlaceWordmark } from "@/lib/brand";
 import { VinnyWordmark } from "@/components/VinnyWordmark";
-import { LUNCH_SERVICE } from "@/lib/lunch-menu";
-import { HERO_LINE, PHONE_DISPLAY, RESERVE_TEL, STREET_ADDRESS } from "@/lib/public";
+import { HERO_LINE, PHONE_DISPLAY, RESERVE_TEL } from "@/lib/public";
 import type { PublicSite } from "@/lib/types";
 import { OrderLink } from "./OrderLink";
 import { PrimaryNav } from "./PrimaryNav";
@@ -10,7 +9,6 @@ import { PrimaryNav } from "./PrimaryNav";
 export function SiteHeader({ site }: { site: PublicSite }) {
   const phoneHref = site.phoneHref || RESERVE_TEL;
   const phoneLabel = site.phone || PHONE_DISPLAY;
-  const address = site.address || STREET_ADDRESS;
   const placeName = site.name.trim() || DEFAULT_PLACE_NAME;
   const { mark, rest } = splitPlaceWordmark(placeName);
   const showShortMark = isVinnyShortMark(mark);
@@ -18,19 +16,6 @@ export function SiteHeader({ site }: { site: PublicSite }) {
   return (
     <header className="site-header">
       <div className="sticky-bar">
-        <div className="rail">
-          <div className="wrap rail-inner">
-            <span>Join us on Cross St.</span>
-            <span className="rail-dot" aria-hidden="true">
-              ·
-            </span>
-            <span>{LUNCH_SERVICE}</span>
-            <span className="rail-dot" aria-hidden="true">
-              ·
-            </span>
-            <span>Across from EMU · {address}</span>
-          </div>
-        </div>
         <div className="wrap brand-row">
           <Link className="brand" href="/" aria-label={placeName}>
             <span className="brand-mark">

@@ -11,21 +11,18 @@ export function SiteFooter({ site }: { site: PublicSite }) {
   const phoneLabel = site.phone || PHONE_DISPLAY;
   const { mark, rest } = splitPlaceWordmark(site.name);
   const showShortMark = isVinnyShortMark(mark);
+  const brandSub = rest ? `${rest} · Ypsilanti, MI` : "Ypsilanti, MI";
   return (
     <footer className="site-footer">
       <div className="wrap footer-grid">
         <div>
-          <p className="footer-name">
-            {showShortMark ? (
-              <>
-                <VinnyWordmark size="md" surface="dark" decorative />
-                {rest ? <span className="footer-name-rest"> {rest}</span> : null}
-              </>
-            ) : (
-              site.name
-            )}
-          </p>
-          {site.tagline ? <p className="footer-tag">{site.tagline}</p> : null}
+          <div className="brand">
+            <span className="brand-mark">
+              {showShortMark ? <VinnyWordmark size="sm" surface="dark" decorative /> : mark}
+            </span>
+            <span className="brand-sub">{brandSub}</span>
+            {site.tagline ? <span className="brand-tagline">{site.tagline}</span> : null}
+          </div>
           <address>{site.address || STREET_ADDRESS}</address>
           <p>
             <a href={phoneHref} data-track="phone_click">
