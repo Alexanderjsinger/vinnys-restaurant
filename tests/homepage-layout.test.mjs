@@ -55,7 +55,7 @@ test("lunch plate frames use cover framing instead of letterboxed tall voids", (
 
   const feature = css.match(/\.select-feature-photo\s*\{[^}]*\}/);
   assert.ok(feature, "featured dish photo frame exists");
-  assert.match(feature[0], /aspect-ratio:\s*4\s*\/\s*3/, "featured dish locks a 4/3 frame");
+  assert.match(feature[0], /aspect-ratio:\s*16\s*\/\s*10/, "featured dish locks a 16/10 frame on small screens");
   assert.match(feature[0], /padding:\s*0/);
   assert.match(feature[0], /border-radius:\s*0/);
   assert.match(feature[0], /border:\s*0/);
@@ -89,13 +89,18 @@ test("lunch plate frames use cover framing instead of letterboxed tall voids", (
   assert.ok(plateDesktop, "desktop select-dishes media query present");
   assert.match(
     plateDesktop,
-    /\.select-stage\s*\{[^}]*grid-template-columns:\s*minmax\(0,\s*1\.15fr\)\s*minmax\(16rem,\s*0\.85fr\)/,
+    /\.select-stage\s*\{[^}]*grid-template-columns:\s*minmax\(0,\s*1\.2fr\)\s*minmax\(17rem,\s*0\.8fr\)/,
     "desktop featured photo sits beside the card",
   );
   assert.match(
     plateDesktop,
-    /\.select-feature-photo\s*\{[^}]*aspect-ratio:\s*4\s*\/\s*3/,
-    "desktop featured photo stays a 4/3 cover frame",
+    /\.select-feature-photo\s*\{[^}]*height:\s*100%/,
+    "desktop featured photo fills the card row",
+  );
+  assert.match(
+    plateDesktop,
+    /\.select-row\s*\{[^}]*grid-template-columns:\s*repeat\(6,\s*minmax\(0,\s*1fr\)\)/,
+    "teaser photos fill one tight row",
   );
   const shotDesktop = desktopBlocks.find((block) => block.includes(".photo-row"));
   assert.ok(shotDesktop, "menu photo-row desktop rule still present");
@@ -240,7 +245,7 @@ test("stitch homepage keeps authenticity constraints in markup", () => {
   assert.match(page, /destination-tiles/, "destination tiles replace the curated band");
   assert.doesNotMatch(
     page,
-    /18 Cold Craft Taps|dry-aged|stone-fired|truffle fries|Happy Hour|Campus Nights|Pease Auditorium|Good Food, Great Times|SCRATCH TAVERN|EST\.\s*1964|Reserve a Table|Weekend Brunch|Birthday list|Lunch, dinner and everything after/i,
+    /18 Cold Craft Taps|dry-aged|stone-fired|truffle fries|Campus Nights|Pease Auditorium|Good Food, Great Times|SCRATCH TAVERN|EST\.\s*1964|Reserve a Table|Weekend Brunch|Birthday list|Lunch, dinner and everything after/i,
   );
   assert.doesNotMatch(page, /testimonial|inquiry form|name="event_type"/i);
   assert.doesNotMatch(page, /private part(?:y|ies)|\/parties|Party details/i);
@@ -265,10 +270,15 @@ test("stitch homepage keeps authenticity constraints in markup", () => {
   assert.match(lunch[0], /toastUrl=\{site\.toastUrl\}/);
   assert.doesNotMatch(page, /\bORDER_URL\b/);
   const select = read(path.join(root, "src/components/SelectDishes.tsx"));
+  assert.match(page, /label: "Lunch"/);
+  assert.match(page, /label: "Happy Hour"/);
+  assert.match(page, /label: "Dinner"/);
   assert.match(select, /Order online/);
-  assert.match(select, /dish\.description/);
+  assert.match(select, /feature\.description/);
   assert.match(select, /OrderLink/);
-  assert.doesNotMatch(select, /truffle|testimonial|CHEF'S FAVORITE|Happy Hour/i);
+  assert.match(select, />\s*Next\s*</);
+  assert.doesNotMatch(select, /truffle|testimonial|CHEF'S FAVORITE|\bdemo\b/i);
+  assert.doesNotMatch(page, /\bdemo\b/i);
 
   const layout = read(path.join(root, "src/app/layout.tsx"));
   assert.match(layout, /Montserrat/, "Meet me loads Montserrat through next/font");

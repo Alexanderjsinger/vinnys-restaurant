@@ -916,7 +916,7 @@ address { font-style: normal; }
 .select-feature-photo {
   position: relative;
   display: block;
-  aspect-ratio: 4 / 3;
+  aspect-ratio: 16 / 10;
   margin: 0;
   padding: 0;
   border: 0;
@@ -985,7 +985,26 @@ address { font-style: normal; }
   text-transform: uppercase;
 }
 .select-writeup { margin: 0; color: var(--paper-ink); line-height: 1.5; }
-.select-card-foot { display: grid; gap: 0.85rem; margin-top: auto; }
+.select-card-foot { display: grid; gap: 0.75rem; margin-top: 0.35rem; }
+.select-card-nav { display: flex; align-items: center; justify-content: space-between; gap: 0.55rem; }
+.select-card-arrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  min-height: 2.75rem;
+  margin: 0;
+  padding: 0 0.75rem;
+  border: 1px solid var(--paper-ink);
+  background: #fff;
+  color: var(--paper-ink);
+  font: inherit;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+.select-card-arrow svg { width: 1rem; height: 1rem; display: block; }
 .band-cream a.select-order.btn-gold,
 .band-cream .select-order.btn-gold {
   display: block;
@@ -1002,33 +1021,27 @@ address { font-style: normal; }
 }
 .select-dots { display: flex; justify-content: flex-end; gap: 0.4rem; }
 .select-dots button {
-  width: 0.55rem;
-  height: 0.55rem;
+  width: 0.7rem;
+  height: 0.7rem;
   margin: 0;
   padding: 0;
   border: 0;
   border-radius: 50%;
-  background: rgba(20, 18, 16, 0.22);
+  background: rgba(20, 18, 16, 0.28);
   cursor: pointer;
 }
 .select-dots button.is-current { background: var(--black); }
-.select-row-wrap {
-  display: grid;
-  grid-template-columns: auto minmax(0, 1fr) auto;
-  gap: 0.45rem;
-  align-items: center;
-  margin-top: 0.9rem;
-}
+.select-teasers { margin-top: 0.7rem; }
+.select-teaser-dots { justify-content: center; margin-top: 0.65rem; }
 .select-row {
-  display: flex;
-  gap: 0.75rem;
-  overflow-x: auto;
-  scroll-snap-type: x mandatory;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.4rem;
   list-style: none;
   margin: 0;
-  padding: 0.15rem 0;
+  padding: 0;
 }
-.select-row li { flex: 0 0 11.5rem; scroll-snap-align: start; min-width: 0; }
+.select-row li { min-width: 0; }
 .select-row-card {
   display: flex;
   flex-direction: column;
@@ -1042,7 +1055,8 @@ address { font-style: normal; }
   text-align: left;
   text-decoration: none;
 }
-button.select-row-card { cursor: pointer; }
+button.select-row-card { cursor: pointer; width: 100%; }
+.select-row-card.is-current { outline: 2px solid var(--gold-hot); outline-offset: 2px; }
 .select-row-photo {
   position: relative;
   display: block;
@@ -1070,31 +1084,7 @@ button.select-row-card { cursor: pointer; }
   object-position: center 36%;
   display: block;
 }
-.select-row-text {
-  aspect-ratio: 4 / 3;
-  margin: 0;
-  padding: 0.75rem;
-  border: 1px solid var(--paper-line);
-  background: #fff;
-  display: flex;
-  align-items: flex-end;
-}
-.select-row-text p {
-  margin: 0;
-  color: var(--paper-muted);
-  font-size: 0.82rem;
-  line-height: 1.35;
-}
-.select-row-name {
-  display: block;
-  margin-top: 0.45rem;
-  font-size: 0.78rem;
-  font-weight: 700;
-  letter-spacing: 0.05em;
-  text-transform: uppercase;
-}
-.select-row-card .price { display: block; margin-top: 0.15rem; font-size: 0.95rem; }
-.select-menus { margin-top: 1.35rem; }
+.select-menus { margin-top: 1.15rem; }
 .select-menu-controls { display: flex; justify-content: center; flex-wrap: wrap; }
 .select-menu-controls button {
   background: none;
@@ -1513,8 +1503,9 @@ button.select-row-card { cursor: pointer; }
 .signup-band .banner { text-align: left; }
 .menu-top h2 { border: 0; margin: 0; padding: 0; font-size: clamp(1.6rem, 3vw, 2rem); }
 @media (min-width: 800px) {
-  .select-stage { grid-template-columns: minmax(0, 1.15fr) minmax(16rem, 0.85fr); }
-  .select-feature-photo { aspect-ratio: 4 / 3; }
+  .select-stage { grid-template-columns: minmax(0, 1.2fr) minmax(17rem, 0.8fr); align-items: stretch; }
+  .select-feature-photo { aspect-ratio: auto; height: 100%; min-height: 100%; }
+  .select-row { grid-template-columns: repeat(6, minmax(0, 1fr)); }
   .photo-row, .plate-list { grid-template-columns: 1fr 1fr; }
   .shot img { max-height: 34rem; }
   .photo-row .shot {

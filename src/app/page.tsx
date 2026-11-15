@@ -36,12 +36,29 @@ const SELECT_DISH_NAMES = [
   "BAVARIAN PRETZEL",
 ] as const;
 
+const STAND_IN_FOOD = [
+  {
+    src: "/photos/pasta.webp",
+    alt: "Fettuccine in a cream sauce with shrimp, parmesan, and herbs",
+    width: 765,
+    height: 1020,
+  },
+  {
+    src: "/photos/cheesecake.webp",
+    alt: "Cheesecake slice with berries, mint, and raspberry sauce",
+    width: 765,
+    height: 1020,
+  },
+] as const;
+
 function selectDishes(menu: MenuSection[]): SelectDish[] {
   const rows = menu.flatMap((section) => section.items.map((item) => ({ item, sectionName: section.name })));
+  let standIn = 0;
   return SELECT_DISH_NAMES.flatMap((name) => {
     const row = rows.find((entry) => entry.item.name === name);
     if (!row) return [];
     const plate = LUNCH_PLATES.find((photo) => photo.menuName === name);
+    const photo = plate ?? STAND_IN_FOOD[standIn++ % STAND_IN_FOOD.length];
     return [
       {
         id: row.item.id,
@@ -50,17 +67,15 @@ function selectDishes(menu: MenuSection[]): SelectDish[] {
         price: row.item.price,
         section: row.sectionName,
         glutenFree: row.item.gluten_free,
-        photo: plate
-          ? { src: plate.src, alt: plate.alt, width: plate.width, height: plate.height }
-          : null,
+        photo: { src: photo.src, alt: photo.alt, width: photo.width, height: photo.height },
       },
     ];
   });
 }
 
-function publishedMenus(menu: MenuSection[]): SelectMenu[] {
-  const sections = menu
-    .filter((section) => section.items.length > 0)
+function menuSections(menu: MenuSection[], sectionNames?: string[]): SelectMenu["sections"] {
+  return menu
+    .filter((section) => section.items.length > 0 && (!sectionNames || sectionNames.includes(section.name)))
     .map((section) => ({
       id: section.id,
       name: section.name,
@@ -74,16 +89,18 @@ function publishedMenus(menu: MenuSection[]): SelectMenu[] {
         marked: item.marked,
       })),
     }));
-  if (!sections.length) return [];
-  const marked = sections.some((section) => section.items.some((item) => item.marked));
+}
+
+function publishedMenus(menu: MenuSection[]): SelectMenu[] {
+  const lunch = menuSections(menu);
+  const happyHour = menuSections(menu, ["Appetizer"]);
+  const dinner = menuSections(menu, ["Salads", "Pizza", "Handhelds"]);
+  const footnoteFor = (sections: SelectMenu["sections"]) =>
+    sections.some((section) => section.items.some((item) => item.marked)) ? LUNCH_FOOTNOTE : null;
   return [
-    {
-      id: "lunch",
-      label: "Lunch",
-      service: LUNCH_SERVICE,
-      footnote: marked ? LUNCH_FOOTNOTE : null,
-      sections,
-    },
+    { id: "lunch", label: "Lunch", service: LUNCH_SERVICE, footnote: footnoteFor(lunch), sections: lunch },
+    { id: "happy-hour", label: "Happy Hour", service: "", footnote: footnoteFor(happyHour), sections: happyHour },
+    { id: "dinner", label: "Dinner", service: "", footnote: footnoteFor(dinner), sections: dinner },
   ];
 }
 

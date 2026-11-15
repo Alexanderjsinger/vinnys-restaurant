@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useState } from "react";
 import { OrderLink } from "@/components/OrderLink";
 import { formatPrice } from "@/lib/format";
 
@@ -59,27 +59,15 @@ export function SelectDishes({
   menus: SelectMenu[];
   toastUrl: string | null;
 }) {
-  const photoDishes = dishes.filter((dish) => dish.photo);
-  const [featureId, setFeatureId] = useState<number | null>(photoDishes[0]?.id ?? dishes[0]?.id ?? null);
+  const [featureId, setFeatureId] = useState<number | null>(dishes[0]?.id ?? null);
   const [openMenu, setOpenMenu] = useState<string | null>(null);
-  const rowRef = useRef<HTMLUListElement>(null);
   const feature = dishes.find((dish) => dish.id === featureId) ?? null;
-  const photoIndex = feature ? photoDishes.findIndex((dish) => dish.id === feature.id) : -1;
-  const rowDishes = dishes.filter((dish) => dish.id !== feature?.id);
+  const featureIndex = feature ? dishes.findIndex((dish) => dish.id === feature.id) : -1;
 
-  function showPhoto(direction: -1 | 1) {
-    if (photoDishes.length < 2) return;
-    const next = photoDishes[stepIndex(Math.max(photoIndex, 0), photoDishes.length, direction)];
+  function showDish(direction: -1 | 1) {
+    if (dishes.length < 2) return;
+    const next = dishes[stepIndex(Math.max(featureIndex, 0), dishes.length, direction)];
     setFeatureId(next.id);
-  }
-
-  function scrollRow(direction: -1 | 1) {
-    const row = rowRef.current;
-    if (!row) return;
-    const card = row.querySelector("li");
-    const width = (card?.getBoundingClientRect().width ?? 184) + 12;
-    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    row.scrollBy({ left: direction * width, behavior: reduce ? "auto" : "smooth" });
   }
 
   if (!feature) {
@@ -97,13 +85,13 @@ export function SelectDishes({
               width={feature.photo.width}
               height={feature.photo.height}
             />
-            {photoDishes.length > 1 ? (
+            {dishes.length > 1 ? (
               <>
-                <button type="button" className="select-photo-arrow select-photo-arrow-prev" onClick={() => showPhoto(-1)}>
+                <button type="button" className="select-photo-arrow select-photo-arrow-prev" onClick={() => showDish(-1)}>
                   <span className="sr-only">Previous dish</span>
                   <Arrow direction="prev" />
                 </button>
-                <button type="button" className="select-photo-arrow select-photo-arrow-next" onClick={() => showPhoto(1)}>
+                <button type="button" className="select-photo-arrow select-photo-arrow-next" onClick={() => showDish(1)}>
                   <span className="sr-only">Next dish</span>
                   <Arrow direction="next" />
                 </button>
@@ -123,51 +111,67 @@ export function SelectDishes({
             <OrderLink className="btn btn-gold select-order" url={toastUrl}>
               Order online
             </OrderLink>
-            {photoDishes.length > 1 ? (
-              <div className="select-dots">
-                {photoDishes.map((dish, index) => (
-                  <button
-                    key={dish.id}
-                    type="button"
-                    className={dish.id === feature.id ? "is-current" : undefined}
-                    aria-label={`Show ${dish.name}`}
-                    aria-current={dish.id === feature.id ? "true" : undefined}
-                    onClick={() => setFeatureId(dish.id)}
-                  >
-                    <span className="sr-only">{index + 1}</span>
-                  </button>
-                ))}
+            {dishes.length > 1 ? (
+              <div className="select-card-nav">
+                <button type="button" className="select-card-arrow" onClick={() => showDish(-1)}>
+                  <Arrow direction="prev" />
+                  <span className="sr-only">Previous dish</span>
+                </button>
+                <div className="select-dots" role="group" aria-label="Featured dishes">
+                  {dishes.map((dish) => (
+                    <button
+                      key={dish.id}
+                      type="button"
+                      className={dish.id === feature.id ? "is-current" : undefined}
+                      aria-label={`Show ${dish.name}`}
+                      aria-current={dish.id === feature.id ? "true" : undefined}
+                      onClick={() => setFeatureId(dish.id)}
+                    />
+                  ))}
+                </div>
+                <button type="button" className="select-card-arrow" onClick={() => showDish(1)}>
+                  <span>Next</span>
+                  <Arrow direction="next" />
+                </button>
               </div>
             ) : null}
           </div>
         </div>
       </div>
 
-      {rowDishes.length ? (
-        <div className="select-row-wrap">
-          <button type="button" className="select-row-arrow" onClick={() => scrollRow(-1)}>
-            <span className="sr-only">Previous dishes</span>
-            <Arrow direction="prev" />
-          </button>
-          <ul className="select-row" ref={rowRef}>
-            {rowDishes.map((dish) => (
+      {dishes.length ? (
+        <div className="select-teasers">
+          <ul className="select-row">
+            {dishes.map((dish) => (
               <li key={dish.id}>
-                {dish.photo ? (
-                  <button type="button" className="select-row-card" onClick={() => setFeatureId(dish.id)}>
-                    <DishFace dish={dish} />
-                  </button>
-                ) : (
-                  <article className="select-row-card">
-                    <DishFace dish={dish} />
-                  </article>
-                )}
+                <button
+                  type="button"
+                  className={dish.id === feature.id ? "select-row-card is-current" : "select-row-card"}
+                  aria-label={dish.name}
+                  aria-current={dish.id === feature.id ? "true" : undefined}
+                  onClick={() => setFeatureId(dish.id)}
+                >
+                  {dish.photo ? (
+                    <figure className="select-row-photo">
+                      <img src={dish.photo.src} alt="" width={dish.photo.width} height={dish.photo.height} />
+                    </figure>
+                  ) : null}
+                </button>
               </li>
             ))}
           </ul>
-          <button type="button" className="select-row-arrow" onClick={() => scrollRow(1)}>
-            <span className="sr-only">Next dishes</span>
-            <Arrow direction="next" />
-          </button>
+          <div className="select-dots select-teaser-dots" role="group" aria-label="More select dishes">
+            {dishes.map((dish) => (
+              <button
+                key={dish.id}
+                type="button"
+                className={dish.id === feature.id ? "is-current" : undefined}
+                aria-label={`Show ${dish.name}`}
+                aria-current={dish.id === feature.id ? "true" : undefined}
+                onClick={() => setFeatureId(dish.id)}
+              />
+            ))}
+          </div>
         </div>
       ) : null}
 
@@ -205,24 +209,6 @@ export function SelectDishes({
         </div>
       ) : null}
     </div>
-  );
-}
-
-function DishFace({ dish }: { dish: SelectDish }) {
-  return (
-    <>
-      {dish.photo ? (
-        <figure className="select-row-photo">
-          <img src={dish.photo.src} alt={dish.photo.alt} width={dish.photo.width} height={dish.photo.height} />
-        </figure>
-      ) : (
-        <div className="select-row-text">
-          {dish.description ? <p>{dish.description}</p> : null}
-        </div>
-      )}
-      <span className="select-row-name">{dish.name}</span>
-      {dish.price ? <span className="price">{formatPrice(dish.price)}</span> : null}
-    </>
   );
 }
 
