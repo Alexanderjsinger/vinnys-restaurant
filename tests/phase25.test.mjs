@@ -233,9 +233,9 @@ test("homepage hero poster is the bartender still and story uses storefront exte
   assert.doesNotMatch(hero, /poster="\/hero\/meet-me\.jpg"/);
   assert.doesNotMatch(hero, /Not a photo of Vinny/, "hero disclaimer is not guest copy");
   assert.doesNotMatch(hero, /dining room/);
-  const social = page.match(/className="social-rituals"[\s\S]*?<\/section>/);
-  assert.ok(social, "social band exists");
-  assert.match(social[0], /src="\/hero\/meet-me\.jpg"/, "social band keeps the table photo tile");
+  const tiles = page.match(/className="destination-tiles"[\s\S]*?<\/section>/);
+  assert.ok(tiles, "destination tiles exist");
+  assert.match(tiles[0], /src="\/hero\/meet-me\.jpg"/, "homepage keeps the table photo on a destination tile");
   const posterFile = path.join(root, "public/hero/sizzle-bartender.jpg");
   assert.ok(fs.existsSync(posterFile), "bartender poster file is present");
   const posterBytes = fs.statSync(posterFile).size;

@@ -11,7 +11,7 @@ npm test
 `tests/homepage-layout.test.mjs` asserts:
 
 1. `home-intro` has **no** twin `.cta-row` (header keeps Call / Directions / Order).
-2. Lunch plate figures use a **4/3** frame with `object-fit: cover` (not letterboxed `contain` into tall voids).
+2. Lunch plates: the featured photo and the smaller dish use `object-fit: cover` inside frames with no padding, border, or radius (not letterboxed `contain`). Mobile featured frame is **4/5**; desktop featured frame is **4/3**.
 3. Desktop CSS does **not** force bare `.shot img { width: 100% }` (the Phase 2 letterbox regression).
 4. Hero `.poster` is **full-bleed** (`width: 100%`, viewport-driven `height`, **no** `aspect-ratio` that shrinks/overflows width). Hero image uses `object-fit: cover`. The stock-still disclaimer is not guest copy under the band (removed per owner markup). Venue band keeps a landscape `aspect-ratio` with cover crop and is not capped at `14rem`.
 
@@ -24,7 +24,8 @@ Viewports: **1280×800**, **1920×1080**, and **390×844**.
 | Header CTAs | Exactly one primary utility row: Call / Directions / Order |
 | Intro | Brand + lede only — no second gold button row under the H1 |
 | Hero | Edge-to-edge under site chrome on typical desktop widths; no large side gutters; no disclaimer caption under the reel |
-| Lunch plates | Food fills the frame; no tall empty black pillars above/below the photo |
+| Destination tiles | Three full-bleed links: Reservations, Menus, Events. Photos sit flush in the frame. |
+| Lunch plates | Featured Vinny’s Burger beside its menu card, then the other photographed lunch plate. Food fills the frame; no tall empty pillars. |
 | Storefront band | Wide landscape crop; not a skinny ribbon |
 | Mobile | Same rules; no horizontal overflow from the hero; header actions wrap once; plates stack without letterbox voids |
 

@@ -24,18 +24,11 @@ export const metadata = pageMeta(
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
 
-const HIGHLIGHT_NAMES = [
-  "VINNY'S BURGER",
-  "SPICY CAULIFLOWER",
-  "SOUTHERN CHICKEN SALAD",
-  "WINGS (8)",
-  "FRENCH DIP",
-  "BAVARIAN PRETZEL",
-];
-
 const PARTY_SIZES = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10] as const;
 
-function lunchPlates(menu: Awaited<ReturnType<typeof listMenu>>): { plate: (typeof LUNCH_PLATES)[number]; item: MenuItem }[] {
+type LunchPlate = { plate: (typeof LUNCH_PLATES)[number]; item: MenuItem };
+
+function lunchPlates(menu: Awaited<ReturnType<typeof listMenu>>): LunchPlate[] {
   const items = menu.flatMap((section) => section.items);
   return LUNCH_PLATES.flatMap((plate) => {
     const item = items.find((row) => row.name === plate.menuName);
@@ -43,19 +36,12 @@ function lunchPlates(menu: Awaited<ReturnType<typeof listMenu>>): { plate: (type
   });
 }
 
-function lunchHighlights(menu: Awaited<ReturnType<typeof listMenu>>): MenuItem[] {
-  const items = menu.flatMap((section) => section.items);
-  return HIGHLIGHT_NAMES.flatMap((name) => {
-    const match = items.find((item) => item.name === name);
-    return match ? [match] : [];
-  });
-}
-
 export default async function HomePage() {
   const site = await getSite();
   const menu = await listMenu("public");
   const plates = lunchPlates(menu);
-  const highlights = lunchHighlights(menu);
+  const featuredPlate = plates.find((row) => row.plate.menuName === "VINNY'S BURGER") ?? null;
+  const otherPlates = featuredPlate ? plates.filter((row) => row !== featuredPlate) : plates;
   const now = detroitNowLocal();
   const upcoming = (await listEvents("public"))
     .filter((event) => (event.ends_at || event.starts_at) >= now)
@@ -205,92 +191,98 @@ export default async function HomePage() {
         </div>
       </section>
 
-      <section className="social-rituals" aria-labelledby="rituals-heading">
-        <div className="wrap">
-          <p className="micro-label">Social rituals & gatherings</p>
-          <h2 id="rituals-heading">Curated for every Cross Street night</h2>
-        </div>
-        <ul className="ritual-strip">
+      <section className="destination-tiles" aria-labelledby="destinations-heading">
+        <h2 id="destinations-heading" className="sr-only">
+          Reservations, menus, and events
+        </h2>
+        <ul>
           <li>
-            <img
-              className="ritual-faces"
-              src="/hero/meet-me.jpg"
-              alt="Friends sharing drinks and plates at a restaurant table"
-              width={1800}
-              height={1203}
-            />
+            <Link className="destination-tile" href="/reserve">
+              <img
+                className="tile-table"
+                src="/hero/meet-me.jpg"
+                alt="Friends sharing drinks and plates at a restaurant table"
+                width={1800}
+                height={1203}
+              />
+              <span>Reservations</span>
+            </Link>
           </li>
-          {plates.map(({ plate, item }) => (
-            <li key={item.id}>
-              <img src={plate.src} alt={plate.alt} width={plate.width} height={plate.height} />
-            </li>
-          ))}
           <li>
-            <img
-              className="ritual-sign"
-              src="/photos/storefront.webp"
-              alt={`Exterior of ${DEFAULT_PLACE_NAME} at 705 W. Cross St.`}
-              width={1110}
-              height={886}
-            />
+            <Link className="destination-tile" href="/menu">
+              <img
+                className="tile-burger"
+                src="/photos/burger-fries.webp"
+                alt="Cheeseburger on a brioche bun with bacon jam, lettuce, tomato, onion, and fries"
+                width={765}
+                height={1020}
+              />
+              <span>Menus</span>
+            </Link>
+          </li>
+          <li>
+            <Link className="destination-tile" href="/events">
+              <img
+                className="tile-bar"
+                src="/hero/sizzle-bartender.jpg"
+                alt="Bartender serving cocktails to guests at the Vinny's bar"
+                width={1280}
+                height={720}
+              />
+              <span>Events</span>
+            </Link>
           </li>
         </ul>
-        <div className="wrap">
-          <p className="cta-row social-ctas">
-            <Link className="btn btn-gold" href="/events">
-              Events
-            </Link>
-            <Link className="btn btn-outline-light" href="/contact">
-              Reserve
-            </Link>
-            <OrderLink className="btn btn-outline-light" url={site.toastUrl}>
-              Order
-            </OrderLink>
-          </p>
-        </div>
       </section>
 
       <section className="band-cream food-band" aria-labelledby="plates-heading">
         <div className="wrap page">
-          <p className="micro-label">From the kitchen</p>
-          <h2 id="plates-heading">Lunch plates</h2>
-          <p className="band-lede">Published lunch items with prices from the menu. {LUNCH_SERVICE}.</p>
-          <ul className="plate-list">
-            {plates.map(({ plate, item }) => (
-              <li key={item.id} className="plate">
-                <figure className="shot">
-                  <img src={plate.src} alt={plate.alt} width={plate.width} height={plate.height} />
-                </figure>
-                <h3>{item.name}</h3>
-                {item.description ? <p>{item.description}</p> : null}
-                <p className="price">{formatPrice(item.price)}</p>
-              </li>
-            ))}
-          </ul>
-          {highlights.length ? (
-            <div className="menu-highlights">
-              <h3 className="menu-highlights-title">Lunch highlights</h3>
-              <ul className="highlights">
-                {highlights.map((item) => (
-                  <li key={item.id}>
-                    <span>
-                      {item.name}
-                      {item.description ? <small>{item.description}</small> : null}
-                    </span>
-                    <span className="price">{formatPrice(item.price)}</span>
-                  </li>
-                ))}
-              </ul>
+          <div className="lunch-intro">
+            <p className="micro-label">From the kitchen</p>
+            <h2 id="plates-heading">Lunch plates</h2>
+            <p className="band-lede">Published lunch items with prices from the menu. {LUNCH_SERVICE}.</p>
+          </div>
+          {featuredPlate ? (
+            <div className="lunch-feature">
+              <figure className="lunch-feature-photo">
+                <img
+                  src={featuredPlate.plate.src}
+                  alt={featuredPlate.plate.alt}
+                  width={featuredPlate.plate.width}
+                  height={featuredPlate.plate.height}
+                />
+              </figure>
+              <div className="lunch-feature-card">
+                <h3>{featuredPlate.item.name}</h3>
+                {featuredPlate.item.description ? <p>{featuredPlate.item.description}</p> : null}
+                <p className="price">{formatPrice(featuredPlate.item.price)}</p>
+                <p className="lunch-feature-actions">
+                  <Link className="btn btn-ink" href="/menu">
+                    Full lunch menu
+                  </Link>
+                  <OrderLink className="btn btn-gold" url={site.toastUrl}>
+                    Order takeout
+                  </OrderLink>
+                </p>
+              </div>
             </div>
           ) : null}
-          <p className="menu-banner">
-            <Link className="btn btn-ink" href="/menu">
-              Full lunch menu
-            </Link>
-            <OrderLink className="btn btn-gold" url={site.toastUrl}>
-              Order takeout
-            </OrderLink>
-          </p>
+          {otherPlates.length ? (
+            <ul className="dish-row">
+              {otherPlates.map(({ plate, item }) => (
+                <li key={item.id}>
+                  <Link className="dish-card" href="/menu">
+                    <figure className="dish-thumb">
+                      <img src={plate.src} alt={plate.alt} width={plate.width} height={plate.height} />
+                    </figure>
+                    <span className="dish-name">{item.name}</span>
+                    {item.description ? <p>{item.description}</p> : null}
+                    <span className="price">{formatPrice(item.price)}</span>
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          ) : null}
         </div>
       </section>
 
