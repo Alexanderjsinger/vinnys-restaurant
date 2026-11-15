@@ -2,15 +2,13 @@ import Link from "next/link";
 import { ConfirmedEvents, EventsEmptyState } from "@/components/ConfirmedEvents";
 import { HeroMedia } from "@/components/HeroMedia";
 import { SIZZLE_REEL } from "@/lib/hero";
-import { HoursList } from "@/components/HoursList";
 import { listEvents, listMenu } from "@/lib/content";
 import { detroitNowLocal } from "@/lib/format";
 import { LUNCH_SERVICE } from "@/lib/lunch-menu";
 import { SelectDishes, type SelectDish } from "@/components/SelectDishes";
 import { DEFAULT_PLACE_NAME, isVinnyShortMark, splitPlaceWordmark } from "@/lib/brand";
 import { VinnyWordmark } from "@/components/VinnyWordmark";
-import { DIRECTIONS_URL, isMeetMeLine, MAP_QUERY, PHONE_DISPLAY, RESERVE_TEL } from "@/lib/public";
-import { OrderLink } from "@/components/OrderLink";
+import { isMeetMeLine, RESERVE_TEL } from "@/lib/public";
 import { LUNCH_PLATES } from "@/lib/lunch-photos";
 import { publishedMenus } from "@/lib/menu-options";
 import { pageMeta } from "@/lib/seo";
@@ -64,9 +62,7 @@ export default async function HomePage() {
   const upcoming = (await listEvents("public"))
     .filter((event) => (event.ends_at || event.starts_at) >= now)
     .slice(0, 3);
-  const addressLine = site.address || MAP_QUERY;
   const phoneHref = site.phoneHref || RESERVE_TEL;
-  const phoneLabel = site.phone || PHONE_DISPLAY;
   const rawHeroSupport = site.heroText?.trim() || "";
   // Meet me lives in the header. The EMU sentence is a placeholder, not reel copy.
   const heroSupport =
@@ -190,32 +186,6 @@ export default async function HomePage() {
         </div>
       </section>
 
-      <section className="visit-band visit-band--compact" aria-labelledby="visit-heading">
-        <div className="wrap visit-grid">
-          <div>
-            <p className="micro-label">Visit</p>
-            <h2 id="visit-heading">See you at Vinny’s.</h2>
-            <p className="visit-address">{addressLine}</p>
-            <p>
-              <a href={phoneHref} data-track="phone_click">Call to Reserve · {phoneLabel}</a>
-            </p>
-            <p>
-              <a href={site.mapUrl || DIRECTIONS_URL} data-track="directions_click" target="_blank" rel="noopener noreferrer">
-                Get Directions
-                <span className="sr-only"> (opens in a new tab)</span>
-              </a>
-            </p>
-            <p>
-              <OrderLink className="btn btn-ink" url={site.toastUrl} />
-            </p>
-          </div>
-          <div className="visit-hours">
-            <h3 id="home-hours-heading">Hours</h3>
-            <p className="lunch-line">{LUNCH_SERVICE}</p>
-            <HoursList hours={site.hours} />
-          </div>
-        </div>
-      </section>
     </>
   );
 }
