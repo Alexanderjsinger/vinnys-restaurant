@@ -118,10 +118,11 @@ export default async function HomePage() {
   const phoneHref = site.phoneHref || RESERVE_TEL;
   const phoneLabel = site.phone || PHONE_DISPLAY;
   const rawHeroSupport = site.heroText?.trim() || "";
-  // Meet me lives in the white header tagline; omit it from cream sub-header to condense.
-  const heroSupport = isMeetMeLine(rawHeroSupport)
-    ? ""
-    : rawHeroSupport || "A bar and grill across from EMU on Cross Street. Lunch daily, 11–3pm.";
+  // Meet me lives in the header. The EMU sentence is a placeholder, not reel copy.
+  const heroSupport =
+    isMeetMeLine(rawHeroSupport) || /^a bar and grill across from emu\b/i.test(rawHeroSupport)
+      ? ""
+      : rawHeroSupport;
   const placeName = (site.heroHeading || site.name).trim() || DEFAULT_PLACE_NAME;
   const { mark: heroMark, rest: heroRest } = splitPlaceWordmark(placeName);
 
