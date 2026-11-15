@@ -221,23 +221,25 @@ test("birthday signup route stays closed and homepage has no birthday list", () 
   assert.doesNotMatch(pub, /BIRTHDAY_HEADING|Free appetizer on your birthday/i);
 });
 
-test("homepage hero poster is the bartender still and story uses storefront exterior", () => {
+test("homepage hero poster is the restored reel opening frame and story uses storefront exterior", () => {
   const hero = fs.readFileSync(path.join(root, "src/components/HeroMedia.tsx"), "utf8");
   const poster = fs.readFileSync(path.join(root, "src/components/PosterSlider.tsx"), "utf8");
   const page = fs.readFileSync(path.join(root, "src/app/page.tsx"), "utf8");
   const layout = fs.readFileSync(path.join(root, "src/app/layout.tsx"), "utf8");
   const seo = fs.readFileSync(path.join(root, "src/lib/seo.ts"), "utf8");
-  assert.match(hero, /\/hero\/sizzle-bartender\.jpg/);
+  assert.match(hero, /\/hero\/sizzle-poster\.jpg/);
+  assert.doesNotMatch(hero, /sizzle-bartender\.jpg/, "hero poster is not the bartender still");
   assert.doesNotMatch(hero, /meet-me\.jpg/, "hero poster is not the stock table photo");
-  assert.match(hero, /Bartender serving cocktails/, "poster alt matches the reel still");
+  assert.match(hero, /Martini on the bar under the Vinny's neon/, "poster alt matches the opening frame");
   assert.doesNotMatch(hero, /poster="\/hero\/meet-me\.jpg"/);
   assert.doesNotMatch(hero, /Not a photo of Vinny/, "hero disclaimer is not guest copy");
   assert.doesNotMatch(hero, /dining room/);
   const tiles = page.match(/className="destination-tiles"[\s\S]*?<\/section>/);
   assert.ok(tiles, "destination tiles exist");
   assert.match(tiles[0], /src="\/hero\/meet-me\.jpg"/, "homepage keeps the table photo on a destination tile");
-  const posterFile = path.join(root, "public/hero/sizzle-bartender.jpg");
-  assert.ok(fs.existsSync(posterFile), "bartender poster file is present");
+  assert.match(tiles[0], /src="\/hero\/sizzle-bartender\.jpg"/, "events tile still uses the bartender still");
+  const posterFile = path.join(root, "public/hero/sizzle-poster.jpg");
+  assert.ok(fs.existsSync(posterFile), "opening-frame poster file is present");
   const posterBytes = fs.statSync(posterFile).size;
   assert.ok(
     posterBytes > 20_000 && posterBytes < 400_000,
@@ -245,8 +247,8 @@ test("homepage hero poster is the bartender still and story uses storefront exte
   );
   assert.equal(
     fs.statSync(path.join(root, "public/hero/vinnys-sizzle-reel.mp4")).size,
-    2_511_869,
-    "sizzle mp4 is unchanged",
+    2_565_836,
+    "sizzle mp4 is the original pre-bartender reel",
   );
   assert.match(poster, /\/photos\/storefront\.webp/);
   assert.match(poster, /listing photo of the exterior/);

@@ -1,6 +1,6 @@
 /**
  * Approved homepage sizzle reel (static under public/hero).
- * Duration measured with ffprobe (16.125000s) — do not invent timecodes.
+ * Duration measured with ffprobe (30.250000s) — do not invent timecodes.
  *
  * Encoded ~720p / ~2.5MB (muted, faststart) so Workers can Range-buffer
  * without exceeding isolate memory. A prior 15MB 1080p master OOMed the
@@ -13,5 +13,5 @@
 export const SIZZLE_REEL = {
   src: "/api/sizzle",
   assetPath: "/hero/vinnys-sizzle-reel.mp4",
-  durationLabel: "0:16",
+  durationLabel: "0:30",
 } as const;

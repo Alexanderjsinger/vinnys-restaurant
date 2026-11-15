@@ -5,8 +5,8 @@ import { useEffect, useRef, useState } from "react";
 
 /**
  * Framed homepage hero media — ambient cinematic reel (not a video player chrome).
- * Approved sizzle via /api/sizzle (Range 206). Poster is a still from that reel
- * at the bartender shot (~11.8s), so the first paint matches the video.
+ * Approved sizzle via /api/sizzle (Range 206). Poster is the opening frame of
+ * that reel (t=0.000s), so the first paint matches the video.
  *
  * Playback:
  * - Poster first; muted inline play when ~50% visible (IntersectionObserver).
@@ -15,8 +15,8 @@ import { useEffect, useRef, useState } from "react";
  * - prefers-reduced-motion + Save-Data → still poster only.
  */
 const DEFAULT_POSTER = {
-  src: "/hero/sizzle-bartender.jpg",
-  alt: "Bartender serving cocktails to guests at the Vinny's bar",
+  src: "/hero/sizzle-poster.jpg",
+  alt: "Martini on the bar under the Vinny's neon",
   width: 1280,
   height: 720,
 } as const;
