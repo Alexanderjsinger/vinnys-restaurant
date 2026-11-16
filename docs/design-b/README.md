@@ -1,11 +1,21 @@
 # Alternative homepage comparison
 
-Branch: `codex/alternative-homepage`, based on accepted main `16ee814`.
+Branch: `codex/alternative-homepage`, based on accepted main `16ee814`. Local comparison: accepted Design A at `http://localhost:3105/`, alternative Design B at `http://localhost:3105/design-b/index.html`. The main homepage and backend remain unchanged.
 
-The owner requested an identical reproduction of the supplied Stitch design. `public/design-b/index.html` is copied byte-for-byte from `code.html` in `stitch_vinny_s_website_design_audit.zip`; no copy, styling, image, font or link substitutions have been made. `source-design.md` is the supplied design reference, retained as reference material rather than project-wide instructions.
+## Supplied baseline
 
-Preview the alternative at `/design-b/index.html`. The accepted homepage remains at `/`. Use a separate local server on port 3105 for this branch; the current preview remains on port 3100. No merge, deployment or D1 changes are part of this comparison.
+The first prototype commit `50d7c69` copied `code.html` from `stitch_vinny_s_website_design_audit.zip` byte-for-byte (55,394 bytes), identical to the pasted HTML. SHA-256: `aa4a34881945025efa1fe1e493e2197ad4f9ab5a53dc8f6a4d4de8845fcff0ad`. `source-design.md` is the supplied design reference, retained as reference material rather than project-wide instructions.
 
-This is the supplied static design prototype. Its CDN fonts/Tailwind, remote imagery/video, sample content and prototype links are retained exactly; it is not wired to the CMS or Contact submission backend. Owner selection and any later integration are separate work.
+## Owner-requested refinements
 
-Verification: HTTP 200 and served bytes match the source SHA-256 `aa4a34881945025efa1fe1e493e2197ad4f9ab5a53dc8f6a4d4de8845fcff0ad`. Chromium captures at 390, 1440 and 2560px show no horizontal overflow. The two occurrences of the supplied wordmark URL fail to load; they remain unchanged under the owner's identical-copy requirement. Other supplied image URLs loaded during the check. `npm run ci` passes (68 PASS, 2 SKIP). External resources are still subject to their providers' availability.
+- Replace the two broken external logo references with the current `/brand/vinnys-wordmark.png`, rendered white on the dark concept header/footer.
+- Play the existing `/api/sizzle` reel behind the hero, using its matching poster. Muted inline loop, no playback controls; pause offscreen/inactive and retain the poster for reduced motion or Save-Data. The existing Range API is reused; no new video file is introduced.
+- Remove the hero location pill.
+- Remove the top status strip’s green/pulsing indicator and use normal Manrope text rather than the monospaced badge styling.
+- Keep the header usable on phones with the logo and a compact Order label; ensure the hero title clears the fixed header.
+
+Remaining source layout, fonts, imagery, sample copy and prototype links are retained. This remains a static comparison design, not a CMS integration. No merge/deploy or D1 changes are included. External Tailwind/fonts/other remote image URLs remain dependencies of the supplied prototype.
+
+## Verification
+
+The initial source baseline passed independent byte-identity review. Follow-up browser checks cover loaded header/footer wordmarks, live advancing reel playback, poster-only reduced-motion behavior, removal of the badge/green dot, and header/title fit at mobile, annotated tablet width and desktop. Local checks do not establish actual-device acceptance or live deployment.
