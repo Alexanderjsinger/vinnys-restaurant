@@ -14,7 +14,7 @@ export function publishedMenus(menu: MenuSection[]): SelectMenu[] {
   return [
     { id: "lunch", label: "Lunch", service: LUNCH_SERVICE, sections,
       footnote: sections.some(section => section.items.some(item => item.marked)) ? LUNCH_FOOTNOTE : null },
-    { id: "happy-hour", label: "Happy Hour", service: "", sections: [], footnote: null },
-    { id: "dinner", label: "Dinner", service: "", sections: [], footnote: null },
+    { id: "happy-hour", label: "Happy Hour", service: "Happy Hour 3–5pm Eastern", sections: [], footnote: null },
+    { id: "dinner", label: "Dinner", service: "Dinner 5–11pm Eastern", sections: [], footnote: null },
   ];
 }

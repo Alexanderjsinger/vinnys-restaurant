@@ -8,9 +8,10 @@ import { LUNCH_SERVICE } from "@/lib/lunch-menu";
 import { SelectDishes, type SelectDish } from "@/components/SelectDishes";
 import { DEFAULT_PLACE_NAME, isVinnyShortMark, splitPlaceWordmark } from "@/lib/brand";
 import { VinnyWordmark } from "@/components/VinnyWordmark";
-import { isMeetMeLine, RESERVE_TEL } from "@/lib/public";
+import { isMeetMeLine } from "@/lib/public";
 import { LUNCH_PLATES } from "@/lib/lunch-photos";
 import { publishedMenus } from "@/lib/menu-options";
+import { demoEventsEnabled, makeDemoEvents } from "@/lib/demo-events";
 import { pageMeta } from "@/lib/seo";
 import { getSite } from "@/lib/site";
 import type { MenuSection } from "@/lib/types";
@@ -27,8 +28,8 @@ export const runtime = "nodejs";
 const SELECT_DISH_NAMES = [
   "VINNY'S BURGER",
   "SPICY CAULIFLOWER",
-  "SOUTHERN CHICKEN SALAD",
   "WINGS (8)",
+  "SOUTHERN CHICKEN SALAD",
   "FRENCH DIP",
   "BAVARIAN PRETZEL",
 ] as const;
@@ -59,10 +60,10 @@ export default async function HomePage() {
   const menu = await listMenu("public");
   const dishes = selectDishes(menu);
   const now = detroitNowLocal();
-  const upcoming = (await listEvents("public"))
+  const demo = process.env.NODE_ENV === "development" && demoEventsEnabled();
+  const upcoming = (demo ? makeDemoEvents(now.slice(0, 10)) : await listEvents("public"))
     .filter((event) => (event.ends_at || event.starts_at) >= now)
-    .slice(0, 3);
-  const phoneHref = site.phoneHref || RESERVE_TEL;
+    .slice(0, demo ? 5 : 3);
   const rawHeroSupport = site.heroText?.trim() || "";
   // Meet me lives in the header. The EMU sentence is a placeholder, not reel copy.
   const heroSupport =
@@ -122,31 +123,25 @@ export default async function HomePage() {
             <p>Find your next reason to stop by.</p>
           </div>
           <div className="occasion-grid">
-            <article className="occasion-card">
+            <article className="occasion-card" tabIndex={0} aria-labelledby="occasion-lunch" aria-describedby="occasion-lunch-hours">
               <img src="/photos/burger-fries.webp" alt="Vinny’s burger with fries" width={765} height={1020} loading="lazy" />
               <div className="occasion-copy">
-                <p className="micro-label">{LUNCH_SERVICE}</p>
-                <h3>Lunch</h3>
-                <p>Explore the published lunch menu, from handhelds to shareable appetizers.</p>
-                <Link href="/menu#select-menu-lunch">View lunch menu <span aria-hidden="true">→</span></Link>
+                <h3 id="occasion-lunch">Lunch</h3>
+                <p className="occasion-hours" id="occasion-lunch-hours">Daily 11am – 3pm</p>
               </div>
             </article>
-            <article className="occasion-card">
-              <img src="/hero/sizzle-bartender.jpg" alt="Cocktail atmosphere from the Vinny’s reel" width={1280} height={720} loading="lazy" />
+            <article className="occasion-card" tabIndex={0} aria-labelledby="occasion-happy-hour" aria-describedby="occasion-happy-hour-hours">
+              <img src="/photos/bartender-supplied.webp" alt="Illustrated cocktail gathering at a bar" width={1365} height={768} loading="lazy" />
               <div className="occasion-copy">
-                <p className="micro-label">At the bar</p>
-                <h3>Happy Hour</h3>
-                <p>Happy Hour menu details will be posted here when available.</p>
-                <Link href="/menu#select-menu-happy-hour">Explore menus <span aria-hidden="true">→</span></Link>
+                <h3 id="occasion-happy-hour">Happy Hour</h3>
+                <p className="occasion-hours" id="occasion-happy-hour-hours">Daily 3pm – 5pm</p>
               </div>
             </article>
-            <article className="occasion-card">
-              <img src="/photos/storefront.webp" alt="Vinny’s Bar & Grill on Cross Street" width={1110} height={886} loading="lazy" />
+            <article className="occasion-card" tabIndex={0} aria-labelledby="occasion-dinner" aria-describedby="occasion-dinner-hours">
+              <img src="/photos/pizza-supplied.webp" alt="Pizza topped with greens" width={1600} height={1143} loading="lazy" />
               <div className="occasion-copy">
-                <p className="micro-label">Around the table</p>
-                <h3>Dinner</h3>
-                <p>Dinner menu details are on the way. Call us to plan your visit.</p>
-                <a href={phoneHref} data-track="phone_click">Call Vinny’s <span aria-hidden="true">→</span></a>
+                <h3 id="occasion-dinner">Dinner</h3>
+                <p className="occasion-hours" id="occasion-dinner-hours">Every night 5pm – 11pm/12am</p>
               </div>
             </article>
           </div>
@@ -156,7 +151,7 @@ export default async function HomePage() {
       <section className="band-cream food-band" aria-labelledby="select-dishes-heading">
         <div className="wrap page">
           <div className="select-intro">
-            <h2 id="select-dishes-heading">Select Dishes</h2>
+            <h2 id="select-dishes-heading">Much-loved dishes</h2>
             <p className="band-lede">{LUNCH_SERVICE}.</p>
           </div>
           <SelectDishes dishes={dishes} menus={publishedMenus(menu)} toastUrl={site.toastUrl} />
@@ -167,6 +162,7 @@ export default async function HomePage() {
         <div className="wrap home-events-inner">
           <p className="micro-label">On the calendar</p>
           <h2 id="home-events-heading">What’s happening at Vinny’s</h2>
+          {demo ? <p className="demo-events-note" role="note">Demo week — concepts only. Dates and 7–9pm times are illustrative; no hosts, prizes, performers, or specials are booked or confirmed.</p> : null}
           {upcoming.length ? (
             <>
               <ConfirmedEvents events={upcoming} />

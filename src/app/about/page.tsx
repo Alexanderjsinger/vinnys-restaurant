@@ -21,8 +21,13 @@ export default function AboutPage() {
           <p>{STORY[0]}</p>
         </div>
         <figure className="story-page-photo">
-          <img src="/photos/storefront.webp" alt="Vinny’s Bar & Grill at 705 W. Cross Street, Ypsilanti" width={1110} height={886} fetchPriority="high" />
+          <img src="/photos/storefront-supplied.webp" alt="Vinny’s Bar & Grill at 705 W. Cross Street, Ypsilanti" width={1584} height={672} fetchPriority="high" />
         </figure>
+      </section>
+      <section className="story-kitchen" aria-label="Food at Vinny’s">
+        <figure><img src="/photos/pizza-supplied.webp" alt="Pizza topped with greens" width={1600} height={1143} loading="lazy" /></figure>
+        <figure><img src="/photos/cheesecake-supplied.webp" alt="Cheesecake slice with berries and red sauce" width={1600} height={1200} loading="lazy" /></figure>
+        <figure><img src="/photos/chocolate-dessert.webp" alt="Chocolate dessert with berries, mint, and red sauce" width={1080} height={1440} loading="lazy" /></figure>
       </section>
       <section className="story-page-body wrap" aria-labelledby="story-welcome-heading">
         <p className="micro-label">Food, friends, and a warm welcome</p>

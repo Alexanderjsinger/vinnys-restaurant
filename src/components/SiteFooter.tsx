@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { SocialLinks } from "./SocialLinks";
 import { HoursList } from "@/components/HoursList";
 import { DEFAULT_PLACE_NAME, isVinnyShortMark, splitPlaceWordmark } from "@/lib/brand";
 import { VinnyWordmark } from "@/components/VinnyWordmark";
@@ -24,6 +25,7 @@ export function SiteFooter({ site }: { site: PublicSite }) {
             <span className="brand-sub">{brandSub}</span>
             {site.tagline ? <span className="brand-tagline">{site.tagline}</span> : null}
           </Link>
+          <SocialLinks />
           <div className="footer-contact">
             <address>{site.address || STREET_ADDRESS}</address>
             <p>

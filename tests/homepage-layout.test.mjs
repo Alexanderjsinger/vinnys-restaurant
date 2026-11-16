@@ -26,6 +26,7 @@ test("featured dishes show one manually selected highlight and expandable menus"
   assert.match(select, /formatPrice\(feature\.price\)/);
   assert.match(select, /aria-expanded=\{openMenu === menu.id\}/);
   assert.match(select, /menu details aren’t available online yet/);
+  assert.match(select, /aria-label="Dish previews"/);
   assert.doesNotMatch(select, /select-teasers|select-photo-arrow/);
   const options = read("src/lib/menu-options.ts");
   assert.match(options, /id: "happy-hour"[^\n]*sections: \[\]/);

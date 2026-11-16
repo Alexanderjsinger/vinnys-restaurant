@@ -13,4 +13,11 @@ export const LUNCH_PLATES = [
     width: 765,
     height: 1020,
   },
+  {
+    menuName: "WINGS (8)",
+    src: "/photos/wings.webp",
+    alt: "Chicken wings with carrot and celery sticks and a dipping sauce",
+    width: 1080,
+    height: 1440,
+  },
 ] as const;

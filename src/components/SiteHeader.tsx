@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { SocialLinks } from "./SocialLinks";
 import { DEFAULT_PLACE_NAME, isVinnyShortMark, splitPlaceWordmark } from "@/lib/brand";
 import { VinnyWordmark } from "@/components/VinnyWordmark";
 import { HERO_LINE, PHONE_DISPLAY, RESERVE_TEL } from "@/lib/public";
@@ -18,6 +19,7 @@ export function SiteHeader({ site }: { site: PublicSite }) {
     <header className="site-header">
       <ReelHeaderBar>
         <div className="wrap brand-row">
+          <div className="header-brand-group">
           <Link className="brand" href="/" aria-label={placeName}>
             <span className="brand-mark">
               {showShortMark ? (
@@ -29,6 +31,8 @@ export function SiteHeader({ site }: { site: PublicSite }) {
             <span className="brand-sub">{brandSub}</span>
             <span className="brand-tagline">{HERO_LINE}</span>
           </Link>
+          <SocialLinks />
+          </div>
           <PrimaryNav phoneHref={phoneHref} directionsUrl={site.mapUrl} />
           <div className="header-actions">
             <a className="btn btn-outline" href={phoneHref} data-track="phone_click">

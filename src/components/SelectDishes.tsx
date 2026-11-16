@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { OrderLink } from "@/components/OrderLink";
 import { formatPrice } from "@/lib/format";
+import { menuForEasternTime } from "@/lib/menu-schedule";
 
 export type SelectDishPhoto = {
   src: string;
@@ -45,6 +46,11 @@ export type SelectMenu = {
   sections: SelectMenuSection[];
 };
 
+/** Present printed all-caps menu names consistently without changing stored content. */
+function displayDishName(name: string) {
+  return name.toLowerCase().replace(/(^|[\s(])([a-z])/g, (_, gap: string, letter: string) => gap + letter.toUpperCase());
+}
+
 function stepIndex(index: number, count: number, direction: -1 | 1) {
   if (count < 1) return 0;
   return (index + direction + count) % count;
@@ -74,66 +80,54 @@ export function SelectDishes({
   }
 
   return (
-    <div className="select-dishes">
-      <div className={feature.photo ? "select-stage" : "select-stage select-stage--text"} role="region" aria-roledescription="carousel" aria-label="Featured dish">
-        {feature.photo ? (
-          <figure className="select-feature-photo">
-            <img
-              src={feature.photo.src}
-              alt={feature.photo.alt}
-              width={feature.photo.width}
-              height={feature.photo.height}
-            />
-          </figure>
-        ) : null}
-        <div className="select-card">
-          <h3 id="select-dish-title" aria-live="polite" aria-atomic="true">{feature.name}</h3>
-          <p className="select-meta">
-            {feature.section}
-            {feature.price ? <span> · {formatPrice(feature.price)}</span> : null}
-            {feature.glutenFree ? <span className="chip">Gluten free</span> : null}
-          </p>
-          {feature.description ? <p className="select-writeup">{feature.description}</p> : null}
-          <div className="select-card-foot">
-            <OrderLink className="btn btn-gold select-order" url={toastUrl}>
-              Order online
-            </OrderLink>
-            {dishes.length > 1 ? (
-              <div className="select-card-nav">
-                <button type="button" className="select-card-arrow" onClick={() => showDish(-1)}>
-                  <Arrow direction="prev" />
-                  <span className="sr-only">Previous dish</span>
-                </button>
-                <div className="select-dots" role="group" aria-label="Featured dishes">
-                  {dishes.map((dish) => (
-                    <button
-                      key={dish.id}
-                      type="button"
-                      className={dish.id === feature.id ? "is-current" : undefined}
-                      aria-label={`Show ${dish.name}`}
-                      aria-current={dish.id === feature.id ? "true" : undefined}
-                      onClick={() => setFeatureId(dish.id)}
-                    />
-                  ))}
-                </div>
-                <button type="button" className="select-card-arrow" onClick={() => showDish(1)}>
-                  <span>Next</span>
-                  <Arrow direction="next" />
-                </button>
-              </div>
-            ) : null}
+    <div className="select-dishes select-editorial">
+      <div className="select-stage select-editorial-stage" role="region" aria-roledescription="carousel" aria-label="Featured dish">
+        <div className="select-feature-media">
+          {feature.photo ? (
+            <img src={feature.photo.src} alt={feature.photo.alt} width={feature.photo.width} height={feature.photo.height} />
+          ) : (
+            <div className="select-photo-missing">
+              <span className="micro-label">From the menu</span>
+              <span>{displayDishName(feature.name)}</span>
+            </div>
+          )}
+          {dishes.length > 1 ? <>
+            <button className="select-feature-prev" type="button" onClick={() => showDish(-1)} aria-label="Previous dish"><Arrow direction="prev" /></button>
+            <button className="select-feature-next" type="button" onClick={() => showDish(1)} aria-label="Next dish"><Arrow direction="next" /></button>
+          </> : null}
+        </div>
+        <div className="select-feature-panel">
+          <div className="select-feature-meta">
+            <span>{feature.section}</span>
+            {feature.price ? <span className="select-feature-price">{formatPrice(feature.price)}</span> : null}
+          </div>
+          <h3 aria-live="polite" aria-atomic="true">{displayDishName(feature.name)}</h3>
+          {feature.glutenFree ? <span className="chip">Gluten free</span> : null}
+          {feature.description ? <div className="select-feature-description"><p>{feature.description}</p></div> : null}
+          <div className="select-feature-bottom">
+            <OrderLink className="btn select-feature-order" url={toastUrl}>Order online</OrderLink>
+            {dishes.length > 1 ? <div className="select-dots" role="group" aria-label="Choose a featured dish">
+              {dishes.map(dish => <button key={dish.id} type="button" className={dish.id === feature.id ? "is-current" : undefined} aria-label={`Show ${dish.name}`} aria-current={dish.id === feature.id ? "true" : undefined} onClick={() => setFeatureId(dish.id)} />)}
+            </div> : null}
           </div>
         </div>
       </div>
-
+      <div className="select-preview-rail" role="group" aria-label="Dish previews">
+        {dishes.map(dish => <button key={dish.id} className={`select-preview${dish.id === feature.id ? " is-current" : ""}${dish.photo ? "" : " select-preview--text"}`} type="button" aria-label={`Preview ${dish.name}`} aria-pressed={dish.id === feature.id} onClick={() => setFeatureId(dish.id)}>
+          {dish.photo ? <img src={dish.photo.src} alt="" width={dish.photo.width} height={dish.photo.height} loading="lazy" /> : <span className="select-preview-section">{dish.section}</span>}
+          <span className="select-preview-name">{displayDishName(dish.name)}</span>
+        </button>)}
+      </div>
       <MenuChoices menus={menus} />
     </div>
   );
 }
 
-export function MenuChoices({ menus }: { menus: SelectMenu[] }) {
-  const [openMenu, setOpenMenu] = useState<string | null>(null);
+export function MenuChoices({ menus, initialMenu = null }: { menus: SelectMenu[]; initialMenu?: string | null }) {
+  const [openMenu, setOpenMenu] = useState<string | null>(initialMenu);
   useEffect(() => {
+    // Recheck at arrival in case this route was prefetched before a service boundary.
+    if (initialMenu !== null) setOpenMenu(menuForEasternTime());
     const sync = () => {
       const id = window.location.hash.replace("#select-menu-", "");
       if (menus.some(menu => menu.id === id)) setOpenMenu(id);
@@ -141,12 +135,13 @@ export function MenuChoices({ menus }: { menus: SelectMenu[] }) {
     sync();
     window.addEventListener("hashchange", sync);
     return () => window.removeEventListener("hashchange", sync);
-  }, [menus]);
+  }, [menus, initialMenu]);
   return (
     <>
       {menus.length ? (
         <div className="select-menus">
-          <div className="select-menu-controls">
+          <p className="select-menu-prompt">Select your menu</p>
+          <div className="select-menu-controls" role="group" aria-label="Select your menu">
             {menus.map((menu) => (
               <button
                 key={menu.id}
@@ -156,6 +151,7 @@ export function MenuChoices({ menus }: { menus: SelectMenu[] }) {
                 onClick={() => setOpenMenu((current) => (current === menu.id ? null : menu.id))}
               >
                 {menu.label}
+                <svg className="menu-toggle-chevron" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="m4 6 4 4 4-4" stroke="currentColor" strokeWidth="1.5" /></svg>
               </button>
             ))}
           </div>
@@ -209,7 +205,7 @@ function MenuBlock({ section }: { section: SelectMenuSection }) {
             <div className="menu-top">
               <strong>
                 {item.marked ? <span className="mark">* </span> : null}
-                {item.name}
+                {displayDishName(item.name)}
                 {item.glutenFree ? <span className="chip">Gluten free</span> : null}
               </strong>
               <span className="dots" aria-hidden="true" />
