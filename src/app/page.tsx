@@ -42,6 +42,7 @@ function selectDishes(menu: MenuSection[]): SelectDish[] {
     if (!row) return [];
     const plate = LUNCH_PLATES.find((photo) => photo.menuName === name);
     const photo = plate;
+    if (!photo) return [];
     return [
       {
         id: row.item.id,
@@ -152,7 +153,7 @@ export default async function HomePage() {
       <section className="band-cream food-band" aria-labelledby="select-dishes-heading">
         <div className="wrap page">
           <div className="select-intro">
-            <h2 id="select-dishes-heading">Much-loved dishes</h2>
+            <h2 id="select-dishes-heading">From Vinny’s Kitchen</h2>
             <p className="band-lede">{LUNCH_SERVICE}.</p>
           </div>
           <SelectDishes dishes={dishes} menus={publishedMenus(menu)} toastUrl={site.toastUrl} />
