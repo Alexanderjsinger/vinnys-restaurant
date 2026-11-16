@@ -1,7 +1,8 @@
 import { ConfirmedEvents, EventsEmptyState } from "@/components/ConfirmedEvents";
 import { TrackView } from "@/components/TrackView";
 import { listEvents } from "@/lib/content";
-import { demoEventsEnabled, makeDemoEvents } from "@/lib/demo-events";
+import { makeDemoEvents } from "@/lib/demo-events";
+import { showDemoEvents } from "@/lib/demo-events-server";
 import { splitPublicEvents } from "@/lib/events-public";
 import { detroitNowLocal } from "@/lib/format";
 import { DEFAULT_PLACE_NAME } from "@/lib/brand";
@@ -19,7 +20,7 @@ export const metadata = pageMeta(
 export default async function EventsPage() {
   const now = detroitNowLocal();
   const site = await getSite();
-  const demo = process.env.NODE_ENV === "development" && demoEventsEnabled();
+  const demo = await showDemoEvents();
   const events = demo ? makeDemoEvents(now.slice(0, 10)) : await listEvents("public");
   const { upcoming, earlier } = splitPublicEvents(events, now);
   const contact = {

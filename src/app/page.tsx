@@ -11,7 +11,8 @@ import { VinnyWordmark } from "@/components/VinnyWordmark";
 import { isMeetMeLine } from "@/lib/public";
 import { LUNCH_PLATES } from "@/lib/lunch-photos";
 import { publishedMenus } from "@/lib/menu-options";
-import { demoEventsEnabled, makeDemoEvents } from "@/lib/demo-events";
+import { makeDemoEvents } from "@/lib/demo-events";
+import { showDemoEvents } from "@/lib/demo-events-server";
 import { pageMeta } from "@/lib/seo";
 import { getSite } from "@/lib/site";
 import type { MenuSection } from "@/lib/types";
@@ -60,7 +61,7 @@ export default async function HomePage() {
   const menu = await listMenu("public");
   const dishes = selectDishes(menu);
   const now = detroitNowLocal();
-  const demo = process.env.NODE_ENV === "development" && demoEventsEnabled();
+  const demo = await showDemoEvents();
   const upcoming = (demo ? makeDemoEvents(now.slice(0, 10)) : await listEvents("public"))
     .filter((event) => (event.ends_at || event.starts_at) >= now)
     .slice(0, demo ? 5 : 3);
