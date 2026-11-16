@@ -2,8 +2,7 @@ import { MenuChoices } from "@/components/SelectDishes";
 import { publishedMenus } from "@/lib/menu-options";
 import { TrackView } from "@/components/TrackView";
 import { listMenu } from "@/lib/content";
-import { LUNCH_SERVICE } from "@/lib/lunch-menu";
-import { OrderLink } from "@/components/OrderLink";
+import { menuForEasternTime } from "@/lib/menu-schedule";
 import { DEFAULT_PLACE_NAME } from "@/lib/brand";
 import { pageMeta } from "@/lib/seo";
 import { getSite } from "@/lib/site";
@@ -23,13 +22,11 @@ export default async function MenuPage() {
   return (
     <div className="page wrap">
       <TrackView name="menu_view" />
-      <p className="eyebrow">Lunch menu</p>
+      <p className="eyebrow">Menus</p>
       <h1>Food &amp; Drinks at {placeName}</h1>
-      <p className="lunch-line">{LUNCH_SERVICE}</p>
-      <p>
-        <OrderLink className="btn btn-solid" url={site.toastUrl} />
-      </p>
-      <MenuChoices menus={publishedMenus(sections)} />
+      <p className="lunch-line">Lunch 11am–3pm · Happy Hour 3–5pm · Dinner 5–11pm</p>
+      <p className="hint">All times Eastern. Choose any menu below.</p>
+      <MenuChoices menus={publishedMenus(sections)} initialMenu={menuForEasternTime()} />
     </div>
   );
 }

@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { OrderLink } from "@/components/OrderLink";
 import { formatPrice } from "@/lib/format";
+import { menuForEasternTime } from "@/lib/menu-schedule";
 
 export type SelectDishPhoto = {
   src: string;
@@ -117,9 +118,11 @@ export function SelectDishes({
   );
 }
 
-export function MenuChoices({ menus }: { menus: SelectMenu[] }) {
-  const [openMenu, setOpenMenu] = useState<string | null>(null);
+export function MenuChoices({ menus, initialMenu = null }: { menus: SelectMenu[]; initialMenu?: string | null }) {
+  const [openMenu, setOpenMenu] = useState<string | null>(initialMenu);
   useEffect(() => {
+    // Recheck at arrival in case this route was prefetched before a service boundary.
+    if (initialMenu !== null) setOpenMenu(menuForEasternTime());
     const sync = () => {
       const id = window.location.hash.replace("#select-menu-", "");
       if (menus.some(menu => menu.id === id)) setOpenMenu(id);
@@ -127,12 +130,13 @@ export function MenuChoices({ menus }: { menus: SelectMenu[] }) {
     sync();
     window.addEventListener("hashchange", sync);
     return () => window.removeEventListener("hashchange", sync);
-  }, [menus]);
+  }, [menus, initialMenu]);
   return (
     <>
       {menus.length ? (
         <div className="select-menus">
-          <div className="select-menu-controls">
+          <p className="select-menu-prompt">Select your menu</p>
+          <div className="select-menu-controls" role="group" aria-label="Select your menu">
             {menus.map((menu) => (
               <button
                 key={menu.id}
@@ -142,6 +146,7 @@ export function MenuChoices({ menus }: { menus: SelectMenu[] }) {
                 onClick={() => setOpenMenu((current) => (current === menu.id ? null : menu.id))}
               >
                 {menu.label}
+                <svg className="menu-toggle-chevron" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="m4 6 4 4 4-4" stroke="currentColor" strokeWidth="1.5" /></svg>
               </button>
             ))}
           </div>

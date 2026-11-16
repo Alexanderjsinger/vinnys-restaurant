@@ -2127,3 +2127,14 @@ a:focus-visible, button:focus-visible { outline: 3px solid var(--gold-hot); outl
 .site-footer .social-links a { width: 32px; height: 32px; }
 .site-footer .social-links svg { width: 18px; height: 18px; }
 @media (max-width: 799px) { .header-brand-group { display: block; flex: 1; min-width: 0; } .header-brand-group .social-links { margin-top: .2rem; color: #141210; } .brand-row .header-brand-group .brand-mark .vinny-wordmark { max-width: 100%; } }
+
+/* Menu choices read as expandable controls; the storefront fills its desktop panel. */
+.select-menu-prompt { text-align: center; margin: 1.6rem 0 .8rem; color: var(--paper-muted); font-size: .85rem; }
+.select-menu-controls { gap: .65rem; }
+.select-menu-controls button, .select-menu-controls button:first-child { display: inline-flex; align-items: center; justify-content: center; gap: .65rem; padding: .7rem 1rem; min-height: 48px; border: 1px solid #bdb3a1; background: #fff; letter-spacing: .07em; }
+.select-menu-controls button:hover { background: #eee8da; border-color: #8a7028; }
+.select-menu-controls button[aria-expanded="true"] { background: #d4af37; color: #141210; border-color: #b89424; box-shadow: none; }
+.menu-toggle-chevron { width: 16px; height: 16px; flex: none; }
+.select-menu-controls button[aria-expanded="true"] .menu-toggle-chevron { transform: rotate(180deg); }
+@media (min-width: 1000px) { .about-grid { align-items: stretch; } .about-exterior { position: relative; min-height: 24rem; overflow: hidden; } .about-exterior img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 60% center; } }
+@media (max-width: 540px) { .select-menu-controls { gap: .4rem; } .select-menu-controls button, .select-menu-controls button:first-child { font-size: .68rem; padding: .65rem .7rem; gap: .4rem; } }
