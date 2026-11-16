@@ -2201,3 +2201,21 @@ main h1:not(.stitch-wordmark) { font-family: var(--font-display), Georgia, serif
   .site-header .sticky-bar--on-reel { background: transparent; }
   .site-header .sticky-bar--on-reel .header-actions .btn { color: #f6f1e7; }
 }
+
+/* Contact invitations use the same editorial type and warm paper palette. */
+.contact-forms { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, .8fr); gap: clamp(2rem, 5vw, 5rem); margin-top: 3rem; padding-top: 2.5rem; border-top: 1px solid var(--paper-line); scroll-margin-top: 8rem; }
+.contact-forms h2 { font-family: var(--font-display), Georgia, serif; font-size: var(--type-section); font-weight: 600; line-height: 1.2; }
+.contact-forms section > p:not(.micro-label) { font-size: 1rem; line-height: 1.75; }
+.contact-signup { align-self: start; padding: clamp(1.25rem, 3vw, 2rem); background: #eee8dc; }
+.contact-form { display: grid; gap: 1.1rem; margin-top: 1.5rem; }
+.contact-form > label:not(.contact-consent) { display: grid; gap: .4rem; font-size: .95rem; }
+.contact-form input, .contact-form select, .contact-form textarea { font-size: 1rem; font-weight: 400; }
+.contact-consent { display: flex; gap: .65rem; align-items: flex-start; font-size: .9rem; line-height: 1.6; }
+.contact-consent input { flex: none; margin-top: .3rem; }
+.contact-form .btn { justify-self: start; }
+.contact-form button:disabled { opacity: .65; cursor: wait; }
+.contact-field-error { color: #8a2b1f; font-size: .9rem; font-weight: 500; }
+.contact-feedback { padding: 1rem; background: #eee8dc; color: #29251e; line-height: 1.6; }
+.contact-honeypot { position: absolute; left: -10000px; width: 1px; height: 1px; overflow: hidden; }
+@media (max-width: 799px) { .contact-forms { grid-template-columns: minmax(0, 1fr); } }
+.contact-form select { appearance: none; min-height: 48px; padding-right: 2.5rem; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 16 16'%3E%3Cpath d='m4 6 4 4 4-4' fill='none' stroke='%23534d45' stroke-width='1.5'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right .8rem center; }

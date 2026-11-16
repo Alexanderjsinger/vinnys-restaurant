@@ -254,6 +254,11 @@ export async function deleteInquiry(id: number) {
   sqlite.deleteInquiry(id);
 }
 
+export async function addSignup(email: string): Promise<void> {
+  if ((await writeMode()) === "d1") return d1.addSignup(email);
+  await sqlite.addSignup(email);
+}
+
 export async function listSignups() {
   if ((await writeMode()) === "d1") return d1.listSignups();
   return sqlite.listSignups();
