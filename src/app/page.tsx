@@ -134,7 +134,7 @@ export default async function HomePage() {
               </div>
             </article>
             <article className="occasion-card">
-              <img src="/hero/sizzle-bartender.jpg" alt="Cocktail atmosphere from the Vinny’s reel" width={1280} height={720} loading="lazy" />
+              <img src="/photos/bartender-supplied.webp" alt="Illustrated cocktail gathering at a bar" width={1365} height={768} loading="lazy" />
               <div className="occasion-copy">
                 <p className="micro-label">At the bar</p>
                 <h3>Happy Hour</h3>
