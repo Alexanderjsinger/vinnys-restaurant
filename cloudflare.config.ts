@@ -26,6 +26,8 @@ export default defineConfig({
         id: "5bd8ee69-a229-4156-a6fa-166f55e3abcb",
       }),
       ADMIN_PASSWORD: bindings.secret(),
+      // Temporary concepts: additionally restricted to the exact workers.dev staging host.
+      VINNYS_STAGING_DEMO_EVENTS: bindings.text("1"),
     },
   }),
 });

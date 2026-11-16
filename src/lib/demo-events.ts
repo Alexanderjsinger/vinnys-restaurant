@@ -1,8 +1,15 @@
 import type { EventRow } from "@/lib/types";
 
-/** Local visual concepts only. A production Worker can never enable these fixtures. */
+/** Local opt-in stays separate from the host-scoped staging switch. */
 export function demoEventsEnabled(env: Record<string, string | undefined> = process.env): boolean {
   return env.NODE_ENV === "development" && env.VINNYS_DEMO_EVENTS === "1";
+}
+
+export const DEMO_STAGING_HOST = "vinnys-bar-grill.toastisadog.workers.dev";
+
+/** A production build can show concepts only on the designated staging host. */
+export function stagingDemoEventsEnabled(flag: unknown, host: string): boolean {
+  return flag === "1" && host.toLowerCase() === DEMO_STAGING_HOST;
 }
 
 export function makeDemoEvents(today: string): EventRow[] {
