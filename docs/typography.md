@@ -12,3 +12,5 @@ Owner direction, updated 2026-11-16. This supersedes the earlier formal/serif he
 - Menu introduction: “Lunch, Happy Hour and Dinner” and “Meet me at Vinny’s, anytime”. No Lunch daily subheading beneath From Vinny’s Kitchen.
 
 Store this direction in repository documentation so future refinements follow it. No CMS names, prices, hours, event records or stored content are modified by typography-only changes.
+
+Footer navigation stays compact: a three-column link grid on phones, a wrapping horizontal row below two content columns at 600–1099px, and two link columns beside branding/hours at 1100px and above. Keep 44px link targets; do not force one link per full-width row at tablet sizes.
