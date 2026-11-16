@@ -11,6 +11,7 @@ import { VinnyWordmark } from "@/components/VinnyWordmark";
 import { isMeetMeLine, RESERVE_TEL } from "@/lib/public";
 import { LUNCH_PLATES } from "@/lib/lunch-photos";
 import { publishedMenus } from "@/lib/menu-options";
+import { demoEventsEnabled, makeDemoEvents } from "@/lib/demo-events";
 import { pageMeta } from "@/lib/seo";
 import { getSite } from "@/lib/site";
 import type { MenuSection } from "@/lib/types";
@@ -59,9 +60,10 @@ export default async function HomePage() {
   const menu = await listMenu("public");
   const dishes = selectDishes(menu);
   const now = detroitNowLocal();
-  const upcoming = (await listEvents("public"))
+  const demo = process.env.NODE_ENV === "development" && demoEventsEnabled();
+  const upcoming = (demo ? makeDemoEvents(now.slice(0, 10)) : await listEvents("public"))
     .filter((event) => (event.ends_at || event.starts_at) >= now)
-    .slice(0, 3);
+    .slice(0, demo ? 5 : 3);
   const phoneHref = site.phoneHref || RESERVE_TEL;
   const rawHeroSupport = site.heroText?.trim() || "";
   // Meet me lives in the header. The EMU sentence is a placeholder, not reel copy.
@@ -167,6 +169,7 @@ export default async function HomePage() {
         <div className="wrap home-events-inner">
           <p className="micro-label">On the calendar</p>
           <h2 id="home-events-heading">What’s happening at Vinny’s</h2>
+          {demo ? <p className="demo-events-note" role="note">Demo week — concepts only. Dates and 7–9pm times are illustrative; no hosts, prizes, performers, or specials are booked or confirmed.</p> : null}
           {upcoming.length ? (
             <>
               <ConfirmedEvents events={upcoming} />
