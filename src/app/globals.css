@@ -2169,3 +2169,15 @@ main h1:not(.stitch-wordmark) { font-family: var(--font-display), Georgia, serif
 .home-events .event-list .event h3, .menu-section h2 { font-family: var(--font-display), Georgia, serif; font-size: var(--type-card); line-height: 1.25; font-weight: 600; letter-spacing: -.015em; text-transform: none; }
 
 .event-list .event .event-date time { color: inherit; }
+
+/* Give the header identity and social destinations a readable presence. */
+.site-header .brand-row { padding-block: 1rem; }
+.site-header .brand-mark .vinny-wordmark { height: clamp(2rem, 3vw, 2.6rem); width: auto; }
+.site-header .social-links { gap: .15rem; }
+.site-header .social-links a { width: 44px; height: 44px; }
+.site-header .social-links svg { width: 22px; height: 22px; }
+@media (max-width: 799px) {
+  .site-header .brand-row { padding-block: .8rem; }
+  .site-header .brand-row .brand-mark .vinny-wordmark { width: min(8rem, 100%); max-width: 100%; height: auto; }
+  .site-header .header-brand-group .social-links { margin-top: .3rem; }
+}
