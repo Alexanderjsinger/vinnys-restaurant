@@ -675,7 +675,8 @@ address { font-style: normal; }
   .reel-hero .framed-hero-frame {
     width: 100%;
     height: auto;
-    aspect-ratio: 16 / 9;
+    /* 15% taller than the previous 16:9 mobile reel. */
+    aspect-ratio: 320 / 207;
     max-height: none;
   }
   .reel-hero-copy {
@@ -2219,3 +2220,9 @@ main h1:not(.stitch-wordmark) { font-family: var(--font-display), Georgia, serif
 .contact-honeypot { position: absolute; left: -10000px; width: 1px; height: 1px; overflow: hidden; }
 @media (max-width: 799px) { .contact-forms { grid-template-columns: minmax(0, 1fr); } }
 .contact-form select { appearance: none; min-height: 48px; padding-right: 2.5rem; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 16 16'%3E%3Cpath d='m4 6 4 4 4-4' fill='none' stroke='%23534d45' stroke-width='1.5'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right .8rem center; }
+
+/* Keep the Story exterior a supporting mobile image beneath the reel. */
+@media (max-width: 799px) {
+  .about-exterior { height: 50vw; overflow: hidden; }
+  .about-exterior img { width: 100%; height: 100%; object-fit: cover; object-position: center 40%; }
+}
