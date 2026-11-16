@@ -119,7 +119,7 @@ export function SelectDishes({
   );
 }
 
-export function MenuChoices({ menus, initialMenu = null }: { menus: SelectMenu[]; initialMenu?: string | null }) {
+export function MenuChoices({ menus, initialMenu = null, showHeading = true }: { menus: SelectMenu[]; initialMenu?: string | null; showHeading?: boolean }) {
   const [openMenu, setOpenMenu] = useState<string | null>(initialMenu);
   useEffect(() => {
     // Recheck at arrival in case this route was prefetched before a service boundary.
@@ -136,8 +136,10 @@ export function MenuChoices({ menus, initialMenu = null }: { menus: SelectMenu[]
     <>
       {menus.length ? (
         <div className="select-menus">
-          <h2 className="select-menu-heading">Menus</h2>
-          <p className="select-menu-prompt">Select your menu</p>
+          {showHeading ? <>
+            <h2 className="select-menu-heading">Lunch, Happy Hour and Dinner</h2>
+            <p className="select-menu-prompt">Meet me at Vinny’s, anytime</p>
+          </> : null}
           <div className="select-menu-controls" role="group" aria-label="Select your menu">
             {menus.map((menu) => (
               <button

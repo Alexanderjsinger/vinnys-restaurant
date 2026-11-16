@@ -47,6 +47,7 @@ Docs such as `docs/project-context.md` and `docs/events-cms-backlog.md` may desc
 | Roles, staging, HOLD | `docs/project-context.md` |
 | Agent loop | `docs/agent-workflow.md` |
 | Homepage layout CI bar | `docs/homepage-visual-qa.md` |
+| Current owner-approved typography and clean visual direction | `docs/typography.md` |
 | Events product gaps | `docs/events-cms-backlog.md` |
 | UX reviewer mandate | `.cursor/agents/ux-design-reviewer.md` |
 

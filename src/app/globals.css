@@ -58,7 +58,7 @@ body {
 main { flex: 1; }
 
 h1, h2, h3, .brand-mark, .lede-title, .stitch-wordmark, .framed-hero-title {
-  font-family: var(--font-display), Georgia, serif;
+  font-family: var(--font-display), Arial, sans-serif;
   font-weight: 600;
   letter-spacing: -0.02em;
   line-height: 1.12;
@@ -675,7 +675,8 @@ address { font-style: normal; }
   .reel-hero .framed-hero-frame {
     width: 100%;
     height: auto;
-    aspect-ratio: 16 / 9;
+    /* 15% taller than the previous 16:9 mobile reel. */
+    aspect-ratio: 320 / 207;
     max-height: none;
   }
   .reel-hero-copy {
@@ -876,7 +877,7 @@ address { font-style: normal; }
   margin: 0;
   padding: 0.75rem;
   color: #fff;
-  font-family: var(--font-display), Georgia, serif;
+  font-family: var(--font-display), Arial, sans-serif;
   font-size: clamp(1.25rem, 2.1vw, 2.05rem);
   font-weight: 600;
   letter-spacing: 0.12em;
@@ -1362,7 +1363,7 @@ button.select-row-card { cursor: pointer; width: 100%; }
   margin: 0;
   text-align: center;
   color: #f6f1e7;
-  font-family: var(--font-display), Georgia, serif;
+  font-family: var(--font-display), Arial, sans-serif;
   font-size: clamp(2.6rem, 8vw, 6rem);
   font-weight: 600;
   line-height: 0.95;
@@ -1426,7 +1427,7 @@ button.select-row-card { cursor: pointer; width: 100%; }
 }
 .special p {
   margin: 0.45rem 0 0;
-  font-family: var(--font-display), Georgia, serif;
+  font-family: var(--font-display), Arial, sans-serif;
   font-size: 1.45rem;
   line-height: 1.15;
 }
@@ -2067,7 +2068,7 @@ a:focus-visible, button:focus-visible { outline: 3px solid var(--gold-hot); outl
 .story-page-body { max-width: 800px; padding-block: clamp(2.5rem, 6vw, 5rem); }
 .story-page-body h2 { font-size: clamp(2rem, 3vw, 2.8rem); }
 .story-page-body > p:not(.micro-label) { font-size: 1.1rem; line-height: 1.85; margin-bottom: 1.5rem; }
-.story-page-body .story-signoff { font-family: var(--font-display), Georgia, serif; font-size: clamp(1.8rem, 3vw, 2.4rem) !important; margin-top: 2rem; }
+.story-page-body .story-signoff { font-family: var(--font-display), Arial, sans-serif; font-size: clamp(1.8rem, 3vw, 2.4rem) !important; margin-top: 2rem; }
 .story-page-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 1.5rem; }
 .story-page-actions .text-link { display: inline-flex; align-items: center; gap: .7rem; min-height: 44px; }
 @media (min-width: 1000px) { .story-page-hero { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); } }
@@ -2083,7 +2084,7 @@ a:focus-visible, button:focus-visible { outline: 3px solid var(--gold-hot); outl
 .select-feature-navigation svg { width: 18px; height: 18px; }
 .select-feature-navigation { display: flex; gap: .4rem; }
 .select-photo-missing { display: flex; flex-direction: column; gap: 1rem; align-items: center; justify-content: center; text-align: center; padding: 3rem; height: 100%; min-height: 26rem; }
-.select-photo-missing > span:last-child { font-family: var(--font-display), Georgia, serif; font-size: 2rem; line-height: 1.2; }
+.select-photo-missing > span:last-child { font-family: var(--font-display), Arial, sans-serif; font-size: 2rem; line-height: 1.2; }
 .select-feature-panel { display: flex; flex-direction: column; align-items: flex-start; padding: clamp(1.5rem, 2.6vw, 2.5rem); min-width: 0; background: #fff; }
 .select-feature-meta { display: flex; align-items: baseline; justify-content: space-between; gap: 1rem; width: 100%; font-size: .65rem; font-weight: 600; text-transform: uppercase; letter-spacing: .08em; color: #756b5c; }
 .select-feature-price { white-space: nowrap; color: #8a7028; }
@@ -2148,9 +2149,9 @@ a:focus-visible, button:focus-visible { outline: 3px solid var(--gold-hot); outl
 
 /* Public typography: one editorial heading family, one reading/control family. */
 :root { --type-page: clamp(2.35rem, 4vw, 3.6rem); --type-section: clamp(1.85rem, 3vw, 2.7rem); --type-card: clamp(1.35rem, 2vw, 1.75rem); --type-label: .72rem; --type-small: .8rem; }
-main h1:not(.stitch-wordmark) { font-family: var(--font-display), Georgia, serif; font-size: var(--type-page); font-weight: 600; line-height: 1.12; letter-spacing: -.02em; max-width: 22ch; }
-#about-heading, #occasion-heading, #home-events-heading, #select-dishes-heading, .story-page-body h2, main .page > h2 { font-family: var(--font-display), Georgia, serif; font-size: var(--type-section); font-weight: 600; line-height: 1.2; letter-spacing: -.02em; text-transform: none; }
-.occasion-copy h3, .event-list .event h3, .select-feature-panel h3 { font-family: var(--font-display), Georgia, serif; font-size: var(--type-card); font-weight: 600; line-height: 1.25; letter-spacing: -.015em; text-transform: none; }
+main h1:not(.stitch-wordmark) { font-family: var(--font-display), Arial, sans-serif; font-size: var(--type-page); font-weight: 600; line-height: 1.12; letter-spacing: -.02em; max-width: 22ch; }
+#about-heading, #occasion-heading, #home-events-heading, #select-dishes-heading, .story-page-body h2, main .page > h2 { font-family: var(--font-display), Arial, sans-serif; font-size: var(--type-section); font-weight: 600; line-height: 1.2; letter-spacing: -.02em; text-transform: none; }
+.occasion-copy h3, .event-list .event h3, .select-feature-panel h3 { font-family: var(--font-display), Arial, sans-serif; font-size: var(--type-card); font-weight: 600; line-height: 1.25; letter-spacing: -.015em; text-transform: none; }
 .micro-label, .eyebrow, .select-feature-meta, .site-footer .footer-hours h2 { font-family: var(--font-body), sans-serif; font-size: var(--type-label); font-weight: 600; line-height: 1.5; letter-spacing: .12em; text-transform: uppercase; }
 .select-feature-price, .select-feature-meta .select-feature-price { font-size: .9rem; font-weight: 600; letter-spacing: 0; }
 .site-header .primary-nav a, .site-header .header-actions .btn, .site-footer nav a, .select-menu-controls button, main .btn, .reel-hero-copy .hero-menu-link { font-family: var(--font-body), sans-serif; font-size: .85rem; font-weight: 600; line-height: 1.4; letter-spacing: .02em; text-transform: none; }
@@ -2163,10 +2164,10 @@ main h1:not(.stitch-wordmark) { font-family: var(--font-display), Georgia, serif
 .select-preview-section { font-size: .65rem; letter-spacing: .08em; }
 .event-list .event .event-date, .event-list .event .event-date time { font-family: var(--font-body), sans-serif; font-size: .85rem; font-weight: 500; letter-spacing: 0; }
 .select-menu-prompt { font-size: .9rem; }
-.story-page-body .story-signoff { font-family: var(--font-display), Georgia, serif; font-weight: 600; letter-spacing: -.02em; font-size: var(--type-section) !important; }
+.story-page-body .story-signoff { font-family: var(--font-display), Arial, sans-serif; font-weight: 600; letter-spacing: -.02em; font-size: var(--type-section) !important; }
 @media (max-width: 540px) { .select-menu-controls button, .select-menu-controls button:first-child { font-size: .78rem; letter-spacing: 0; gap: .35rem; } }
 
-.home-events .event-list .event h3, .menu-section h2 { font-family: var(--font-display), Georgia, serif; font-size: var(--type-card); line-height: 1.25; font-weight: 600; letter-spacing: -.015em; text-transform: none; }
+.home-events .event-list .event h3, .menu-section h2 { font-family: var(--font-display), Arial, sans-serif; font-size: var(--type-card); line-height: 1.25; font-weight: 600; letter-spacing: -.015em; text-transform: none; }
 
 .event-list .event .event-date time { color: inherit; }
 
@@ -2175,7 +2176,7 @@ main h1:not(.stitch-wordmark) { font-family: var(--font-display), Georgia, serif
 .select-feature-bottom { margin-top: 0; padding-top: 1.25rem; }
 .select-preview-rail { width: min(100%, 1020px); margin-inline: auto; }
 .select-preview { padding: 0; }
-.select-menu-heading { font-family: var(--font-display), Georgia, serif; font-size: var(--type-section); line-height: 1.2; font-weight: 600; text-align: center; margin: 2.5rem 0 .6rem; }
+.select-menu-heading { font-family: var(--font-display), Arial, sans-serif; font-size: var(--type-section); line-height: 1.2; font-weight: 600; text-align: center; margin: 2.5rem 0 .6rem; }
 .select-menus .select-menu-prompt { margin: 0 0 1rem; font-size: 1rem; }
 .select-menu-controls button, .select-menu-controls button:first-child { font-size: 1rem; }
 
@@ -2204,7 +2205,7 @@ main h1:not(.stitch-wordmark) { font-family: var(--font-display), Georgia, serif
 
 /* Contact invitations use the same editorial type and warm paper palette. */
 .contact-forms { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, .8fr); gap: clamp(2rem, 5vw, 5rem); margin-top: 3rem; padding-top: 2.5rem; border-top: 1px solid var(--paper-line); scroll-margin-top: 8rem; }
-.contact-forms h2 { font-family: var(--font-display), Georgia, serif; font-size: var(--type-section); font-weight: 600; line-height: 1.2; }
+.contact-forms h2 { font-family: var(--font-display), Arial, sans-serif; font-size: var(--type-section); font-weight: 600; line-height: 1.2; }
 .contact-forms section > p:not(.micro-label) { font-size: 1rem; line-height: 1.75; }
 .contact-signup { align-self: start; padding: clamp(1.25rem, 3vw, 2rem); background: #eee8dc; }
 .contact-form { display: grid; gap: 1.1rem; margin-top: 1.5rem; }
@@ -2219,3 +2220,49 @@ main h1:not(.stitch-wordmark) { font-family: var(--font-display), Georgia, serif
 .contact-honeypot { position: absolute; left: -10000px; width: 1px; height: 1px; overflow: hidden; }
 @media (max-width: 799px) { .contact-forms { grid-template-columns: minmax(0, 1fr); } }
 .contact-form select { appearance: none; min-height: 48px; padding-right: 2.5rem; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 16 16'%3E%3Cpath d='m4 6 4 4 4-4' fill='none' stroke='%23534d45' stroke-width='1.5'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right .8rem center; }
+
+/* Keep the Story exterior a supporting mobile image beneath the reel. */
+@media (max-width: 799px) {
+  .about-exterior { height: 50vw; overflow: hidden; }
+  .about-exterior img { width: 100%; height: 100%; object-fit: cover; object-position: center 40%; }
+}
+
+/* Owner direction: contemporary headings and open text layouts, without badges. */
+.home-events { background: var(--cream); color: var(--paper-ink); }
+.home-events .micro-label { color: var(--gold-deep); }
+.event-list, .home-events .event-list { gap: 3rem 2.5rem; align-items: start; }
+.event-list .event, .home-events .event-list .event { display: flex; flex-direction: column; gap: .9rem; padding: 0; border: 0; background: transparent; box-shadow: none; }
+.event-list .event h3, .home-events .event-list .event h3 { margin: 0; max-width: 32ch; }
+.event-list .event > p, .home-events .event-list .event > p { margin: 0; line-height: 1.75; }
+.event-list .event .event-date, .home-events .event-list .event .event-date { align-self: flex-start; padding: 0; margin: .1rem 0; background: transparent; color: #625b50; font-size: .9rem; font-weight: 500; }
+.event-list .event time, .home-events .event-list .event time { color: inherit; font-weight: 500; }
+.event-list .event > img, .home-events .event-list .event > img { display: block; width: 100%; height: auto; max-height: none; margin: .25rem 0; }
+.home-events .event-list { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.home-events a { color: var(--paper-ink); }
+.home-events .btn { border: 0; padding-inline: 0; background: transparent; color: var(--paper-ink); text-decoration: underline; text-underline-offset: .25em; }
+.events-concept-label { color: #625b50; font-size: .8rem; line-height: 1.5; margin: -.5rem 0 2rem; }
+.contact-text-link { display: inline-flex; align-items: center; min-height: 44px; color: var(--paper-ink); text-decoration: underline; text-underline-offset: .25em; }
+.contact-hours { padding: 0; border: 0; background: transparent; box-shadow: none; }
+.contact-signup { padding: 0; background: transparent; }
+@media (max-width: 799px) { .home-events .event-list { grid-template-columns: minmax(0, 1fr); } }
+.home-events .events-empty { padding: 0; background: transparent; border: 0; color: var(--paper-ink); }
+.home-events .hint { color: var(--paper-muted); }
+
+/* Footer follows available width instead of dropping into a tall link stack. */
+.site-footer nav ul { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: .2rem .8rem; list-style: none; }
+.site-footer nav a { display: inline-flex; align-items: center; min-height: 44px; }
+@media (max-width: 599px) {
+  .site-footer .footer-grid { grid-template-columns: minmax(0, 1fr); gap: 1.75rem; }
+}
+@media (min-width: 600px) and (max-width: 1099px) {
+  .site-footer .footer-grid { grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr); gap: 2rem; }
+  .site-footer nav { grid-column: 1 / -1; }
+  .site-footer nav ul { display: flex; flex-wrap: wrap; gap: .2rem 1.5rem; }
+}
+@media (min-width: 600px) and (max-width: 899px) {
+  .site-footer .hours div { display: grid; grid-template-columns: minmax(0, 1fr); gap: .2rem; }
+}
+@media (min-width: 1100px) {
+  .site-footer .footer-grid { grid-template-columns: minmax(0, 1.1fr) minmax(0, 1.3fr) minmax(0, .65fr); }
+  .site-footer nav ul { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}

@@ -29,7 +29,7 @@ export default async function ContactPage({ searchParams }: { searchParams: Prom
           {site.mapUrl ? (
             <p>
               <a
-                className="btn"
+                className="contact-text-link"
                 href={site.mapUrl}
                 data-track="directions_click"
                 target="_blank"
@@ -41,8 +41,8 @@ export default async function ContactPage({ searchParams }: { searchParams: Prom
             </p>
           ) : null}
           <p>
-            <a className="btn btn-solid" href={site.phoneHref || RESERVE_TEL} data-track="phone_click">
-              Call {site.phone || PHONE_DISPLAY}
+            <a className="contact-text-link" href={site.phoneHref || RESERVE_TEL} data-track="phone_click">
+              {site.phone || PHONE_DISPLAY}
             </a>
           </p>
           {site.email ? (
@@ -50,13 +50,8 @@ export default async function ContactPage({ searchParams }: { searchParams: Prom
               <a href={`mailto:${site.email}`}>{site.email}</a>
             </p>
           ) : null}
-          <p>
-            <a href={site.phoneHref || RESERVE_TEL} data-track="phone_click">
-              Call to reserve
-            </a>
-          </p>
         </section>
-        <section className="paper" aria-labelledby="hours-heading">
+        <section className="contact-hours" aria-labelledby="hours-heading">
           <h2 id="hours-heading">Hours</h2>
           <HoursList hours={site.hours} />
         </section>

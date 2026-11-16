@@ -4,7 +4,6 @@ import { HeroMedia } from "@/components/HeroMedia";
 import { SIZZLE_REEL } from "@/lib/hero";
 import { listEvents, listMenu } from "@/lib/content";
 import { detroitNowLocal } from "@/lib/format";
-import { LUNCH_SERVICE } from "@/lib/lunch-menu";
 import { SelectDishes, type SelectDish } from "@/components/SelectDishes";
 import { DEFAULT_PLACE_NAME, isVinnyShortMark, splitPlaceWordmark } from "@/lib/brand";
 import { VinnyWordmark } from "@/components/VinnyWordmark";
@@ -154,7 +153,6 @@ export default async function HomePage() {
         <div className="wrap page">
           <div className="select-intro">
             <h2 id="select-dishes-heading">From Vinny’s Kitchen</h2>
-            <p className="band-lede">{LUNCH_SERVICE}.</p>
           </div>
           <SelectDishes dishes={dishes} menus={publishedMenus(menu)} toastUrl={site.toastUrl} />
         </div>
@@ -164,7 +162,7 @@ export default async function HomePage() {
         <div className="wrap home-events-inner">
           <p className="micro-label">On the calendar</p>
           <h2 id="home-events-heading">What’s happening at Vinny’s</h2>
-          {demo ? <p className="demo-events-note" role="note">Demo week — concepts only. Dates and 7–9pm times are illustrative; no hosts, prizes, performers, or specials are booked or confirmed.</p> : null}
+          {demo ? <p className="events-concept-label">Concept preview · illustrative dates and times</p> : null}
           {upcoming.length ? (
             <>
               <ConfirmedEvents events={upcoming} />
