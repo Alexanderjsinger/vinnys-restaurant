@@ -46,6 +46,11 @@ export type SelectMenu = {
   sections: SelectMenuSection[];
 };
 
+/** Present printed all-caps menu names consistently without changing stored content. */
+function displayDishName(name: string) {
+  return name.toLowerCase().replace(/(^|[\s(])([a-z])/g, (_, gap: string, letter: string) => gap + letter.toUpperCase());
+}
+
 function stepIndex(index: number, count: number, direction: -1 | 1) {
   if (count < 1) return 0;
   return (index + direction + count) % count;
@@ -83,7 +88,7 @@ export function SelectDishes({
           ) : (
             <div className="select-photo-missing">
               <span className="micro-label">From the menu</span>
-              <span>{feature.name}</span>
+              <span>{displayDishName(feature.name)}</span>
             </div>
           )}
           {dishes.length > 1 ? <>
@@ -96,7 +101,7 @@ export function SelectDishes({
             <span>{feature.section}</span>
             {feature.price ? <span className="select-feature-price">{formatPrice(feature.price)}</span> : null}
           </div>
-          <h3 aria-live="polite" aria-atomic="true">{feature.name}</h3>
+          <h3 aria-live="polite" aria-atomic="true">{displayDishName(feature.name)}</h3>
           {feature.glutenFree ? <span className="chip">Gluten free</span> : null}
           {feature.description ? <div className="select-feature-description"><p>{feature.description}</p></div> : null}
           <div className="select-feature-bottom">
@@ -110,7 +115,7 @@ export function SelectDishes({
       <div className="select-preview-rail" role="group" aria-label="Dish previews">
         {dishes.map(dish => <button key={dish.id} className={`select-preview${dish.id === feature.id ? " is-current" : ""}${dish.photo ? "" : " select-preview--text"}`} type="button" aria-label={`Preview ${dish.name}`} aria-pressed={dish.id === feature.id} onClick={() => setFeatureId(dish.id)}>
           {dish.photo ? <img src={dish.photo.src} alt="" width={dish.photo.width} height={dish.photo.height} loading="lazy" /> : <span className="select-preview-section">{dish.section}</span>}
-          <span className="select-preview-name">{dish.name}</span>
+          <span className="select-preview-name">{displayDishName(dish.name)}</span>
         </button>)}
       </div>
       <MenuChoices menus={menus} />
@@ -200,7 +205,7 @@ function MenuBlock({ section }: { section: SelectMenuSection }) {
             <div className="menu-top">
               <strong>
                 {item.marked ? <span className="mark">* </span> : null}
-                {item.name}
+                {displayDishName(item.name)}
                 {item.glutenFree ? <span className="chip">Gluten free</span> : null}
               </strong>
               <span className="dots" aria-hidden="true" />
