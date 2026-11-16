@@ -25,9 +25,9 @@ export default function AboutPage() {
         </figure>
       </section>
       <section className="story-kitchen" aria-label="Food at Vinny’s">
-        <figure><img src="/photos/pizza-supplied.webp" alt="Pizza topped with greens" width={1600} height={1143} loading="lazy" /><figcaption>From the kitchen</figcaption></figure>
-        <figure><img src="/photos/cheesecake-supplied.webp" alt="Cheesecake slice with berries and red sauce" width={1600} height={1200} loading="lazy" /><figcaption>Something sweet</figcaption></figure>
-        <figure><img src="/photos/chocolate-dessert.webp" alt="Chocolate dessert with berries, mint, and red sauce" width={1080} height={1440} loading="lazy" /><figcaption>A sweet finish</figcaption></figure>
+        <figure><img src="/photos/pizza-supplied.webp" alt="Pizza topped with greens" width={1600} height={1143} loading="lazy" /></figure>
+        <figure><img src="/photos/cheesecake-supplied.webp" alt="Cheesecake slice with berries and red sauce" width={1600} height={1200} loading="lazy" /></figure>
+        <figure><img src="/photos/chocolate-dessert.webp" alt="Chocolate dessert with berries, mint, and red sauce" width={1080} height={1440} loading="lazy" /></figure>
       </section>
       <section className="story-page-body wrap" aria-labelledby="story-welcome-heading">
         <p className="micro-label">Food, friends, and a warm welcome</p>
