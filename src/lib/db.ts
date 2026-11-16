@@ -817,7 +817,7 @@ export type Signup = {
 
 export async function addSignup(email: string) {
   const createdAt = new Date().toISOString();
-  getDb().prepare("INSERT INTO signups (email, created_at) VALUES (?, ?)").run(email, createdAt);
+  getDb().prepare("INSERT INTO signups (email, created_at) SELECT ?, ? WHERE NOT EXISTS (SELECT 1 FROM signups WHERE lower(email) = lower(?))").run(email, createdAt, email);
 }
 
 export function listSignups(): Signup[] {

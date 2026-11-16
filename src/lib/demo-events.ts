@@ -26,6 +26,6 @@ export function makeDemoEvents(today: string): EventRow[] {
     const date = new Date(monday);
     date.setUTCDate(date.getUTCDate() + index);
     const day = date.toISOString().slice(0, 10);
-    return { id: -(index + 1), title, blurb, starts_at: `${day}T19:00`, ends_at: `${day}T21:00`, is_sample: true, price: "", photo: "", next_step: "", status: "published", updated_at: "", published_at: "" };
+    return { id: -(index + 1), title, blurb, starts_at: `${day}T19:00`, ends_at: `${day}T21:00`, is_sample: true, price: "", photo: index === 0 ? "/events/demo-trivia.webp" : index === 2 ? "/events/demo-open-mic.webp" : "", next_step: "", status: "published", updated_at: "", published_at: "" };
   });
 }

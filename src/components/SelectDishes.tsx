@@ -91,10 +91,6 @@ export function SelectDishes({
               <span>{displayDishName(feature.name)}</span>
             </div>
           )}
-          {dishes.length > 1 ? <>
-            <button className="select-feature-prev" type="button" onClick={() => showDish(-1)} aria-label="Previous dish"><Arrow direction="prev" /></button>
-            <button className="select-feature-next" type="button" onClick={() => showDish(1)} aria-label="Next dish"><Arrow direction="next" /></button>
-          </> : null}
         </div>
         <div className="select-feature-panel">
           <div className="select-feature-meta">
@@ -106,16 +102,16 @@ export function SelectDishes({
           {feature.description ? <div className="select-feature-description"><p>{feature.description}</p></div> : null}
           <div className="select-feature-bottom">
             <OrderLink className="btn select-feature-order" url={toastUrl}>Order online</OrderLink>
-            {dishes.length > 1 ? <div className="select-dots" role="group" aria-label="Choose a featured dish">
-              {dishes.map(dish => <button key={dish.id} type="button" className={dish.id === feature.id ? "is-current" : undefined} aria-label={`Show ${dish.name}`} aria-current={dish.id === feature.id ? "true" : undefined} onClick={() => setFeatureId(dish.id)} />)}
+            {dishes.length > 1 ? <div className="select-feature-navigation" role="group" aria-label="Browse dishes">
+              <button type="button" onClick={() => showDish(-1)} aria-label="Previous dish"><Arrow direction="prev" /></button>
+              <button type="button" onClick={() => showDish(1)} aria-label="Next dish"><Arrow direction="next" /></button>
             </div> : null}
           </div>
         </div>
       </div>
       <div className="select-preview-rail" role="group" aria-label="Dish previews">
         {dishes.map(dish => <button key={dish.id} className={`select-preview${dish.id === feature.id ? " is-current" : ""}${dish.photo ? "" : " select-preview--text"}`} type="button" aria-label={`Preview ${dish.name}`} aria-pressed={dish.id === feature.id} onClick={() => setFeatureId(dish.id)}>
-          {dish.photo ? <img src={dish.photo.src} alt="" width={dish.photo.width} height={dish.photo.height} loading="lazy" /> : <span className="select-preview-section">{dish.section}</span>}
-          <span className="select-preview-name">{displayDishName(dish.name)}</span>
+          {dish.photo ? <img src={dish.photo.src} alt="" width={dish.photo.width} height={dish.photo.height} loading="lazy" /> : null}
         </button>)}
       </div>
       <MenuChoices menus={menus} />
@@ -140,6 +136,7 @@ export function MenuChoices({ menus, initialMenu = null }: { menus: SelectMenu[]
     <>
       {menus.length ? (
         <div className="select-menus">
+          <h2 className="select-menu-heading">Menus</h2>
           <p className="select-menu-prompt">Select your menu</p>
           <div className="select-menu-controls" role="group" aria-label="Select your menu">
             {menus.map((menu) => (

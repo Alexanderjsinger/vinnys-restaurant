@@ -15,3 +15,5 @@ The upload filenames contain “Code_Generated_Image”; image provenance has no
 2026-11-15: Owner supplied `Gemini_Generated_Image_dxmaqudxmaqudxma.jpeg` as the corrected Happy Hour card image. Optimized as `bartender-supplied.webp` (1365×768); used only for the middle homepage occasion card. Generated atmosphere imagery, not a documentary photograph of the venue. Hero poster and reel remain unchanged.
 
 Owner supplied `Gemini_Generated_Image_6srovh6srovh6sro.jpeg` as the sharper replacement for the Happy Hour card. Re-encoded at WebP quality 92 with its native 1365×768 dimensions preserved; placement and crop unchanged. Original source remains untouched.
+
+Owner supplied `1-Photo-1.jpg` (illustrative burger) for the Lunch occasion card, `2-Photo-2.jpg` (trivia) and `3-Photo-3.jpg` (open mic) for the in-memory event concepts. WebP derivatives: `photos/lunch-demo-burger.webp`, `events/demo-trivia.webp`, `events/demo-open-mic.webp`. These are atmosphere/demo assets, not verification of a specific menu item, performer or scheduled event. Featured menu photography remains unchanged; no D1 records or event-photo validation rules changed.

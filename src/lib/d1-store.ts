@@ -872,6 +872,13 @@ export async function deleteInquiry(id: number) {
   await db.prepare("DELETE FROM inquiries WHERE id = ?").bind(id).run();
 }
 
+export async function addSignup(email: string): Promise<void> {
+  await prepareD1();
+  const db = await database();
+  await db.prepare("INSERT INTO signups (email, created_at) SELECT ?, ? WHERE NOT EXISTS (SELECT 1 FROM signups WHERE lower(email) = lower(?))")
+    .bind(email, new Date().toISOString(), email).run();
+}
+
 export async function listSignups() {
   await prepareD1();
   const db = await database();

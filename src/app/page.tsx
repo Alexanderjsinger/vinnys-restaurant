@@ -42,6 +42,7 @@ function selectDishes(menu: MenuSection[]): SelectDish[] {
     if (!row) return [];
     const plate = LUNCH_PLATES.find((photo) => photo.menuName === name);
     const photo = plate;
+    if (!photo) return [];
     return [
       {
         id: row.item.id,
@@ -125,7 +126,7 @@ export default async function HomePage() {
           </div>
           <div className="occasion-grid">
             <article className="occasion-card" tabIndex={0} aria-labelledby="occasion-lunch" aria-describedby="occasion-lunch-hours">
-              <img src="/photos/burger-fries.webp" alt="Vinny’s burger with fries" width={765} height={1020} loading="lazy" />
+              <img src="/photos/lunch-demo-burger.webp" alt="Illustrative burger and fries for lunch" width={1280} height={714} loading="lazy" />
               <div className="occasion-copy">
                 <h3 id="occasion-lunch">Lunch</h3>
                 <p className="occasion-hours" id="occasion-lunch-hours">Daily 11am – 3pm</p>
@@ -152,7 +153,7 @@ export default async function HomePage() {
       <section className="band-cream food-band" aria-labelledby="select-dishes-heading">
         <div className="wrap page">
           <div className="select-intro">
-            <h2 id="select-dishes-heading">Much-loved dishes</h2>
+            <h2 id="select-dishes-heading">From Vinny’s Kitchen</h2>
             <p className="band-lede">{LUNCH_SERVICE}.</p>
           </div>
           <SelectDishes dishes={dishes} menus={publishedMenus(menu)} toastUrl={site.toastUrl} />
