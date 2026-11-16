@@ -9,7 +9,7 @@ test("homepage exposes honest reservation actions and published menu content", (
   const page = read("src/app/page.tsx");
   assert.match(page, /listMenu\("public"\)/);
   assert.match(page, /listEvents\("public"\)/);
-  assert.match(read("src/components/SiteFooter.tsx"), /Call to reserve/);
+  assert.match(read("src/components/SiteFooter.tsx"), /href=\{phoneHref\}/);
   assert.doesNotMatch(page, /Party size|type="date"|type="time"|label: "Happy Hour"|label: "Dinner"/);
   assert.doesNotMatch(page, /private part(?:y|ies)|href="\/parties"|testimonial|EST\.\s*1964/i);
   assert.match(page, /LUNCH_PLATES\.find/);
@@ -61,9 +61,9 @@ test("mobile navigation has disclosure state, Escape recovery and current-page l
 
 test("visual system uses two font families and preserves CMS wordmark and hours", () => {
   const layout = read("src/app/layout.tsx");
-  assert.match(layout, /Playfair_Display/);
+  assert.match(layout, /Montserrat/);
   assert.match(layout, /Plus_Jakarta_Sans/);
-  assert.doesNotMatch(layout, /Montserrat/);
+  assert.doesNotMatch(layout, /Playfair_Display/);
   assert.match(read("src/components/SiteHeader.tsx"), /splitPlaceWordmark/);
   assert.doesNotMatch(read("src/components/HoursList.tsx"), /Not confirmed yet/);
 });

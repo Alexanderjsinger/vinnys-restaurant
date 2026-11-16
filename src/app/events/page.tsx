@@ -32,7 +32,7 @@ export default async function EventsPage() {
     <div className="page wrap">
       <TrackView name="event_view" />
       <h1>Events</h1>
-      {demo ? <p className="demo-events-note" role="note">Demo week — concepts only. Dates and 7–9pm times are illustrative. No hosts, prizes, performers, or specials are confirmed.</p> : <p className="lede">Times are America/Detroit. Only confirmed events are listed.</p>}
+      {demo ? <p className="events-concept-label">Concept preview · illustrative dates and times</p> : <p className="lede">All times Eastern. Only confirmed events are listed.</p>}
       {upcoming.length === 0 ? (
         <EventsEmptyState surface="page" hasEarlier={earlier.length > 0} {...contact} />
       ) : null}

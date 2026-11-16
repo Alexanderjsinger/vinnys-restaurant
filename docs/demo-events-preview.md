@@ -10,7 +10,7 @@ The homepage and `/events` can display five in-memory Monday–Friday concepts. 
 
 `cloudflare.config.ts` sets the runtime text binding `VINNYS_STAGING_DEMO_EVENTS` to `"1"`. The server also requires the request Host to exactly match `vinnys-bar-grill.toastisadog.workers.dev`; custom domains and other Workers hosts use real published events even if the switch is enabled. Do not substitute forwarded-host headers. This scopes display behavior, not private access: anyone visiting staging can see the mockups.
 
-Both routes retain a visible “Demo week — concepts only” notice. All five concepts appear on the homepage. Dates use next Monday–Friday in Detroit calendar terms; 19:00–21:00 is illustrative only. No prices, real hosts, prizes, specials, booking links or performers are asserted.
+Both routes show a small “Concept preview · illustrative dates and times” label alongside the calendar introduction instead of a boxed demo banner. All five concepts appear on the homepage. Dates use next Monday–Friday in Detroit calendar terms; 19:00–21:00 is illustrative only. No prices, real hosts, prizes, specials, booking links or performers are asserted.
 
 To restore real staging events, change the text binding to `"0"` in the config and deploy through `npm run ci && npm run deploy:vinext`. No data cleanup is needed. Normal real-event mode retains the three-upcoming homepage limit. Workers Builds stays disconnected.
 

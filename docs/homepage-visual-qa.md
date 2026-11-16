@@ -41,3 +41,7 @@ Owner iPhone screenshot showed a collapsed feature media frame while its thumbna
 Use “From Vinny’s Kitchen”, no pagination dots or preview text overlays, navigation and Order inside the text panel, plain descriptions, closer photo previews, and a clearly sized Menus H2. Only burger, cauliflower and wings have confirmed matching photos; unphotographed dishes remain available in the menus.
 
 Browser verification: Chromium and WebKit at 320/390/430/768/1440px PASS for loaded feature image with height >200px, all three photo previews, no dots/captions, preview selection, previous/next navigation and no horizontal overflow. Local screenshots inspected. E6 HOLD unchanged; no D1 edits.
+
+## Clean type and Events direction — 2026-11-16
+
+Owner superseded the formal serif heading treatment with Montserrat, retaining Jakarta reading/control text and the raster wordmark. Follow `docs/typography.md` for the saved direction. Event entries and dates use open spacing with no dark text-card/date-badge backgrounds. Contact directions and number are plain links with no gold fill or duplicate reservation CTA. Demo mockups retain a discreet Concept preview label, not the former banner block. Menu copy is Lunch, Happy Hour and Dinner / Meet me at Vinny’s, anytime; the Kitchen lunch subheading is removed.
