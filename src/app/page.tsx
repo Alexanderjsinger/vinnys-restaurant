@@ -27,8 +27,8 @@ export const runtime = "nodejs";
 const SELECT_DISH_NAMES = [
   "VINNY'S BURGER",
   "SPICY CAULIFLOWER",
-  "SOUTHERN CHICKEN SALAD",
   "WINGS (8)",
+  "SOUTHERN CHICKEN SALAD",
   "FRENCH DIP",
   "BAVARIAN PRETZEL",
 ] as const;
@@ -141,7 +141,7 @@ export default async function HomePage() {
               </div>
             </article>
             <article className="occasion-card">
-              <img src="/photos/storefront.webp" alt="Vinny’s Bar & Grill on Cross Street" width={1110} height={886} loading="lazy" />
+              <img src="/photos/pizza-supplied.webp" alt="Pizza topped with greens" width={1600} height={1143} loading="lazy" />
               <div className="occasion-copy">
                 <p className="micro-label">Around the table</p>
                 <h3>Dinner</h3>
