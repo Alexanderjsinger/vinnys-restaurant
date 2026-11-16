@@ -8,7 +8,7 @@ import { LUNCH_SERVICE } from "@/lib/lunch-menu";
 import { SelectDishes, type SelectDish } from "@/components/SelectDishes";
 import { DEFAULT_PLACE_NAME, isVinnyShortMark, splitPlaceWordmark } from "@/lib/brand";
 import { VinnyWordmark } from "@/components/VinnyWordmark";
-import { isMeetMeLine, RESERVE_TEL } from "@/lib/public";
+import { isMeetMeLine } from "@/lib/public";
 import { LUNCH_PLATES } from "@/lib/lunch-photos";
 import { publishedMenus } from "@/lib/menu-options";
 import { demoEventsEnabled, makeDemoEvents } from "@/lib/demo-events";
@@ -64,7 +64,6 @@ export default async function HomePage() {
   const upcoming = (demo ? makeDemoEvents(now.slice(0, 10)) : await listEvents("public"))
     .filter((event) => (event.ends_at || event.starts_at) >= now)
     .slice(0, demo ? 5 : 3);
-  const phoneHref = site.phoneHref || RESERVE_TEL;
   const rawHeroSupport = site.heroText?.trim() || "";
   // Meet me lives in the header. The EMU sentence is a placeholder, not reel copy.
   const heroSupport =
@@ -124,31 +123,25 @@ export default async function HomePage() {
             <p>Find your next reason to stop by.</p>
           </div>
           <div className="occasion-grid">
-            <article className="occasion-card">
+            <article className="occasion-card" tabIndex={0} aria-labelledby="occasion-lunch" aria-describedby="occasion-lunch-hours">
               <img src="/photos/burger-fries.webp" alt="Vinny’s burger with fries" width={765} height={1020} loading="lazy" />
               <div className="occasion-copy">
-                <p className="micro-label">{LUNCH_SERVICE}</p>
-                <h3>Lunch</h3>
-                <p>Explore the published lunch menu, from handhelds to shareable appetizers.</p>
-                <Link href="/menu#select-menu-lunch">View lunch menu <span aria-hidden="true">→</span></Link>
+                <h3 id="occasion-lunch">Lunch</h3>
+                <p className="occasion-hours" id="occasion-lunch-hours">Daily 11am – 3pm</p>
               </div>
             </article>
-            <article className="occasion-card">
+            <article className="occasion-card" tabIndex={0} aria-labelledby="occasion-happy-hour" aria-describedby="occasion-happy-hour-hours">
               <img src="/photos/bartender-supplied.webp" alt="Illustrated cocktail gathering at a bar" width={1365} height={768} loading="lazy" />
               <div className="occasion-copy">
-                <p className="micro-label">At the bar</p>
-                <h3>Happy Hour</h3>
-                <p>Happy Hour menu details will be posted here when available.</p>
-                <Link href="/menu#select-menu-happy-hour">Explore menus <span aria-hidden="true">→</span></Link>
+                <h3 id="occasion-happy-hour">Happy Hour</h3>
+                <p className="occasion-hours" id="occasion-happy-hour-hours">Daily 3pm – 5pm</p>
               </div>
             </article>
-            <article className="occasion-card">
+            <article className="occasion-card" tabIndex={0} aria-labelledby="occasion-dinner" aria-describedby="occasion-dinner-hours">
               <img src="/photos/pizza-supplied.webp" alt="Pizza topped with greens" width={1600} height={1143} loading="lazy" />
               <div className="occasion-copy">
-                <p className="micro-label">Around the table</p>
-                <h3>Dinner</h3>
-                <p>Dinner menu details are on the way. Call us to plan your visit.</p>
-                <a href={phoneHref} data-track="phone_click">Call Vinny’s <span aria-hidden="true">→</span></a>
+                <h3 id="occasion-dinner">Dinner</h3>
+                <p className="occasion-hours" id="occasion-dinner-hours">Every night 5pm – 11pm/12am</p>
               </div>
             </article>
           </div>
