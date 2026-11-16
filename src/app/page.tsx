@@ -126,7 +126,7 @@ export default async function HomePage() {
           </div>
           <div className="occasion-grid">
             <article className="occasion-card" tabIndex={0} aria-labelledby="occasion-lunch" aria-describedby="occasion-lunch-hours">
-              <img src="/photos/burger-fries.webp" alt="Vinny’s burger with fries" width={765} height={1020} loading="lazy" />
+              <img src="/photos/lunch-demo-burger.webp" alt="Illustrative burger and fries for lunch" width={1280} height={714} loading="lazy" />
               <div className="occasion-copy">
                 <h3 id="occasion-lunch">Lunch</h3>
                 <p className="occasion-hours" id="occasion-lunch-hours">Daily 11am – 3pm</p>

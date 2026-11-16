@@ -17,3 +17,5 @@ To restore real staging events, change the text binding to `"0"` in the config a
 Concepts: Monday Trivia & Table Games; Tuesday Acoustic Evenings; Wednesday Open Mic at Vinny’s; Thursday Themed Dinner Night; Friday Game Night at Vinny’s.
 
 E6 HOLD remains unchanged. This is visual fixture coverage, not CMS acceptance or event scheduling approval.
+
+Trivia and Open Mic mockups use the owner-supplied local images `/events/demo-trivia.webp` and `/events/demo-open-mic.webp`. Other concepts intentionally have no photo. Image assignments exist only in the in-memory fixtures and do not modify CMS rows.

@@ -1913,7 +1913,7 @@ input[type="checkbox"] { width: 1.15rem; height: 1.15rem; min-height: 0; accent-
 .nav-toggle, .nav-mobile-action { display: none; }
 a:focus-visible, button:focus-visible { outline: 3px solid var(--gold-hot); outline-offset: 4px; }
 @media (min-width: 800px) {
-  .sticky-bar--on-reel { background: linear-gradient(#111e, #1119) !important; }
+  .sticky-bar--on-reel { background: transparent; }
   .brand-row .primary-nav { order: initial; flex: initial; }
   .brand-row .primary-nav a { min-height: 44px; }
   .visit-band { display: grid; grid-template-columns: 1fr 1fr; align-items: start; }
@@ -2178,3 +2178,26 @@ main h1:not(.stitch-wordmark) { font-family: var(--font-display), Georgia, serif
 .select-menu-heading { font-family: var(--font-display), Georgia, serif; font-size: var(--type-section); line-height: 1.2; font-weight: 600; text-align: center; margin: 2.5rem 0 .6rem; }
 .select-menus .select-menu-prompt { margin: 0 0 1rem; font-size: 1rem; }
 .select-menu-controls button, .select-menu-controls button:first-child { font-size: 1rem; }
+
+/* Retain the requested larger header branding alongside the cleaner actions. */
+.site-header .brand-row { padding-block: 1rem; }
+.site-header .brand-mark .vinny-wordmark { height: clamp(2rem, 3vw, 2.6rem); width: auto; }
+.site-header .social-links { gap: .15rem; }
+.site-header .social-links a { width: 44px; height: 44px; }
+.site-header .social-links svg { width: 22px; height: 22px; }
+@media (max-width: 799px) {
+  .site-header .brand-row { padding-block: .8rem; }
+  .site-header .brand-row .brand-mark .vinny-wordmark { width: min(8rem, 100%); max-width: 100%; height: auto; }
+  .site-header .header-brand-group .social-links { margin-top: .3rem; }
+}
+
+/* Plain header actions share the navigation treatment instead of boxed CTAs. */
+.site-header .sticky-bar { border: 0; box-shadow: none; backdrop-filter: none; }
+.site-header .header-actions .btn,
+.site-header .header-actions .btn:hover,
+.site-header .nav-toggle { background: transparent; border: 0; box-shadow: none; color: var(--black); }
+.site-header .header-actions .btn:hover { text-decoration: underline; text-underline-offset: .3em; }
+@media (min-width: 800px) {
+  .site-header .sticky-bar--on-reel { background: transparent; }
+  .site-header .sticky-bar--on-reel .header-actions .btn { color: #f6f1e7; }
+}
