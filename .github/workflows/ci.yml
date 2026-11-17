@@ -4,21 +4,126 @@ on:
   push:
     branches: [main]
   pull_request:
+  merge_group:
+  workflow_call:
+
+permissions:
+  contents: read
 
 jobs:
   check:
     runs-on: ubuntu-latest
     timeout-minutes: 20
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
         with:
           node-version: "22"
           cache: npm
       - run: npm ci
-      - run: npm run typecheck
-      - run: npm test
+      - run: npm run ci
         env:
-          # Live SEO check hits staging; allow network in CI.
           NODE_OPTIONS: ""
-      - run: npm run build:vinext
+
+  dependency-audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: "22"
+          cache: npm
+      # Include build dependencies: they execute inside the release pipeline.
+      - run: npm audit --audit-level=high --package-lock-only
+
+  secret-scan:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Install versioned Gitleaks and verify archive checksum
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p "$RUNNER_TEMP/gitleaks"
+          cd "$RUNNER_TEMP/gitleaks"
+          curl --fail --silent --show-error --location --output gitleaks_8.24.2_linux_x64.tar.gz https://github.com/gitleaks/gitleaks/releases/download/v8.24.2/gitleaks_8.24.2_linux_x64.tar.gz
+          curl --fail --silent --show-error --location --output checksums.txt https://github.com/gitleaks/gitleaks/releases/download/v8.24.2/gitleaks_8.24.2_checksums.txt
+          sha256sum --check --ignore-missing checksums.txt
+          tar -xzf gitleaks_8.24.2_linux_x64.tar.gz gitleaks
+      - name: Scan checkout and reachable history without revealing matches
+        shell: bash
+        run: |
+          set -euo pipefail
+          "$RUNNER_TEMP/gitleaks/gitleaks" git --redact=100 --no-banner --log-opts="--all"
+
+  codeql:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    permissions:
+      contents: read
+      security-events: write
+      packages: read
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: "22"
+      - uses: github/codeql-action/init@b7b84b636b4f90c9b31da1bc5f72bfadd5b31410 # v3
+        with:
+          languages: javascript-typescript
+          build-mode: none
+      - uses: github/codeql-action/analyze@b7b84b636b4f90c9b31da1bc5f72bfadd5b31410 # v3
+        with:
+          output: ${{ runner.temp }}/codeql-results
+      - name: Fail on missing results or any CodeQL finding
+        run: node scripts/check-sarif.mjs "$SARIF_DIRECTORY"
+        env:
+          SARIF_DIRECTORY: ${{ runner.temp }}/codeql-results
+
+  workflow-lint:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          persist-credentials: false
+      - name: Validate workflows with checksum-verified actionlint
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p "$RUNNER_TEMP/actionlint"
+          cd "$RUNNER_TEMP/actionlint"
+          curl --fail --silent --show-error --location --output actionlint_1.7.7_linux_amd64.tar.gz https://github.com/rhysd/actionlint/releases/download/v1.7.7/actionlint_1.7.7_linux_amd64.tar.gz
+          curl --fail --silent --show-error --location --output checksums.txt https://github.com/rhysd/actionlint/releases/download/v1.7.7/actionlint_1.7.7_checksums.txt
+          sha256sum --check --ignore-missing checksums.txt
+          tar -xzf actionlint_1.7.7_linux_amd64.tar.gz actionlint
+          cd "$GITHUB_WORKSPACE"
+          "$RUNNER_TEMP/actionlint/actionlint"
+
+  release-gate:
+    if: always()
+    needs: [check, dependency-audit, secret-scan, codeql, workflow-lint]
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: "22"
+      - name: Fail unless every required result exists and succeeds
+        run: node scripts/assert-check-results.mjs
+        env:
+          CHECK_RESULTS: ${{ toJSON(needs) }}

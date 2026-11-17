@@ -91,8 +91,8 @@ remove/restrict them only as a separately authorized credential transition after
 the hosted release path is validated. No such credential changes occurred here.
 
 
-This policy-only PR does not add the proposed release-gate/deployment workflows.
+PR #57 did not add the proposed release-gate/deployment workflows. This stacked
+CI branch adds release-gate, but still no deployment workflow.
 Do not configure a required context that has not been introduced and run: that
-would block all merges without providing a working check. The older build/test
-CI remains the only workflow present in this branch until the separate pipeline
-change is reviewed and merged.
+would block all merges without providing a working check. The new CI definition remains a candidate until its own PR is reviewed and
+merged; it is not proof of remote enforcement.

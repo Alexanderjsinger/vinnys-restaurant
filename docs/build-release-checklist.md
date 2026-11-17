@@ -29,15 +29,16 @@ For a leaked secret: identify file/location, revoke/rotate through the service's
 secure interface, then handle Git history with an explicit owner-approved plan.
 Removing the string alone does not revoke it.
 
-## Proposed sequence — depends on a separate pipeline PR
+## CI candidate and deployment follow-up
 
-This policy-only branch does not include the new release-gate workflow, gate
-scripts, comparison deployment implementation, patched Vite dependencies or
-uncommitted A/B/C additions. The sequence below describes prepared work in the
-separate development workspace, **not functionality implemented by this PR**.
-Do not require an absent check context or treat the historical validation below
-as results for this policy candidate. Activate and test that pipeline in its own
-reviewed PR before claiming enforcement.
+PR #57 is the policy-only baseline. This stacked CI branch now includes the
+build/audit/secret/CodeQL/release-gate workflow, its gate scripts and the Vite
+8.3.8 patch. These files are not evidence that GitHub has activated or enforced
+them; hosted runs, owner review and ruleset verification remain required.
+The comparison deployment workflow and uncommitted A/B/C implementation remain
+outside this branch. See `docs/automated-build-rollout.md` for the precise scope.
+Steps 1–3 below describe the CI candidate; steps 4–5 describe a proposed later
+deployment change, not a deployment workflow included here.
 
 1. PR/push/merge-queue CI runs build/tests, full lockfile vulnerability audit,
    Gitleaks across reachable Git history, and CodeQL.
@@ -214,10 +215,8 @@ The owner's prior chat review approved the direction with requested fixes; it is
 not the exact-head PR comment required to merge this amendment.
 
 
-Policy-candidate boundary: this isolated branch still has Vite 8.3.0 and the
-older build/test CI from its base. The newer workflow/dependency results above
-are historical evidence for separate unmerged work, not a passing audit/build
-report for this policy head. That dependency fix must land separately before
-claiming the high-severity audit gate passes on this branch. Documentation-only
+Historical policy-candidate boundary: PR #57 retained Vite 8.3.0 and older CI.
+This stacked CI change adds the patch and build gates separately; record its own
+validation below rather than borrowing another working tree’s PASS. Documentation-only
 policy edits may use Quick review while retaining CRITICAL classification and
 owner-comment requirements; executable release-tool changes require Full.
