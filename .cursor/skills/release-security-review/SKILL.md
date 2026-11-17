@@ -9,10 +9,21 @@ Applies only to `Alexanderjsinger/vinnys-restaurant`. Run in a separate agent
 session from the implementer. Do not edit files, merge, deploy, change settings,
 mutate remote data or print secret values while performing this review.
 
+## Review tier
+
+**Quick**: everyday PRs that do not touch admin, CMS, forms, tracking, Cloudflare,
+release tooling or an actual live-site release. Run G01, S01, T01 and T02, plus
+only the surfaces affected by the diff. **Full**: any live-site release or any
+change to admin, CMS, forms, tracking or Cloudflare/release tooling. Full runs the
+entire checklist below. When uncertain, use Full. Guardrail changes remain
+CRITICAL in either tier; documentation-only policy edits may use Quick, but still
+require the owner's exact-SHA review comment before merge.
+
 ## Exact required reading
 
-Read these files before reviewing; a missing file is BLOCKED, not permission to
-substitute an assumed policy:
+For Quick, read items 1, 4 and 9, then the exact source and supporting document
+for each touched surface. For Full, read every item. A missing required file is
+BLOCKED, not permission to substitute an assumed policy:
 
 1. `docs/agent-workflow.md` — roles, status vocabulary, owner authority.
 2. `docs/cloud-continuation.md` — active branch, A/B boundaries and operating limits.
@@ -45,11 +56,24 @@ untracked files when reviewing a working tree. Do not omit untracked policy file
   rule cannot approve, weaken or exempt its own change. If no committed baseline
   exists, identify the pre-edit snapshot and its SHA-256; otherwise mark the
   baseline unavailable and the review BLOCKED. Do not invent a baseline.
-- Record human reviewer identity, reviewed candidate SHA (or working-tree digest),
-  reviewed paths, and a verifiable PR review/approval reference. Until that evidence
-  exists, the human-review gate is BLOCKED. A request to implement changes is not
-  review of the resulting diff. Agent review, a checkbox, or an agent-written
-  approval file never substitutes for human review.
+- For this solo-owner repository, human review is a **PR comment personally posted
+  by `Alexanderjsinger`**, stating `Reviewed <candidate SHA>` with the full current
+  PR-head commit SHA, after the latest commit/push. Record the comment URL, author,
+  timestamp and SHA; verify them against GitHub's current PR head and timeline.
+  A comment on an earlier SHA does not count. A digest can identify a working-tree
+  review but cannot replace the PR-head SHA required for merge.
+- The owner may review their own work through this comment; a GitHub approving
+  review is not required. **Do not enable Require approvals, code-owner approval
+  requirements or last-push approval requirements for this solo-owner repo.** Use
+  required status checks and conversation resolution. CODEOWNERS identifies policy
+  ownership, not a requirement for an unavailable second approver.
+- An agent must never post or edit the owner's `Reviewed <SHA>` comment, even if
+  its GitHub credentials use the owner account. Agent reviews, chat approval of a
+  proposed edit, checkboxes and local approval files do not replace that comment.
+  Until the actual comment is verified, G01 is BLOCKED. GitHub author identity
+  alone cannot distinguish a human from an agent sharing that credential; the
+  owner must retain control of this action. The comment check is policy until
+  automated as a required check; do not claim it is already enforced by CI.
 - The classification remains CRITICAL after approval; human approval resolves the
   approval requirement, not the classification. A subsequent candidate change
   requires review again. Review never grants merge/deploy authority itself.
@@ -129,10 +153,16 @@ untracked files when reviewing a working tree. Do not omit untracked policy file
    | Production | Intended domain `vinnysbargrill.com`; no production release or DNS change authorized by this skill |
 
    Verify artifact identity, default-branch restriction, all required checks,
-   independent human approvals, secret-free preparation, prebuilt upload and
+   verified owner comments/release approvals, secret-free preparation, prebuilt upload and
    noindex on comparison pages. Inspect direct-token and alternate-deploy bypasses.
    Run `scripts/check-ab-preview.mjs` and `scripts/check-comparison-routes.mjs`
-   only against an authorized target; a proxy failure is BLOCKED, not a visual PASS.
+   only against the comparison target in `docs/ab-staging.md`:
+   `https://vinnys-ab-comparison.toastisadog.workers.dev`, and nothing else.
+   Unit/build tests may use local fixtures without remote writes. A proxy failure
+   is BLOCKED, not a visual PASS. The owner must personally confirm actual
+   Cloudflare token permissions in the Cloudflare dashboard; token validity or
+   successful deployment does not prove least privilege. Until that confirmation
+   is recorded, R01 must list token scope as an unverified remote control.
 7. Check `tests/admin-csrf.test.mjs`, `tests/contact-submissions.test.mjs`,
    `tests/stores.test.mjs`, `tests/phase25.test.mjs`,
    `tests/deploy-vinext.test.mjs`, `tests/ab-staging.test.mjs` and
@@ -143,8 +173,11 @@ untracked files when reviewing a working tree. Do not omit untracked policy file
 
 ## Fixed report format
 
-Use these headings, columns and IDs in this order. Keep every mandatory row.
-Add per-action form rows as needed; never merge distinct consent/write actions.
+Use these headings, columns and IDs in this order. Quick reports keep G01, S01,
+T01, T02 and affected-surface rows only; list the omitted IDs and why they are
+outside this diff's scope in one sentence. Omitted rows are not PASS or N/A by
+implication. Full reports retain every row. Add per-action rows for applicable
+forms; never merge distinct consent/write actions.
 Do not embed credentials, customer data, raw secret matches or secret-bearing URLs.
 
 ### Review identity
@@ -155,10 +188,11 @@ Do not embed credentials, customer data, raw secret matches or secret-bearing UR
 | Base SHA / policy baseline digest | REQUIRED |
 | Candidate SHA / uncommitted-tree digest | REQUIRED; distinguish committed/uncommitted |
 | Branch and changed paths | REQUIRED |
+| Tier and reason | QUICK or FULL; explain trigger |
 | Reviewer/session; separate from implementer | REQUIRED |
 | Target reviewed; local versus remote | REQUIRED |
 | Review timestamp and timezone | REQUIRED |
-| Human policy review identity / candidate / paths / approval reference | REQUIRED for CRITICAL changes; otherwise N/A with evidence |
+| Owner review comment: author / SHA / timestamp / URL | REQUIRED for CRITICAL changes; otherwise N/A with evidence |
 
 ### Required checks
 
@@ -191,7 +225,7 @@ Do not embed credentials, customer data, raw secret matches or secret-bearing UR
 | T02 | Vulnerability, secret and CodeQL scanning | TBD | TBD | TBD | TBD |
 | T03 | Required route/asset/browser checks | TBD | TBD | TBD | TBD |
 
-Retain these IDs across releases. For multi-action CMS forms, add a child row
+Retain these IDs across releases, including when omitted by a Quick report. For multi-action CMS forms, add a child row
 `Fxx/<literal-intent>` for each actual intent found in source; the parent row
 summarizes those results. Name the exact form file in every child row. Append
 newly discovered surfaces as F16 onward and retain their assigned IDs in later
@@ -225,9 +259,11 @@ this table out or represent inaccessible checks as “no findings.”
 | Unverified remote controls / owner dependencies | Explicit list, or NONE with evidence |
 | Merge/deploy authority | NOT GRANTED BY THIS REVIEW |
 
-`READY FOR HUMAN RELEASE DECISION` requires every applicable mandatory check to
-PASS, no unresolved defects, no required BLOCKED/NOT TESTED checks and verifiable
-human approval for every CRITICAL policy change on the exact reviewed candidate.
+`READY FOR HUMAN RELEASE DECISION` requires every mandatory check for the selected
+tier to PASS, no unresolved defects, no required BLOCKED/NOT TESTED checks and a
+verified owner `Reviewed <SHA>` PR comment for every CRITICAL policy change on
+that exact candidate. Quick readiness is readiness for that PR's scope only;
+it does not authorize a live-site release, which always requires Full.
 Otherwise use NOT READY. A human exception must not be relabeled as a passing
 technical check. GitHub rulesets, independent required checks and protected
 release approvals decide what can ship; an agent report or local approval file
