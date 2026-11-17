@@ -69,3 +69,20 @@ test('declared commit time cannot substitute for missing or newer server-side pu
   assert.ok(assessFinalPolicySnapshot(expected(), snapshot(), { commentCreatedAt: timing.commentCreatedAt }).some(x => x.includes('trusted branch-specific')));
   assert.ok(assessFinalPolicySnapshot(expected(), snapshot(), { ...timing, headPushAt: '2026-11-17T12:02:00Z' }).some(x => x.includes('latest verified head push')));
 });
+
+test('SARIF CLI annotations expose failure categories without report contents', async () => {
+  const { mkdtempSync, writeFileSync, rmSync } = await import('node:fs');
+  const { tmpdir } = await import('node:os');
+  const { join } = await import('node:path');
+  const { spawnSync } = await import('node:child_process');
+  const directory = mkdtempSync(join(tmpdir(), 'sarif-gate-'));
+  try {
+    for (const report of ['PRIVATE_TEST_MARKER malformed JSON', JSON.stringify({ version: '2.1.0', runs: [{ tool: { driver: { name: 'CodeQL' } }, results: [{ message: { text: 'PRIVATE_TEST_MARKER' } }] }] })]) {
+      writeFileSync(join(directory, 'test.sarif'), report);
+      const result = spawnSync(process.execPath, ['scripts/check-sarif.mjs', directory], { encoding: 'utf8', env: { ...process.env, GITHUB_ACTIONS: 'true' } });
+      assert.equal(result.status, 1);
+      assert.match(result.stderr, /::error::/);
+      assert.doesNotMatch(result.stderr, /PRIVATE_TEST_MARKER/);
+    }
+  } finally { rmSync(directory, { recursive: true, force: true }); }
+});

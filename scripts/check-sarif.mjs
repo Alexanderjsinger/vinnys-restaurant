@@ -26,7 +26,14 @@ if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) 
     assertCleanSarif(files.map(file => JSON.parse(fs.readFileSync(path.join(directory, file), 'utf8'))));
     console.log('PASS: scanner reports exist and contain no findings.');
   } catch (error) {
-    console.error(error instanceof SyntaxError ? 'Malformed SARIF JSON report; raw contents withheld.' : error.message);
+    // Make the failure category visible through the Checks API when log downloads
+    // are unavailable. Never put scanner contents or parser excerpts in annotations.
+    const message = error instanceof SyntaxError ? 'Malformed SARIF JSON report; raw contents withheld.' : error.message;
+    console.error(message);
+    if (process.env.GITHUB_ACTIONS === 'true') {
+      const known = /^(Missing code-scanning reports\.|Malformed or empty code-scanning report\.|Missing scanner identity or results\.|Scanner execution failed\.|Release blocked: \d+ code-scanning finding\(s\)\. Review scanner results; raw evidence is not printed here\.|Malformed SARIF JSON report; raw contents withheld\.)$/;
+      console.error(`::error::${known.test(message) ? message : 'SARIF validation failed; inspect the restricted job logs.'}`);
+    }
     process.exitCode = 1;
   }
 }
