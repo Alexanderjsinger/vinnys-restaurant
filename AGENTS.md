@@ -19,3 +19,7 @@ use `.cursor/skills/release-security-review/SKILL.md` and its fixed report forma
 - Remote review smoke checks target only the comparison URL in
   `docs/ab-staging.md`. Record failed/blocked/unrun checks honestly; an agent’s
   “done” is not evidence. Cloudflare token scope requires owner dashboard review.
+
+Documentation-only policy edits may use Quick review, but remain CRITICAL and
+still require the owner’s exact-head review comment. Executable release-tooling
+changes require Full.

@@ -18,3 +18,7 @@ edit, deploy, change settings or write remote data. Smoke checks may target only
 the comparison URL in `docs/ab-staging.md`. Token scope stays unverified until
 the owner confirms it in Cloudflare’s dashboard. These instructions do not
 prove Bugbot is installed or enforce any GitHub merge gate by themselves.
+
+Documentation-only policy edits may use Quick review, but remain CRITICAL and
+still require the owner’s exact-head review comment. Executable release-tooling
+changes require Full.

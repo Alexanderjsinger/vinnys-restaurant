@@ -49,7 +49,8 @@ a PR; no workflow is activated merely by editing this workspace. Do not merge al
 existing uncommitted A/B/C work as a side effect of activating security controls.
 
 For the default branch, require PRs, resolved conversations, the exact CI
-`release-gate` status context, up-to-date checks and force-push/deletion protection.
+`release-gate` status context only after the separate pipeline PR has introduced
+it and it has actually run, up-to-date checks and force-push/deletion protection.
 **Do not enable Require approvals, required code-owner reviews or last-push
 approval requirements:** the only owner cannot approve their own PR in GitHub.
 CODEOWNERS is an ownership map. For CRITICAL guardrail changes, the owner account
@@ -88,3 +89,10 @@ exercise. Production/staging/DNS/live data remain outside this rollout. Existing
 workspace Cloudflare deployment credentials are still a bypass of GitHub gates;
 remove/restrict them only as a separately authorized credential transition after
 the hosted release path is validated. No such credential changes occurred here.
+
+
+This policy-only PR does not add the proposed release-gate/deployment workflows.
+Do not configure a required context that has not been introduced and run: that
+would block all merges without providing a working check. The older build/test
+CI remains the only workflow present in this branch until the separate pipeline
+change is reviewed and merged.

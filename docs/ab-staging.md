@@ -1,5 +1,11 @@
 # Isolated A/B comparison
 
+Operational history of the existing remote comparison Worker. This policy-only
+PR includes this document as review context; it does not introduce the deployment
+scripts, configuration or uncommitted A/B/C implementation described below.
+Those code changes remain separate. Historical deployment evidence is not a
+release validation of this policy candidate.
+
 ## Published comparison — 2026-11-16
 
 ### Version C added from latest desktop/mobile masters
