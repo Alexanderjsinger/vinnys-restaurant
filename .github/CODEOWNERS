@@ -16,3 +16,7 @@
 /docs/github-gate-activation.md @Alexanderjsinger
 /AGENTS.md @Alexanderjsinger
 /BUGBOT.md @Alexanderjsinger
+
+/scripts/check-* @Alexanderjsinger
+/scripts/assert-* @Alexanderjsinger
+/docs/automated-build-rollout.md @Alexanderjsinger

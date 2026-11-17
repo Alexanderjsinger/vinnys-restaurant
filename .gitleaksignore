@@ -1,0 +1,3 @@
+# Worker version UUID in deployment history, not a credential.
+# Narrow historical finding only; new locations/values remain scanned.
+c1440b927ac80ba49199e8cb0e704d190fce7456:docs/phase-2-status.md:generic-api-key:47
