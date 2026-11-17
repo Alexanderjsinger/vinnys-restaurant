@@ -145,8 +145,9 @@ test("source sitemap omits /parties; live workers.dev keeps noindex and core URL
   const sitemap = await fetch("https://vinnys-bar-grill.toastisadog.workers.dev/sitemap.xml", { headers });
   assert.equal(sitemap.status, 200);
   const xml = await sitemap.text();
+  const locations = Array.from(xml.matchAll(/<loc>([^<]*)<\/loc>/g), ([, location]) => location);
   for (const page of ["/", "/menu", "/events", "/contact"]) {
     const url = page === "/" ? "https://vinnysbargrill.com/" : `https://vinnysbargrill.com${page}`;
-    assert.equal(xml.includes(url), true, url);
+    assert.equal(locations.includes(url), true, url);
   }
 });
