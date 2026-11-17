@@ -148,6 +148,6 @@ test("source sitemap omits /parties; live workers.dev keeps noindex and core URL
   const locations = Array.from(xml.matchAll(/<loc>([^<]*)<\/loc>/g), ([, location]) => location);
   for (const page of ["/", "/menu", "/events", "/contact"]) {
     const url = page === "/" ? "https://vinnysbargrill.com/" : `https://vinnysbargrill.com${page}`;
-    assert.equal(locations.includes(url), true, url);
+    assert.ok(locations.some(location => location === url), url);
   }
 });
