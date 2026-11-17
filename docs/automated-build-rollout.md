@@ -50,8 +50,10 @@ builder-editable script or report makes the review policy unbypassable.
 
 ## Remaining activation boundaries
 
-- This old chat still blocks `api.github.com`, although the user has confirmed
-  access in a new chat. No environment configuration changes are made here.
+- GitHub API access now works. Actions log-download hosts still return Forbidden,
+  and the integration cannot read classic branch protection, code-scanning alerts
+  or repository security settings (HTTP 403). No environment configuration changes
+  were made to obtain access.
 - Open the stacked CI PR into `codex/solo-owner-review-policy`; after PR #57 lands,
   retarget it to `codex/alternative-homepage`. Do not merge either automatically.
 - Required status-check selection and conversation-resolution rules must be
@@ -78,7 +80,53 @@ builder-editable script or report makes the review policy unbypassable.
   stale/non-owner comments, moving PR identity and absent/untrustworthy review
   timing. Independent read-only code review found no remaining concrete defects
   after remediation. This does not establish operational readiness.
-- Live PR #57 verification remains BLOCKED by this chat's GitHub API restriction.
-  No current-head owner comment, hosted run or branch protection is claimed as
-  verified. The new CI diff is CRITICAL and needs its own exact-head owner review;
-  it is not covered by an earlier comment on PR #57.
+- PR #57's current head is `1ae5992842000ce12b3bcb7883228bc527169595`;
+  its owner-account comment matches that SHA and the reported CI check passed.
+  Trusted latest-push timing remains unverified; repeating the comment is not
+  a substitute for that missing evidence. The new CI diff is CRITICAL and needs
+  its own exact-head owner review; PR #57's comment does not approve PR #58.
+
+## Hosted investigation — November 17, 2026
+
+The original [hosted run](https://github.com/Alexanderjsinger/vinnys-restaurant/actions/runs/44146981129)
+passed build/tests and workflow lint, but failed audit, secrets, CodeQL validation
+and the aggregate gate. Follow-up work preserves those blocking checks:
+
+- Full-ref Gitleaks reproduction found the same documented noncredential Worker
+  version UUID on a second historical commit. Added only the exact
+  commit/file/rule/line fingerprint, not a value-wide exclusion. The subsequent
+  [hosted run](https://github.com/Alexanderjsinger/vinnys-restaurant/actions/runs/44150035503)
+  passed secret scanning, build/tests and workflow lint.
+- CodeQL analysis/upload succeeded, but SARIF contained one result:
+  `js/incomplete-url-substring-sanitization`, `tests/stores.test.mjs:150`.
+  The sitemap test now compares complete `<loc>` entries instead of substrings.
+  Local synthetic fixtures verified valid locations pass and a URL embedded in
+  another address fails. Redacted annotations expose only failure categories
+  and validated rule/location metadata, never result text or snippets. Eight
+  focused gate tests passed. Consult the latest PR check results for hosted
+  validation of this fix.
+- A fresh audit reproduces high-severity
+  [GHSA-fc5q-39xc-vjpf](https://github.com/advisories/GHSA-fc5q-39xc-vjpf)
+  in transitive picomatch. The advisory reports no patched version and npm's
+  latest version remains 4.0.7, inside the affected range. The older zero-high
+  audit above is historical, not the current result. No exception, forced
+  override, or severity-threshold reduction was applied. This remains a blocker.
+
+Read-only GitHub control evidence:
+
+- Branch metadata for `main`, `codex/alternative-homepage` and
+  `codex/solo-owner-review-policy` reports `protected: false`, protection disabled,
+  empty required check contexts and enforcement `off`.
+- Repository rulesets (including parents) and effective branch rules returned
+  empty lists. CI's aggregate failure is verified, but no required merge-check
+  enforcement is established. Classic protection details remain inaccessible
+  (403); do not interpret that error alone as proof of absence.
+- The environments API returns zero environments. There is no configured
+  `vinnys-comparison` environment approval gate. Auto-merge is disabled.
+- Code-scanning and vulnerability-alert configuration APIs return 403. Hosted
+  CodeQL execution is verified; secret-scanning/push-protection settings remain
+  unverified. Owner-comment enforcement is still a manual policy control.
+
+Both PRs remain unmerged; PR #58 remains draft. No deployment, environment/settings
+change, credential transition or owner-review comment was performed. This is
+failure triage, not an independent security/release PASS.
