@@ -1,0 +1,18 @@
+# Policy ownership only: do not require approving reviews in this solo-owner repo.
+# CRITICAL changes need the owner's personally posted Reviewed <head SHA> PR comment.
+/.github/ @Alexanderjsinger
+/.gitleaksignore @Alexanderjsinger
+/scripts/deploy-*.mjs @Alexanderjsinger
+/scripts/assert-check-results.mjs @Alexanderjsinger
+/scripts/check-sarif.mjs @Alexanderjsinger
+/scripts/check-comparison-routes.mjs @Alexanderjsinger
+/docs/build-release-checklist.md @Alexanderjsinger
+/.cursor/skills/release-security-review/ @Alexanderjsinger
+/cloudflare.config.ts @Alexanderjsinger
+/vite.config.ts @Alexanderjsinger
+/package.json @Alexanderjsinger
+/package-lock.json @Alexanderjsinger
+/scripts/check-ab-preview.mjs @Alexanderjsinger
+/docs/github-gate-activation.md @Alexanderjsinger
+/AGENTS.md @Alexanderjsinger
+/BUGBOT.md @Alexanderjsinger
