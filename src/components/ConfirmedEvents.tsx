@@ -107,15 +107,15 @@ export function ConfirmedEvents({
             </p>
             {time ? (
               <p>
-                Starts <time dateTime={time}>{formatTime(time)}</time>
+                <time dateTime={time}>{formatTime(time)}</time>
                 {event.ends_at ? (
                   <>
                     {" "}
-                    · Ends <time dateTime={eventTimePart(event.ends_at)}>{formatTime(eventTimePart(event.ends_at))}</time>
+                    – <time dateTime={eventTimePart(event.ends_at)}>{formatTime(eventTimePart(event.ends_at))}</time>
                   </>
                 ) : null}
                 {" "}
-                America/Detroit
+                ET
               </p>
             ) : null}
             {photo ? <EventPhoto src={photo} alt={event.title} /> : null}

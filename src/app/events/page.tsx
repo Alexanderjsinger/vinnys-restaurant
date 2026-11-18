@@ -1,7 +1,8 @@
 import { ConfirmedEvents, EventsEmptyState } from "@/components/ConfirmedEvents";
 import { TrackView } from "@/components/TrackView";
 import { listEvents } from "@/lib/content";
-import { demoEventsEnabled, makeDemoEvents } from "@/lib/demo-events";
+import { makeDemoEvents } from "@/lib/demo-events";
+import { showDemoEvents } from "@/lib/demo-events-server";
 import { splitPublicEvents } from "@/lib/events-public";
 import { detroitNowLocal } from "@/lib/format";
 import { DEFAULT_PLACE_NAME } from "@/lib/brand";
@@ -19,7 +20,7 @@ export const metadata = pageMeta(
 export default async function EventsPage() {
   const now = detroitNowLocal();
   const site = await getSite();
-  const demo = process.env.NODE_ENV === "development" && demoEventsEnabled();
+  const demo = await showDemoEvents();
   const events = demo ? makeDemoEvents(now.slice(0, 10)) : await listEvents("public");
   const { upcoming, earlier } = splitPublicEvents(events, now);
   const contact = {
@@ -31,7 +32,7 @@ export default async function EventsPage() {
     <div className="page wrap">
       <TrackView name="event_view" />
       <h1>Events</h1>
-      {demo ? <p className="demo-events-note" role="note">Demo week — concepts only. Dates and 7–9pm times are illustrative. No hosts, prizes, performers, or specials are confirmed.</p> : <p className="lede">Times are America/Detroit. Only confirmed events are listed.</p>}
+      {demo ? <p className="events-concept-label">Concept preview · illustrative dates and times</p> : <p className="lede">All times Eastern. Only confirmed events are listed.</p>}
       {upcoming.length === 0 ? (
         <EventsEmptyState surface="page" hasEarlier={earlier.length > 0} {...contact} />
       ) : null}

@@ -1,6 +1,6 @@
 import { AdminForm } from "@/components/AdminForm";
 import { SaveBanner } from "@/components/SaveBanner";
-import { getInquiryNotifyStatus, listInquiries, listPendingNotifies } from "@/lib/content";
+import { getInquiryNotifyStatus, listInquiries, listPendingNotifies, listSignups } from "@/lib/content";
 import { formatLongDate, formatTimestamp } from "@/lib/format";
 import { firstQuery } from "@/lib/messages";
 import { NOTIFY_MAX_ATTEMPTS } from "@/lib/notify";
@@ -14,8 +14,7 @@ export default async function InquiriesPage({
   searchParams: Promise<Record<string, string | string[] | undefined>>;
 }) {
   const query = await searchParams;
-  const inquiries = await listInquiries();
-  const pending = await listPendingNotifies(50);
+  const [inquiries, signups, pending] = await Promise.all([listInquiries(), listSignups(), listPendingNotifies(50)]);
   const statuses = await Promise.all(
     inquiries.map(async (inquiry) => [inquiry.id, await getInquiryNotifyStatus(inquiry.id)] as const),
   );
@@ -23,7 +22,7 @@ export default async function InquiriesPage({
 
   return (
     <>
-      <h1>Party inquiries</h1>
+      <h1>Messages &amp; inquiries</h1>
       <SaveBanner saved={firstQuery(query.saved)} error={firstQuery(query.error)} />
       <p>
         A note appears here only after it is stored. Email is marked “accepted” when Resend accepts the API
@@ -46,6 +45,11 @@ export default async function InquiriesPage({
         </section>
       ) : null}
       {inquiries.length === 0 ? <p>No inquiries yet.</p> : null}
+      <section aria-labelledby="email-signups-heading">
+        <h2 id="email-signups-heading">Email signups</h2>
+        <p className="hint">New Contact page signups require an explicit email opt-in. This list may include older records; review their consent before importing them into a mailing service. No campaigns or welcome emails are sent automatically.</p>
+        {signups.length ? <ul>{signups.map(signup => <li key={signup.id}>{signup.email} · {formatTimestamp(signup.created_at)}</li>)}</ul> : <p>No email signups yet.</p>}
+      </section>
       {inquiries.map((inquiry) => {
         const notify = byId.get(inquiry.id);
         const label =
@@ -63,7 +67,7 @@ export default async function InquiriesPage({
               <a href={`mailto:${inquiry.email}`}>{inquiry.email}</a>
             </p>
             <p>
-              {formatLongDate(inquiry.event_date)} · Party of {inquiry.party_size}
+              {inquiry.event_date ? formatLongDate(inquiry.event_date) : "Contact message"}{inquiry.party_size > 0 ? ` · Party of ${inquiry.party_size}` : ""}
             </p>
             <p>Received {formatTimestamp(inquiry.created_at)} (Detroit time)</p>
             <p className={notify?.status === "failed" ? "banner banner-bad" : "hint"} role="status">

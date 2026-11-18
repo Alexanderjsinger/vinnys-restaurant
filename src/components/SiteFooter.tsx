@@ -62,11 +62,6 @@ export function SiteFooter({ site }: { site: PublicSite }) {
             <li>
               <Link href="/contact">Contact</Link>
             </li>
-            <li>
-              <a href={phoneHref} data-track="phone_click">
-                Call to reserve
-              </a>
-            </li>
           </ul>
         </nav>
       </div>

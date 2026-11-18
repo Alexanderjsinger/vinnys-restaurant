@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
-import { demoEventsEnabled, makeDemoEvents } from "../src/lib/demo-events.ts";
+import { demoEventsEnabled, makeDemoEvents, stagingDemoEventsEnabled, DEMO_STAGING_HOST } from "../src/lib/demo-events.ts";
 
 test("demo event fixtures require an explicit local development opt-in", () => {
   assert.equal(demoEventsEnabled({ NODE_ENV: "production", VINNYS_DEMO_EVENTS: "1" }), false);
@@ -14,4 +14,14 @@ test("demo week has five dated concepts and never fabricates prices or booking a
   assert.equal(events[0].starts_at, "2026-11-16T19:00");
   assert.equal(events[4].starts_at, "2026-11-20T19:00");
   assert.ok(events.every(event => event.is_sample && event.id < 0 && !event.price && !event.next_step));
+});
+
+test("staging concepts require both the exact host and enabled runtime binding", () => {
+  assert.equal(stagingDemoEventsEnabled("1", DEMO_STAGING_HOST), true);
+  for (const flag of [undefined, "0", "", true, 1]) {
+    assert.equal(stagingDemoEventsEnabled(flag, DEMO_STAGING_HOST), false);
+  }
+  for (const host of ["", "vinnysbargrill.com", "www.vinnysbargrill.com", "localhost:3100", "other.workers.dev", DEMO_STAGING_HOST + ".example.com"]) {
+    assert.equal(stagingDemoEventsEnabled("1", host), false);
+  }
 });

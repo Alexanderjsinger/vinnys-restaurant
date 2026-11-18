@@ -1,8 +1,15 @@
 import type { EventRow } from "@/lib/types";
 
-/** Local visual concepts only. A production Worker can never enable these fixtures. */
+/** Local opt-in stays separate from the host-scoped staging switch. */
 export function demoEventsEnabled(env: Record<string, string | undefined> = process.env): boolean {
   return env.NODE_ENV === "development" && env.VINNYS_DEMO_EVENTS === "1";
+}
+
+export const DEMO_STAGING_HOST = "vinnys-bar-grill.toastisadog.workers.dev";
+
+/** A production build can show concepts only on the designated staging host. */
+export function stagingDemoEventsEnabled(flag: unknown, host: string): boolean {
+  return flag === "1" && host.toLowerCase() === DEMO_STAGING_HOST;
 }
 
 export function makeDemoEvents(today: string): EventRow[] {
@@ -19,6 +26,6 @@ export function makeDemoEvents(today: string): EventRow[] {
     const date = new Date(monday);
     date.setUTCDate(date.getUTCDate() + index);
     const day = date.toISOString().slice(0, 10);
-    return { id: -(index + 1), title, blurb, starts_at: `${day}T19:00`, ends_at: `${day}T21:00`, is_sample: true, price: "", photo: "", next_step: "", status: "published", updated_at: "", published_at: "" };
+    return { id: -(index + 1), title, blurb, starts_at: `${day}T19:00`, ends_at: `${day}T21:00`, is_sample: true, price: "", photo: index === 0 ? "/events/demo-trivia.webp" : index === 2 ? "/events/demo-open-mic.webp" : "", next_step: "", status: "published", updated_at: "", published_at: "" };
   });
 }

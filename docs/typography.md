@@ -1,13 +1,16 @@
-# Public typography
+# Public type and visual direction
 
-2026-11-15 owner-requested consistency pass. Keep the owner raster wordmark unchanged.
+Owner direction, updated 2026-11-16. This supersedes the earlier formal/serif heading treatment.
 
-- Playfair Display 600: page, section and card headings; closing Story signature.
-- Plus Jakarta Sans 400: reading text, generally 16px / 1.75 line-height.
-- Jakarta 600: navigation, buttons, prices and emphasized text.
-- Jakarta 600, 0.72rem uppercase, 0.12em tracking: small section/category labels only.
-- Heading sizes use three responsive scales: page 2.35–3.6rem; section 1.85–2.7rem; card 1.35–1.75rem.
-- Controls use sentence/title case and modest tracking, not wide all-caps.
-- Printed menu names receive presentation-only title casing. CMS content and prices remain unchanged.
+- Montserrat 600: page, section and card headings and the Story signature. Use the existing three responsive heading scales; avoid formal serif headings. Heading fallback is sans-serif.
+- Plus Jakarta Sans 400: reading text, generally 16px / 1.75 line-height; 600 for navigation, buttons and emphasis.
+- Keep small uppercase section labels restrained and controls in sentence/title case.
+- Keep the owner raster wordmark as the brand asset.
+- Prefer clean, open text layouts with deliberate spacing. No decorative boxes/background panels around ordinary text, dark event cards, colored date badges, or gold fills behind phone numbers. Media framing and meaningful form controls may remain.
+- Events use plain dates/times and generous gaps; time zone is written ET. Demo mockups retain a small inline Concept preview label rather than a banner block, and never imply a confirmed schedule.
+- Contact directions and phone number are plain links. Do not repeat a separate Call to reserve CTA beside the same number or in the footer nav.
+- Menu introduction: “Lunch, Happy Hour and Dinner” and “Meet me at Vinny’s, anytime”. No Lunch daily subheading beneath From Vinny’s Kitchen.
 
-No additional font family is loaded. Remove legacy Montserrat fallback and unsupported intermediate weights. Preserve brand-specific wordmark/subtitle treatments.
+Store this direction in repository documentation so future refinements follow it. No CMS names, prices, hours, event records or stored content are modified by typography-only changes.
+
+Footer navigation stays compact: a three-column link grid on phones, a wrapping horizontal row below two content columns at 600–1099px, and two link columns beside branding/hours at 1100px and above. Keep 44px link targets; do not force one link per full-width row at tablet sizes.

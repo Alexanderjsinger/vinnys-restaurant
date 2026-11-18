@@ -45,12 +45,12 @@ async function sendResend(input: {
       body: JSON.stringify({
         from: input.from,
         to: [input.to],
-        subject: `New party note for ${input.placeName}`,
+        subject: `New ${input.inquiry.eventDate ? "party note" : "contact message"} for ${input.placeName}`,
         text: [
           `Name: ${input.inquiry.name}`,
           `Email: ${input.inquiry.email}`,
-          `Date: ${input.inquiry.eventDate}`,
-          `Party size: ${input.inquiry.partySize}`,
+          `Date: ${input.inquiry.eventDate || "Not specified"}`,
+          `Party size: ${input.inquiry.partySize || "Not specified"}`,
           `Note: ${input.inquiry.message}`,
         ].join("\n"),
       }),

@@ -1,6 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { headers } from "next/headers";
-import { Playfair_Display, Plus_Jakarta_Sans } from "next/font/google";
+import { Montserrat, Plus_Jakarta_Sans } from "next/font/google";
 import { LocalBusinessJsonLd } from "@/components/LocalBusinessJsonLd";
 import { SiteFooter } from "@/components/SiteFooter";
 import { SiteHeader } from "@/components/SiteHeader";
@@ -13,7 +13,7 @@ import "./globals.css";
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
 
-const display = Playfair_Display({
+const display = Montserrat({
   subsets: ["latin"],
   weight: ["600", "700"],
   variable: "--font-display",

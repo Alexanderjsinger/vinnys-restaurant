@@ -4,14 +4,14 @@ import { HeroMedia } from "@/components/HeroMedia";
 import { SIZZLE_REEL } from "@/lib/hero";
 import { listEvents, listMenu } from "@/lib/content";
 import { detroitNowLocal } from "@/lib/format";
-import { LUNCH_SERVICE } from "@/lib/lunch-menu";
 import { SelectDishes, type SelectDish } from "@/components/SelectDishes";
 import { DEFAULT_PLACE_NAME, isVinnyShortMark, splitPlaceWordmark } from "@/lib/brand";
 import { VinnyWordmark } from "@/components/VinnyWordmark";
 import { isMeetMeLine } from "@/lib/public";
 import { LUNCH_PLATES } from "@/lib/lunch-photos";
 import { publishedMenus } from "@/lib/menu-options";
-import { demoEventsEnabled, makeDemoEvents } from "@/lib/demo-events";
+import { makeDemoEvents } from "@/lib/demo-events";
+import { showDemoEvents } from "@/lib/demo-events-server";
 import { pageMeta } from "@/lib/seo";
 import { getSite } from "@/lib/site";
 import type { MenuSection } from "@/lib/types";
@@ -41,6 +41,7 @@ function selectDishes(menu: MenuSection[]): SelectDish[] {
     if (!row) return [];
     const plate = LUNCH_PLATES.find((photo) => photo.menuName === name);
     const photo = plate;
+    if (!photo) return [];
     return [
       {
         id: row.item.id,
@@ -60,7 +61,7 @@ export default async function HomePage() {
   const menu = await listMenu("public");
   const dishes = selectDishes(menu);
   const now = detroitNowLocal();
-  const demo = process.env.NODE_ENV === "development" && demoEventsEnabled();
+  const demo = await showDemoEvents();
   const upcoming = (demo ? makeDemoEvents(now.slice(0, 10)) : await listEvents("public"))
     .filter((event) => (event.ends_at || event.starts_at) >= now)
     .slice(0, demo ? 5 : 3);
@@ -124,7 +125,7 @@ export default async function HomePage() {
           </div>
           <div className="occasion-grid">
             <article className="occasion-card" tabIndex={0} aria-labelledby="occasion-lunch" aria-describedby="occasion-lunch-hours">
-              <img src="/photos/burger-fries.webp" alt="Vinny’s burger with fries" width={765} height={1020} loading="lazy" />
+              <img src="/photos/lunch-demo-burger.webp" alt="Illustrative burger and fries for lunch" width={1280} height={714} loading="lazy" />
               <div className="occasion-copy">
                 <h3 id="occasion-lunch">Lunch</h3>
                 <p className="occasion-hours" id="occasion-lunch-hours">Daily 11am – 3pm</p>
@@ -151,8 +152,7 @@ export default async function HomePage() {
       <section className="band-cream food-band" aria-labelledby="select-dishes-heading">
         <div className="wrap page">
           <div className="select-intro">
-            <h2 id="select-dishes-heading">Much-loved dishes</h2>
-            <p className="band-lede">{LUNCH_SERVICE}.</p>
+            <h2 id="select-dishes-heading">From Vinny’s Kitchen</h2>
           </div>
           <SelectDishes dishes={dishes} menus={publishedMenus(menu)} toastUrl={site.toastUrl} />
         </div>
@@ -162,7 +162,7 @@ export default async function HomePage() {
         <div className="wrap home-events-inner">
           <p className="micro-label">On the calendar</p>
           <h2 id="home-events-heading">What’s happening at Vinny’s</h2>
-          {demo ? <p className="demo-events-note" role="note">Demo week — concepts only. Dates and 7–9pm times are illustrative; no hosts, prizes, performers, or specials are booked or confirmed.</p> : null}
+          {demo ? <p className="events-concept-label">Concept preview · illustrative dates and times</p> : null}
           {upcoming.length ? (
             <>
               <ConfirmedEvents events={upcoming} />
